@@ -1,0 +1,28 @@
+state:
+  decision_timeframe: "3m"
+  use_incomplete_higher_tf_bars: false
+  fusion: null  # TODO
+  timeframes:
+    "3m":
+      lookback_bars: null  # TODO
+      features: null
+      normalization: null
+    "1h":
+      lookback_bars: null  # TODO
+      features: null
+      normalization: null
+    "4h":
+      lookback_bars: null  # TODO
+      features: null
+      normalization: null
+
+data:
+  state_window: null  # TODO: 3m bars for TemporalSplit
+  reward_horizon: null  # TODO: future 3m bars
+
+market:
+  benchmark_symbol: null  # TODO
+  sigma_method: null  # TODO
+  sigma_timeframe: null  # TODO
+  sigma_window: null
+  epsilon: 1.0e-8

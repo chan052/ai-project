@@ -1,0 +1,15 @@
+experiment_id: phase0_smoke
+seed: null
+
+state:
+  decision_timeframe: "3m"
+  use_incomplete_higher_tf_bars: false
+
+data:
+  state_window: null
+  reward_horizon: null
+
+market:
+  benchmark_symbol: null
+  sigma_method: null
+  sigma_timeframe: null
