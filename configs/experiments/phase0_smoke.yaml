@@ -3,7 +3,7 @@ seed: null
 
 state:
   decision_timeframe: "3m"
-  use_incomplete_higher_tf_bars: false
+  use_completed_higher_tf_bars_only: false
 
 data:
   state_window: null

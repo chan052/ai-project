@@ -47,13 +47,19 @@ class StateConfig(BaseModel):
         default=None,
         description="TODO: policy input fusion strategy (concat, multi_encoder, ...)",
     )
-    use_incomplete_higher_tf_bars: bool = Field(
+    use_completed_higher_tf_bars_only: bool = Field(
         default=False,
         description=(
-            "P1 Phase 0: False — only completed 1H/4H bars at decision time. "
-            "Future ablation candidate; not implemented in Phase 0."
+            "Deprecated compatibility flag. False (default): P1 uses completed "
+            "higher-TF bars plus partial current bar aggregated from 3m through t. "
+            "True: Phase-0 completed-only mode."
         ),
     )
+
+    @property
+    def use_incomplete_higher_tf_bars(self) -> bool:
+        """Deprecated alias — partial bars are the P1 default when False."""
+        return not self.use_completed_higher_tf_bars_only
 
 
 class DataConfig(BaseModel):
@@ -79,8 +85,11 @@ class MarketConfig(BaseModel):
     epsilon: float = 1e-8
 
 
+from chartai.reward.config import RewardConfig
+
+
 class ExperimentConfig(BaseModel):
-    """Top-level experiment config skeleton for Phase 0."""
+    """Top-level experiment config skeleton."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -89,6 +98,7 @@ class ExperimentConfig(BaseModel):
     state: StateConfig = Field(default_factory=StateConfig)
     data: DataConfig = Field(default_factory=DataConfig)
     market: MarketConfig = Field(default_factory=MarketConfig)
+    reward: RewardConfig = Field(default_factory=RewardConfig)
 
 
 def load_yaml_config(path: str | Path) -> dict[str, Any]:
