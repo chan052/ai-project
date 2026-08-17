@@ -1,5 +1,5 @@
 # Chart Intelligence AI — P1
 
-Research-oriented RL system for direction judgment (LONG / HOLD / SHORT) at 3m decision time.
+Research-oriented system for P1 supervised regression: predict F_LONG / F_SHORT at 3m decision time.
 
 Phase 0 provides temporal causality primitives and multi-timeframe alignment.

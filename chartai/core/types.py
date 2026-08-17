@@ -27,11 +27,10 @@ class Timeframe(str, Enum):
 
 
 class Action(IntEnum):
-    """P1 action space — direction judgment at decision time t."""
+    """P1 action space — LONG / SHORT direction judgment at decision time t."""
 
     LONG = 0
-    HOLD = 1
-    SHORT = 2
+    SHORT = 1
 
 
 @dataclass(frozen=True)

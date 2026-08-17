@@ -3,56 +3,22 @@ reward_horizon: 10
 use_path: true
 use_utility: true
 use_mae: true
-use_surprise: false
-
-use_hold_neutral_path: true
-use_hold_movement: true
-use_hold_surprise: false
-
-weights:
-  path: null
-  utility: null
-  mae: null
-  surprise: null
-  hold_neutral_path: null
-  hold_movement: null
-  hold_surprise: null
 
 path:
-  gamma: null  # TODO
+  gamma: 0.75  # decay rate r for Path weights w_k ∝ r^(k-1)
   per_step_return_mode: simple
-  normalization: null
+  normalization: null  # TBD — not implemented
 
 utility:
-  alpha: null
-  beta: null
-  lambda: null
-  input_source: horizon_return
+  alpha: 1.0
+  beta: 2.0
+  lambda: 1.5
 
 mae:
-  normalization: null
+  normalization: null  # TBD — not implemented
 
-surprise:
-  m_future_mode: abs_cumulative_return
-  sigma_method: rolling_std
-  sigma_window: null
-  transform: identity
-  cap: null
-  epsilon: 1.0e-8
-  apply_mode: multiply_base
-
-hold_neutral_path:
-  mode: inverse_abs_return
-  gamma: null
-  scale: null
-  normalization: null
-
-hold_movement:
-  metric: max_abs_deviation
-  normalization: null
-
-hold_surprise:
-  apply_mode: subtract_weighted
-  transform: identity
-  cap: null
-  epsilon: 1.0e-8
+# Legacy / P2 — not used in P1 F-target engine
+use_surprise: false
+use_hold_neutral_path: false
+use_hold_movement: false
+use_hold_surprise: false

@@ -4,33 +4,19 @@ from __future__ import annotations
 
 import pytest
 
-from chartai.reward.config import ComponentWeights, RewardConfig, UtilityConfig
+from chartai.reward.config import RewardConfig
 
 
 @pytest.fixture
 def base_reward_config() -> RewardConfig:
-    """Explicit test weights — not research defaults."""
+    """P1 baseline — alpha=1, beta=2, lambda=1.5, decay r=0.75."""
     return RewardConfig(
         reward_horizon=10,
         use_path=True,
         use_utility=True,
         use_mae=True,
-        use_surprise=False,
-        use_hold_neutral_path=True,
-        use_hold_movement=True,
-        use_hold_surprise=False,
-        weights=ComponentWeights(
-            path=1.0,
-            utility=1.0,
-            mae=-1.0,
-            surprise=0.5,
-            hold_neutral_path=1.0,
-            hold_movement=-1.0,
-            hold_surprise=1.0,
-        ),
-        path={"gamma": 0.9},
-        utility=UtilityConfig(alpha=1.0, beta=1.0, lambda_=2.0),
-        hold_neutral_path={"scale": 0.01},
+        path={"gamma": 0.75},
+        utility={"alpha": 1.0, "beta": 2.0, "lambda": 1.5},
     )
 
 
@@ -40,7 +26,5 @@ def path_only_config() -> RewardConfig:
         use_path=True,
         use_utility=False,
         use_mae=False,
-        use_surprise=False,
-        weights=ComponentWeights(path=1.0),
-        path={"gamma": 0.9},
+        path={"gamma": 0.75},
     )

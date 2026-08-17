@@ -1,4 +1,8 @@
-"""Reward composition — enabled components and configurable weights only."""
+"""Legacy reward composition — superseded by :mod:`chartai.reward.f_composer`.
+
+HOLD and S_Move composers are retained for reference but are **not** used by
+the P1 :class:`~chartai.reward.engine.RewardEngine`.
+"""
 
 from __future__ import annotations
 
@@ -14,12 +18,12 @@ from chartai.reward.utility import UtilityComponent
 
 
 class DirectionalRewardComposer:
-    """Compose LONG / SHORT rewards from independent directional components."""
+    """Legacy full-horizon composer — use :class:`~chartai.reward.f_composer.FTargetComposer`."""
 
     def __init__(self, config: RewardConfig) -> None:
         self._config = config
         self._path = DirectionalPathComponent(config.path)
-        self._utility = UtilityComponent(config.utility, path_gamma=config.path.gamma)
+        self._utility = UtilityComponent(config.utility)
         self._mae = MaeComponent(config.mae)
         self._surprise = MoveSurpriseComponent(config.surprise)
 
@@ -28,8 +32,8 @@ class DirectionalRewardComposer:
         return self._config
 
     def compose(self, ctx: RewardContext, action: Action) -> RewardBreakdown:
-        if action is Action.HOLD:
-            raise ValueError("DirectionalRewardComposer does not support HOLD")
+        if action not in (Action.LONG, Action.SHORT):
+            raise ValueError("DirectionalRewardComposer requires LONG or SHORT")
 
         cfg = self._config
         components: dict[str, float] = {}
@@ -38,24 +42,21 @@ class DirectionalRewardComposer:
 
         if cfg.use_path:
             val = self._path.compute(ctx, action)
-            weight = cfg.weight_for("path")
             components["path"] = val
-            weighted["path"] = weight * val
-            base_total += weighted["path"]
+            weighted["path"] = val
+            base_total += val
 
         if cfg.use_utility:
             val = self._utility.compute(ctx, action)
-            weight = cfg.weight_for("utility")
             components["utility"] = val
-            weighted["utility"] = weight * val
-            base_total += weighted["utility"]
+            weighted["utility"] = val
+            base_total += val
 
         if cfg.use_mae:
             val = self._mae.compute(ctx, action)
-            weight = cfg.weight_for("mae")
             components["mae"] = val
-            weighted["mae"] = weight * val
-            base_total += weighted["mae"]
+            weighted["mae"] = -val
+            base_total -= val
 
         multipliers: dict[str, float] = {}
         total = base_total
@@ -69,9 +70,7 @@ class DirectionalRewardComposer:
                     cfg.surprise.transform,
                     cap=cfg.surprise.cap,
                 )
-                surprise_weight = cfg.weight_for("surprise")
-                # Candidate: base × (1 + weight × S_move) — TODO finalize multiplier form.
-                surprise_multiplier = 1.0 + surprise_weight * transformed
+                surprise_multiplier = 1.0 + transformed
                 multipliers["surprise_multiplier"] = surprise_multiplier
                 total = base_total * surprise_multiplier
             else:
@@ -90,7 +89,7 @@ class DirectionalRewardComposer:
 
 
 class HoldRewardComposer:
-    """Compose HOLD reward — separate from directional (not a negation)."""
+    """Legacy HOLD composer — not used in P1 (HOLD removed from action space)."""
 
     def __init__(self, config: RewardConfig) -> None:
         self._config = config
@@ -103,50 +102,4 @@ class HoldRewardComposer:
         return self._config
 
     def compose(self, ctx: RewardContext) -> RewardBreakdown:
-        cfg = self._config
-        components: dict[str, float] = {}
-        weighted: dict[str, float] = {}
-        base_total = 0.0
-
-        if cfg.use_hold_neutral_path:
-            val = self._neutral.compute(ctx)
-            weight = cfg.weight_for("hold_neutral_path")
-            components["hold_neutral_path"] = val
-            weighted["hold_neutral_path"] = weight * val
-            base_total += weighted["hold_neutral_path"]
-
-        if cfg.use_hold_movement:
-            val = self._movement.compute(ctx)
-            weight = cfg.weight_for("hold_movement")
-            components["hold_movement"] = val
-            weighted["hold_movement"] = weight * val
-            base_total += weighted["hold_movement"]
-
-        multipliers: dict[str, float] = {}
-        total = base_total
-
-        if cfg.use_hold_surprise:
-            s_move = self._surprise.compute_s_move(ctx)
-            multipliers["s_move"] = s_move
-            penalty = apply_transform(
-                s_move,
-                cfg.hold_surprise.transform,
-                cap=cfg.hold_surprise.cap,
-            )
-            multipliers["hold_surprise_penalty"] = penalty
-            if cfg.hold_surprise.apply_mode is HoldSurpriseApplyMode.SUBTRACT_WEIGHTED:
-                weight = cfg.weight_for("hold_surprise")
-                total = base_total - weight * penalty
-            else:
-                raise NotImplementedError(
-                    f"Hold surprise apply_mode {cfg.hold_surprise.apply_mode!r} not implemented"
-                )
-
-        return RewardBreakdown(
-            action=Action.HOLD,
-            components=components,
-            multipliers=multipliers,
-            weighted_components=weighted,
-            base_total=base_total,
-            total=total,
-        )
+        raise NotImplementedError("HOLD is not part of P1 action space")

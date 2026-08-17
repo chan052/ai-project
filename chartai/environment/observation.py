@@ -20,7 +20,7 @@ def action_from_env_int(action: int):
     try:
         return Action(action)
     except ValueError as exc:
-        raise ValueError(f"Invalid action {action}; expected 0=LONG, 1=HOLD, 2=SHORT") from exc
+        raise ValueError(f"Invalid action {action}; expected 0=LONG, 1=SHORT") from exc
 
 
 def _bar_array(bars: tuple[OHLCVBar, ...]) -> np.ndarray:

@@ -1,0 +1,608 @@
+{
+  "purpose": "Compare Baseline (P+U-MAE) vs S+D+U-MAE; explore Opportunity Assessment metrics",
+  "market_data": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\\uc774\uc720\ucc2c\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "experiment": {
+    "num_valid_samples": 4970,
+    "eval_samples": 2485,
+    "norm_prefix_fraction": 0.5,
+    "decay_rate": 0.75,
+    "f_weights": {
+      "w_P_or_SD": 1,
+      "w_U": 1,
+      "w_MAE": 1
+    }
+  },
+  "candidate_definitions": {
+    "baseline": "F = norm(P) + norm(U) - norm(MAE), P = raw_return path",
+    "candidate": "F = norm(S) + norm(D) + norm(U) - norm(MAE)",
+    "sd_pairs": {
+      "S_early_sign__D_late_sign": {
+        "speed": "early_sign",
+        "persistence": "late_sign",
+        "speed_desc": "Early-weighted sign(aligned R_k); magnitude-free; emphasizes quick direction",
+        "persistence_desc": "Late-weighted sign(aligned R_k); magnitude-free persistence"
+      },
+      "S_time_to_favorable__D_occupancy": {
+        "speed": "time_to_favorable",
+        "persistence": "favorable_occupancy",
+        "speed_desc": "Inverse time-to-first favorable step; pure timing",
+        "persistence_desc": "Fraction of steps with aligned R_k > 0"
+      },
+      "S_time_to_favorable__D_max_run": {
+        "speed": "time_to_favorable",
+        "persistence": "max_favorable_run",
+        "speed_desc": "Inverse time-to-first favorable step; pure timing",
+        "persistence_desc": "Longest consecutive favorable run / n"
+      },
+      "S_early_sign__D_occupancy": {
+        "speed": "early_sign",
+        "persistence": "favorable_occupancy",
+        "speed_desc": "Early-weighted sign(aligned R_k); magnitude-free; emphasizes quick direction",
+        "persistence_desc": "Fraction of steps with aligned R_k > 0"
+      }
+    },
+    "speed_candidates": [
+      "early_sign",
+      "time_to_favorable",
+      "early_favorable_mass"
+    ],
+    "persistence_candidates": [
+      "late_sign",
+      "favorable_occupancy",
+      "max_favorable_run",
+      "late_favorable_mass"
+    ]
+  },
+  "baseline": {
+    "structure": "P + U - MAE",
+    "component_corr_h10": {
+      "P_U": 0.5826596049769277,
+      "P_MAE": -0.6625086026651689,
+      "U_MAE": -0.26888185403841763,
+      "absP_absU": 0.3427621458197863
+    },
+    "normalized_influence": {
+      "mean_abs_P": 0.6447504095909472,
+      "mean_abs_U": 0.6710931775314346,
+      "mean_abs_MAE": 0.6503442148499564,
+      "share_P": 0.28750142097490977,
+      "share_U": 0.3661067647648138,
+      "share_MAE": 0.34639181425952703
+    },
+    "layer1_terminal": {
+      "direction_accuracy": 0.7822937625754527,
+      "f_gap_vs_terminal_return_corr": 0.7392905652648898,
+      "mean_abs_f_gap": 2.9375856000972473
+    },
+    "layer2_opportunity": {
+      "ranking_correlations": {
+        "spearman_F_mfe": 0.6246929836116359,
+        "spearman_F_neg_mae": 0.7616312548377426,
+        "spearman_F_neg_time_to_mfe": -0.46145318281838815,
+        "spearman_F_favorable_occupancy": 0.8591635463438809,
+        "spearman_F_favorable_duration": 0.8591635463438809,
+        "spearman_F_early_return": 0.9435464614926921,
+        "spearman_F_terminal_return": 0.71558957672956
+      },
+      "top_decile_observable_means": {
+        "mfe": 0.0030167749186339817,
+        "mae": 0.00026332286125143564,
+        "terminal_return": 0.0019573402815188175,
+        "early_mean_return": 0.0011629882389070593,
+        "favorable_occupancy": 0.9665322580645161
+      },
+      "bottom_decile_observable_means": {
+        "mfe": 0.00039364917583386286,
+        "mae": 0.0031727744540284825,
+        "terminal_return": -0.0017053978183049557,
+        "early_mean_return": -0.001221270209022503,
+        "favorable_occupancy": 0.05685483870967742
+      },
+      "high_mae_filtering": {
+        "mae_q90_threshold": 0.0022788971281307003,
+        "mean_F_high_mae": -3.5116487116572106,
+        "mean_F_low_mae": 1.1820109657653457,
+        "high_mae_downrank_gap": 4.6936596774225565
+      },
+      "poor_entry_archetype": {
+        "case_a_dip_then_rise": {
+          "count": 101,
+          "mean_F": -1.550080386244333,
+          "mean_mfe": 0.0012323940657872543,
+          "mean_mae": 0.0013541315079557555,
+          "mean_terminal": 0.0008317591005472985,
+          "mean_early": -0.0006019007706075618
+        },
+        "case_b_rise_then_fall": {
+          "count": 114,
+          "mean_F": 1.2812885165992518,
+          "mean_mfe": 0.0015497937082602233,
+          "mean_mae": 0.001363769657054502,
+          "mean_terminal": -0.0009412547987692671,
+          "mean_early": 0.0006621347695865496
+        },
+        "case_a_vs_b_mean_F_diff": -2.831368902843585
+      }
+    }
+  },
+  "sd_pairs": {
+    "S_early_sign__D_late_sign": {
+      "structure": "S + D + U - MAE",
+      "speed_candidate": "early_sign",
+      "persistence_candidate": "late_sign",
+      "component_corr_h10": {
+        "S_D": 0.8275169153301352,
+        "S_U": 0.20852008667995006,
+        "D_U": 0.4159057431360372,
+        "S_MAE": -0.24838833928531875,
+        "D_MAE": -0.44291003435299364,
+        "U_MAE": -0.26888185403841763,
+        "S_P_baseline": 0.5288179911655164,
+        "D_P_baseline": 0.7460124195577809
+      },
+      "normalized_influence": {
+        "mean_abs_S": 0.9538876593346526,
+        "mean_abs_D": 0.888215158776578,
+        "mean_abs_U": 0.6710931775314346,
+        "mean_abs_MAE": 0.6503442148499564,
+        "share_S": 0.32035748509426226,
+        "share_D": 0.2776855737303478,
+        "share_U": 0.2058242622681338,
+        "share_MAE": 0.19613267890688874
+      },
+      "layer1_terminal": {
+        "direction_accuracy": 0.6736418511066399,
+        "f_gap_vs_terminal_return_corr": 0.5864381343893322,
+        "mean_abs_f_gap": 4.75704320714814
+      },
+      "layer2_opportunity": {
+        "ranking_correlations": {
+          "spearman_F_mfe": 0.5735759378092019,
+          "spearman_F_neg_mae": 0.6436655768126702,
+          "spearman_F_neg_time_to_mfe": -0.35397370757829,
+          "spearman_F_favorable_occupancy": 0.8398352978489433,
+          "spearman_F_favorable_duration": 0.8398352978489433,
+          "spearman_F_early_return": 0.8686966607867928,
+          "spearman_F_terminal_return": 0.5607864152591538
+        },
+        "top_decile_observable_means": {
+          "mfe": 0.0027274679693829076,
+          "mae": 0.00016909114358933968,
+          "terminal_return": 0.0018381962921303783,
+          "early_mean_return": 0.001090095428664429,
+          "favorable_occupancy": 0.9899193548387096
+        },
+        "bottom_decile_observable_means": {
+          "mfe": 0.00029360078768989284,
+          "mae": 0.002961056589960178,
+          "terminal_return": -0.001646599215592135,
+          "early_mean_return": -0.001168498870127701,
+          "favorable_occupancy": 0.03225806451612903
+        },
+        "high_mae_filtering": {
+          "mae_q90_threshold": 0.0022788971281307003,
+          "mean_F_high_mae": -3.3053490175236715,
+          "mean_F_low_mae": 1.5407029828307917,
+          "high_mae_downrank_gap": 4.846052000354463
+        },
+        "poor_entry_archetype": {
+          "case_a_dip_then_rise": {
+            "count": 101,
+            "mean_F": -2.5844003720432913,
+            "mean_mfe": 0.0012323940657872543,
+            "mean_mae": 0.0013541315079557555,
+            "mean_terminal": 0.0008317591005472985,
+            "mean_early": -0.0006019007706075618
+          },
+          "case_b_rise_then_fall": {
+            "count": 114,
+            "mean_F": 2.2821066548930777,
+            "mean_mfe": 0.0015497937082602233,
+            "mean_mae": 0.001363769657054502,
+            "mean_terminal": -0.0009412547987692671,
+            "mean_early": 0.0006621347695865496
+          },
+          "case_a_vs_b_mean_F_diff": -4.866507026936369
+        }
+      },
+      "vs_baseline_P_corr": {
+        "S_vs_P": 0.5288179911655164,
+        "D_vs_P": 0.7460124195577809,
+        "S_plus_D_vs_P": 0.6563657319352715
+      }
+    },
+    "S_time_to_favorable__D_occupancy": {
+      "structure": "S + D + U - MAE",
+      "speed_candidate": "time_to_favorable",
+      "persistence_candidate": "favorable_occupancy",
+      "component_corr_h10": {
+        "S_D": 0.7012890658820914,
+        "S_U": 0.2695626601036514,
+        "D_U": 0.5572055528130156,
+        "S_MAE": -0.29964061361703337,
+        "D_MAE": -0.5098750669746068,
+        "U_MAE": -0.26888185403841763,
+        "S_P_baseline": 0.5810786928933367,
+        "D_P_baseline": 0.7546852324424334
+      },
+      "normalized_influence": {
+        "mean_abs_S": 0.9218024814261607,
+        "mean_abs_D": 0.9017639502298693,
+        "mean_abs_U": 0.6710931775314346,
+        "mean_abs_MAE": 0.6503442148499564,
+        "share_S": 0.30484188215724317,
+        "share_D": 0.286896556606444,
+        "share_U": 0.20983802090871612,
+        "share_MAE": 0.19842354032721377
+      },
+      "layer1_terminal": {
+        "direction_accuracy": 0.7154929577464789,
+        "f_gap_vs_terminal_return_corr": 0.6431359182485348,
+        "mean_abs_f_gap": 4.522726668316602
+      },
+      "layer2_opportunity": {
+        "ranking_correlations": {
+          "spearman_F_mfe": 0.6514985513955864,
+          "spearman_F_neg_mae": 0.6441761689018216,
+          "spearman_F_neg_time_to_mfe": -0.4233818799247539,
+          "spearman_F_favorable_occupancy": 0.8995229107807616,
+          "spearman_F_favorable_duration": 0.8995229107807616,
+          "spearman_F_early_return": 0.9031133294338534,
+          "spearman_F_terminal_return": 0.62145979127375
+        },
+        "top_decile_observable_means": {
+          "mfe": 0.0028251797409001604,
+          "mae": 0.00017632360002249825,
+          "terminal_return": 0.001933573334164179,
+          "early_mean_return": 0.0011050688895942614,
+          "favorable_occupancy": 0.9858870967741935
+        },
+        "bottom_decile_observable_means": {
+          "mfe": 0.00023566947961522737,
+          "mae": 0.0028941686456227934,
+          "terminal_return": -0.0016899783368224607,
+          "early_mean_return": -0.001157644905184922,
+          "favorable_occupancy": 0.01532258064516129
+        },
+        "high_mae_filtering": {
+          "mae_q90_threshold": 0.0022788971281307003,
+          "mean_F_high_mae": -3.4545909052842756,
+          "mean_F_low_mae": 1.490056180558798,
+          "high_mae_downrank_gap": 4.944647085843074
+        },
+        "poor_entry_archetype": {
+          "case_a_dip_then_rise": {
+            "count": 101,
+            "mean_F": -2.3939583819224186,
+            "mean_mfe": 0.0012323940657872543,
+            "mean_mae": 0.0013541315079557555,
+            "mean_terminal": 0.0008317591005472985,
+            "mean_early": -0.0006019007706075618
+          },
+          "case_b_rise_then_fall": {
+            "count": 114,
+            "mean_F": 2.051040037038266,
+            "mean_mfe": 0.0015497937082602233,
+            "mean_mae": 0.001363769657054502,
+            "mean_terminal": -0.0009412547987692671,
+            "mean_early": 0.0006621347695865496
+          },
+          "case_a_vs_b_mean_F_diff": -4.444998418960685
+        }
+      },
+      "vs_baseline_P_corr": {
+        "S_vs_P": 0.5810786928933367,
+        "D_vs_P": 0.7546852324424334,
+        "S_plus_D_vs_P": 0.7217919447150957
+      }
+    },
+    "S_time_to_favorable__D_max_run": {
+      "structure": "S + D + U - MAE",
+      "speed_candidate": "time_to_favorable",
+      "persistence_candidate": "max_favorable_run",
+      "component_corr_h10": {
+        "S_D": 0.6408773327649854,
+        "S_U": 0.2695626601036514,
+        "D_U": 0.5705080640296557,
+        "S_MAE": -0.29964061361703337,
+        "D_MAE": -0.48107869210234644,
+        "U_MAE": -0.26888185403841763,
+        "S_P_baseline": 0.5810786928933367,
+        "D_P_baseline": 0.7453860495135314
+      },
+      "normalized_influence": {
+        "mean_abs_S": 0.9218024814261607,
+        "mean_abs_D": 0.8924406847133535,
+        "mean_abs_U": 0.6710931775314346,
+        "mean_abs_MAE": 0.6503442148499564,
+        "share_S": 0.3069081822455435,
+        "share_D": 0.28493590047395073,
+        "share_U": 0.20975946188083527,
+        "share_MAE": 0.1983964553992888
+      },
+      "layer1_terminal": {
+        "direction_accuracy": 0.7126760563380282,
+        "f_gap_vs_terminal_return_corr": 0.6427149220404645,
+        "mean_abs_f_gap": 4.458087560523071
+      },
+      "layer2_opportunity": {
+        "ranking_correlations": {
+          "spearman_F_mfe": 0.6482828154581645,
+          "spearman_F_neg_mae": 0.643834535500886,
+          "spearman_F_neg_time_to_mfe": -0.41722918495891836,
+          "spearman_F_favorable_occupancy": 0.8975637987332625,
+          "spearman_F_favorable_duration": 0.8975637987332625,
+          "spearman_F_early_return": 0.9057657482745137,
+          "spearman_F_terminal_return": 0.6166423799597989
+        },
+        "top_decile_observable_means": {
+          "mfe": 0.002794457666176343,
+          "mae": 0.00016973429021433496,
+          "terminal_return": 0.001891142900119352,
+          "early_mean_return": 0.0011068113433286722,
+          "favorable_occupancy": 0.9875
+        },
+        "bottom_decile_observable_means": {
+          "mfe": 0.00023566947961522737,
+          "mae": 0.0028941686456227934,
+          "terminal_return": -0.0016899783368224607,
+          "early_mean_return": -0.0011576449051849218,
+          "favorable_occupancy": 0.01532258064516129
+        },
+        "high_mae_filtering": {
+          "mae_q90_threshold": 0.0022788971281307003,
+          "mean_F_high_mae": -3.4197125830757225,
+          "mean_F_low_mae": 1.4694896676486102,
+          "high_mae_downrank_gap": 4.889202250724333
+        },
+        "poor_entry_archetype": {
+          "case_a_dip_then_rise": {
+            "count": 101,
+            "mean_F": -2.3671359505182408,
+            "mean_mfe": 0.0012323940657872543,
+            "mean_mae": 0.0013541315079557555,
+            "mean_terminal": 0.0008317591005472985,
+            "mean_early": -0.0006019007706075618
+          },
+          "case_b_rise_then_fall": {
+            "count": 114,
+            "mean_F": 2.068088791900022,
+            "mean_mfe": 0.0015497937082602233,
+            "mean_mae": 0.001363769657054502,
+            "mean_terminal": -0.0009412547987692671,
+            "mean_early": 0.0006621347695865496
+          },
+          "case_a_vs_b_mean_F_diff": -4.435224742418263
+        }
+      },
+      "vs_baseline_P_corr": {
+        "S_vs_P": 0.5810786928933367,
+        "D_vs_P": 0.7453860495135314,
+        "S_plus_D_vs_P": 0.7289894668613214
+      }
+    },
+    "S_early_sign__D_occupancy": {
+      "structure": "S + D + U - MAE",
+      "speed_candidate": "early_sign",
+      "persistence_candidate": "favorable_occupancy",
+      "component_corr_h10": {
+        "S_D": 0.5879312042613316,
+        "S_U": 0.20852008667995006,
+        "D_U": 0.5572055528130156,
+        "S_MAE": -0.24838833928531875,
+        "D_MAE": -0.5098750669746068,
+        "U_MAE": -0.26888185403841763,
+        "S_P_baseline": 0.5288179911655164,
+        "D_P_baseline": 0.7546852324424334
+      },
+      "normalized_influence": {
+        "mean_abs_S": 0.9538876593346526,
+        "mean_abs_D": 0.9017639502298693,
+        "mean_abs_U": 0.6710931775314346,
+        "mean_abs_MAE": 0.6503442148499564,
+        "share_S": 0.3222891997064028,
+        "share_D": 0.283793025806145,
+        "share_U": 0.20156032304615815,
+        "share_MAE": 0.19235745144093297
+      },
+      "layer1_terminal": {
+        "direction_accuracy": 0.6973843058350101,
+        "f_gap_vs_terminal_return_corr": 0.6184289653236359,
+        "mean_abs_f_gap": 4.639447355336685
+      },
+      "layer2_opportunity": {
+        "ranking_correlations": {
+          "spearman_F_mfe": 0.6059308095161537,
+          "spearman_F_neg_mae": 0.6519458529874235,
+          "spearman_F_neg_time_to_mfe": -0.3875075795521904,
+          "spearman_F_favorable_occupancy": 0.8695170803289309,
+          "spearman_F_favorable_duration": 0.8695170803289309,
+          "spearman_F_early_return": 0.8860761500221964,
+          "spearman_F_terminal_return": 0.593765046546452
+        },
+        "top_decile_observable_means": {
+          "mfe": 0.002741111764571275,
+          "mae": 0.00017035353252543194,
+          "terminal_return": 0.0018538994100423486,
+          "early_mean_return": 0.0010948039749084496,
+          "favorable_occupancy": 0.989516129032258
+        },
+        "bottom_decile_observable_means": {
+          "mfe": 0.00028733747943114786,
+          "mae": 0.0029915502108288604,
+          "terminal_return": -0.0016879455099971033,
+          "early_mean_return": -0.001168833783322266,
+          "favorable_occupancy": 0.02903225806451613
+        },
+        "high_mae_filtering": {
+          "mae_q90_threshold": 0.0022788971281307003,
+          "mean_F_high_mae": -3.370159457382057,
+          "mean_F_low_mae": 1.524972724096184,
+          "high_mae_downrank_gap": 4.895132181478241
+        },
+        "poor_entry_archetype": {
+          "case_a_dip_then_rise": {
+            "count": 101,
+            "mean_F": -2.4289888163674975,
+            "mean_mfe": 0.0012323940657872543,
+            "mean_mae": 0.0013541315079557555,
+            "mean_terminal": 0.0008317591005472985,
+            "mean_early": -0.0006019007706075618
+          },
+          "case_b_rise_then_fall": {
+            "count": 114,
+            "mean_F": 2.186135111745239,
+            "mean_mfe": 0.0015497937082602233,
+            "mean_mae": 0.001363769657054502,
+            "mean_terminal": -0.0009412547987692671,
+            "mean_early": 0.0006621347695865496
+          },
+          "case_a_vs_b_mean_F_diff": -4.6151239281127365
+        }
+      },
+      "vs_baseline_P_corr": {
+        "S_vs_P": 0.5288179911655164,
+        "D_vs_P": 0.7546852324424334,
+        "S_plus_D_vs_P": 0.6556975915600923
+      }
+    }
+  },
+  "speed_candidates": {
+    "early_sign": {
+      "corr_U": 0.20852008667995006,
+      "corr_MAE": -0.24838833928531875,
+      "corr_P": 0.5288179911655164,
+      "corr_absU": 0.07157340975375676,
+      "mean": 0.0039281986173532145,
+      "std": 0.8679213135999594
+    },
+    "time_to_favorable": {
+      "corr_U": 0.2695626601036514,
+      "corr_MAE": -0.29964061361703337,
+      "corr_P": 0.5810786928933367,
+      "corr_absU": 0.26811544209530036,
+      "mean": 0.7135613682092555,
+      "std": 0.3890311868508678
+    },
+    "early_favorable_mass": {
+      "corr_U": NaN,
+      "corr_MAE": NaN,
+      "corr_P": NaN,
+      "corr_absU": NaN,
+      "mean": NaN,
+      "std": NaN
+    }
+  },
+  "persistence_candidates": {
+    "late_sign": {
+      "corr_U": 0.4159057431360372,
+      "corr_MAE": -0.44291003435299364,
+      "corr_P": 0.7460124195577809,
+      "corr_absU": 0.10684576368663548,
+      "mean": -0.0004586993303198391,
+      "std": 0.7248900940228554
+    },
+    "favorable_occupancy": {
+      "corr_U": 0.5572055528130156,
+      "corr_MAE": -0.5098750669746068,
+      "corr_P": 0.7546852324424334,
+      "corr_absU": 0.5550515929781346,
+      "mean": 0.4846680080482898,
+      "std": 0.3703529509703013
+    },
+    "max_favorable_run": {
+      "corr_U": 0.5705080640296557,
+      "corr_MAE": -0.48107869210234644,
+      "corr_P": 0.7453860495135314,
+      "corr_absU": 0.5686761403120173,
+      "mean": 0.43814889336016105,
+      "std": 0.3630207963121581
+    },
+    "late_favorable_mass": {
+      "corr_U": NaN,
+      "corr_MAE": NaN,
+      "corr_P": NaN,
+      "corr_absU": NaN,
+      "mean": NaN,
+      "std": NaN
+    }
+  },
+  "case_study_analysis": {
+    "case_a_count": 101,
+    "case_b_count": 114,
+    "same_terminal_diff_early_pairs": 200,
+    "note": "Case A: early adverse then positive terminal; Case B: early favorable then negative terminal"
+  },
+  "amplification_analysis": {
+    "baseline_P_U_same_sign_mean_F": 2.197283380435401,
+    "baseline_P_U_opposite_sign_mean_F": -0.1386453717718074,
+    "interpretation": "Large positive F when P and U agree amplifies terminal-return narrative",
+    "sd_pair_S_D_corr": {
+      "S_early_sign__D_late_sign": 0.8275169153301352,
+      "S_time_to_favorable__D_occupancy": 0.7012890658820914,
+      "S_time_to_favorable__D_max_run": 0.6408773327649854,
+      "S_early_sign__D_occupancy": 0.5879312042613316
+    }
+  },
+  "structure_comparison_summary": [
+    {
+      "structure": "baseline_P+U-MAE",
+      "dir_acc": 0.7822937625754527,
+      "gap_terminal_corr": 0.7392905652648898,
+      "spearman_mfe": 0.6246929836116359,
+      "spearman_neg_mae": 0.7616312548377426,
+      "spearman_early": 0.9435464614926921,
+      "P_U_corr": 0.5826596049769277
+    },
+    {
+      "structure": "S_early_sign__D_late_sign",
+      "dir_acc": 0.6736418511066399,
+      "gap_terminal_corr": 0.5864381343893322,
+      "spearman_mfe": 0.5735759378092019,
+      "spearman_neg_mae": 0.6436655768126702,
+      "spearman_early": 0.8686966607867928,
+      "S_U_corr": 0.20852008667995006,
+      "S_D_corr": 0.8275169153301352
+    },
+    {
+      "structure": "S_time_to_favorable__D_occupancy",
+      "dir_acc": 0.7154929577464789,
+      "gap_terminal_corr": 0.6431359182485348,
+      "spearman_mfe": 0.6514985513955864,
+      "spearman_neg_mae": 0.6441761689018216,
+      "spearman_early": 0.9031133294338534,
+      "S_U_corr": 0.2695626601036514,
+      "S_D_corr": 0.7012890658820914
+    },
+    {
+      "structure": "S_time_to_favorable__D_max_run",
+      "dir_acc": 0.7126760563380282,
+      "gap_terminal_corr": 0.6427149220404645,
+      "spearman_mfe": 0.6482828154581645,
+      "spearman_neg_mae": 0.643834535500886,
+      "spearman_early": 0.9057657482745137,
+      "S_U_corr": 0.2695626601036514,
+      "S_D_corr": 0.6408773327649854
+    },
+    {
+      "structure": "S_early_sign__D_occupancy",
+      "dir_acc": 0.6973843058350101,
+      "gap_terminal_corr": 0.6184289653236359,
+      "spearman_mfe": 0.6059308095161537,
+      "spearman_neg_mae": 0.6519458529874235,
+      "spearman_early": 0.8860761500221964,
+      "S_U_corr": 0.20852008667995006,
+      "S_D_corr": 0.5879312042613316
+    }
+  ]
+}

@@ -1,50 +1,59 @@
-"""P1 Reward Engine — routes actions to directional or HOLD composers."""
+"""P1 Reward Engine — F-target computation for LONG / SHORT."""
 
 from __future__ import annotations
 
 from chartai.core.types import Action
-from chartai.reward.base import RewardBreakdown
-from chartai.reward.composer import DirectionalRewardComposer, HoldRewardComposer
+from chartai.reward.base import FTargetBreakdown
 from chartai.reward.config import RewardConfig
 from chartai.reward.context import RewardContext
+from chartai.reward.f_composer import FTargetComposer
+from chartai.reward.normalization import ComponentNormalizer, IdentityNormalizer
 
 
 class RewardEngine:
-    """Compute decomposed reward for LONG / HOLD / SHORT at decision time t.
+    """Compute P1 F-position targets for LONG / SHORT at decision time t.
 
-    Uses only :class:`RewardContext` (future path + past sigma series).
-    Does **not** accept MTF state features — no D_ret / market-relative component.
+    Uses only :class:`RewardContext` (future OHLC path). Does **not** accept
+    MTF state features.
 
-    **Role in P1 regression (interim):** :meth:`compute` returns a
-    :class:`RewardBreakdown` whose ``total`` is used as an **F target candidate**.
-    ``RewardEngine.total ≠ finalized F definition``. Reward components
-    (Path, Utility, MAE, Surprise, HOLD, …) are one way to *express* F;
-    F itself is not yet finalized.
+    Output :class:`FTargetBreakdown` with::
 
-    See :mod:`chartai.features.target`.
+        F_position = mean(f_1, ..., f_10)
+
+    See :mod:`chartai.features.target` and :mod:`chartai.reward.f_composer`.
     """
 
-    def __init__(self, config: RewardConfig) -> None:
+    def __init__(
+        self,
+        config: RewardConfig,
+        normalizer: ComponentNormalizer | None = None,
+    ) -> None:
         self._config = config
-        self._directional = DirectionalRewardComposer(config)
-        self._hold = HoldRewardComposer(config)
+        self._normalizer = normalizer or IdentityNormalizer()
+        self._composer = FTargetComposer(config, normalizer=self._normalizer)
 
     @property
     def config(self) -> RewardConfig:
         return self._config
 
-    def compute(self, action: Action, ctx: RewardContext) -> RewardBreakdown:
+    @property
+    def normalizer(self) -> ComponentNormalizer:
+        return self._normalizer
+
+    def compute(self, action: Action, ctx: RewardContext) -> FTargetBreakdown:
         ctx.validate_temporal_causality()
         if len(ctx.future_closes) != self._config.reward_horizon:
             raise ValueError(
                 f"RewardContext horizon {len(ctx.future_closes)} != "
                 f"config.reward_horizon {self._config.reward_horizon}"
             )
+        return self._composer.compose(ctx, action)
 
-        if action is Action.HOLD:
-            return self._hold.compose(ctx)
-
-        return self._directional.compose(ctx, action)
+    def compute_both(self, ctx: RewardContext) -> dict[Action, FTargetBreakdown]:
+        return {
+            Action.LONG: self.compute(Action.LONG, ctx),
+            Action.SHORT: self.compute(Action.SHORT, ctx),
+        }
 
     def enabled_component_names(self) -> list[str]:
         cfg = self._config
@@ -55,12 +64,4 @@ class RewardEngine:
             names.append("utility")
         if cfg.use_mae:
             names.append("mae")
-        if cfg.use_surprise:
-            names.append("surprise")
-        if cfg.use_hold_neutral_path:
-            names.append("hold_neutral_path")
-        if cfg.use_hold_movement:
-            names.append("hold_movement")
-        if cfg.use_hold_surprise:
-            names.append("hold_surprise")
         return names

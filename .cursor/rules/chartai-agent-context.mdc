@@ -1,0 +1,73 @@
+---
+description: ChartAI P1 project context — architecture, experiments, design boundaries
+alwaysApply: true
+---
+
+# ChartAI Agent Context
+
+Research project: **P1 direction judgment** at 3m decision time t (LONG / HOLD / SHORT).
+**Not** a trade simulator (entry/exit/holding = P2).
+
+## Learning direction
+
+- P1 = **supervised regression**: `State(t) → [F_long, F_hold, F_short]`
+- **Not** PPO / policy-gradient for P1
+- `P1TradingEnv` (Gymnasium) = optional validation only
+
+## F vs Reward (critical boundary)
+
+- **F** = P1 prediction target concept (not finalized)
+- **Reward** = compositional expression of F (Path, Utility, MAE, Surprise, HOLD, …)
+- `RewardEngine.total` = **F target candidate only** — NOT finalized F definition
+- Same future market path for all actions; action changes scoring perspective only
+
+## Temporal causality (never weaken)
+
+- **State(t)**: past-only through t (3m + 1H/4H completed + partial bars)
+- **Target/Reward**: future 3m bars t+1..t+10 only
+- Partial 1H/4H: aggregate 3m bars with `end <= t` only
+
+## Code layout
+
+| Area | Path |
+|------|------|
+| Core / MTF | `chartai/core/`, `chartai/data/mtf_aligner.py` |
+| State / targets | `chartai/features/` (`state.py`, `target.py`, `sample.py`) |
+| Reward engine | `chartai/reward/` |
+| Analysis (non-canonical) | `chartai/analysis/` |
+| Env (optional) | `chartai/environment/` |
+| Market data | `data/market/btcusdt_3m.csv` |
+| Reports | `reports/*.json` |
+
+## Last completed milestone
+
+**Case A/B + Opportunity Analysis** ([transcript](eb0f3246-51a3-4e50-9c98-4d761a85f042))
+
+- Report: `reports/opportunity_analysis_report.json`
+- Rerun: `python scripts/run_opportunity_analysis.py`
+- BTCUSDT 3m, 5000 bars, eval 2485 samples
+
+### Confirmed findings
+
+1. "Future good movement" ≠ "good entry at t" (Case A/B)
+2. Baseline F ≈ early-return ranking (ρ ≈ 0.94)
+3. Case A (dip→rise): terminal + but target-first 1% under tight stop
+4. Case B (rise→fall): terminal − but scalp-type opportunity at t possible
+5. Terminal-only and MFE-only views are both incomplete
+6. **Canonical P1 target NOT finalized** — do not hardcode F formula
+
+### Recommended next steps
+
+1. Dual-axis labeling (immediate capture vs deferred opportunity)
+2. Case A: best entry within t..t+H gap vs F at t
+3. Policy sweep / robustness clustering
+4. Same-terminal pair visualization
+5. Multi-asset validation
+
+## Do NOT (unless explicitly requested)
+
+- Finalize F formula, reward weights, gamma, utility params
+- Implement PPO, policy network, training loop for P1
+- Implement P2 position management
+- Change canonical P1 code during analysis-only experiments
+- Delete or weaken causality tests

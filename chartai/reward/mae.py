@@ -1,4 +1,4 @@
-"""MAE / adverse movement for LONG and SHORT."""
+"""MAE / adverse excursion for LONG and SHORT."""
 
 from __future__ import annotations
 
@@ -8,45 +8,44 @@ from chartai.reward.config import MaeConfig
 from chartai.reward.context import RewardContext
 
 
-def long_downward_excursion(ctx: RewardContext) -> float:
-    """Maximum adverse downward move relative to price_at_t during future path."""
+def compute_mae_n(ctx: RewardContext, action: Action, n: int) -> float:
+    """Cumulative adverse excursion from t through t+n (positive magnitude).
+
+    LONG:  (C_t - min(L_{t+1}, ..., L_{t+n})) / C_t
+    SHORT: (max(H_{t+1}, ..., H_{t+n}) - C_t) / C_t
+    """
+    if n < 1 or n > ctx.reward_horizon:
+        raise ValueError(f"n must be in 1..{ctx.reward_horizon}, got {n}")
     anchor = ctx.price_at_t
-    running_max = anchor
-    max_adverse = 0.0
-    for price in ctx.future_prices[1:]:
-        running_max = max(running_max, price)
-        drawdown = (running_max - price) / anchor
-        max_adverse = max(max_adverse, drawdown)
-    return max_adverse
+    if action is Action.LONG:
+        min_low = min(ctx.future_lows[:n])
+        return (anchor - min_low) / anchor
+    if action is Action.SHORT:
+        max_high = max(ctx.future_highs[:n])
+        return (max_high - anchor) / anchor
+    raise ValueError(f"MAE requires LONG or SHORT, got {action!r}")
 
 
-def short_upward_excursion(ctx: RewardContext) -> float:
-    """Maximum adverse upward move relative to price_at_t during future path."""
-    anchor = ctx.price_at_t
-    running_min = anchor
-    max_adverse = 0.0
-    for price in ctx.future_prices[1:]:
-        running_min = min(running_min, price)
-        adverse = (price - running_min) / anchor
-        max_adverse = max(max_adverse, adverse)
-    return max_adverse
+def long_downward_excursion(ctx: RewardContext, *, n: int | None = None) -> float:
+    """LONG MAE over t+1..t+n (default full horizon)."""
+    steps = n if n is not None else ctx.reward_horizon
+    return compute_mae_n(ctx, Action.LONG, steps)
+
+
+def short_upward_excursion(ctx: RewardContext, *, n: int | None = None) -> float:
+    """SHORT MAE over t+1..t+n (default full horizon)."""
+    steps = n if n is not None else ctx.reward_horizon
+    return compute_mae_n(ctx, Action.SHORT, steps)
 
 
 class MaeComponent(RewardComponent):
-    """Directional adverse excursion — returned as **positive magnitude**.
-
-    Composer applies configured (typically negative) weight as penalty.
-    Exact normalization remains TODO.
-    """
+    """Full-horizon MAE — prefer :func:`compute_mae_n` for F-target steps."""
 
     name = "mae"
 
     def __init__(self, config: MaeConfig) -> None:
         self._config = config
 
-    def compute(self, ctx: RewardContext, action: Action) -> float:
-        if action is Action.LONG:
-            return long_downward_excursion(ctx)
-        if action is Action.SHORT:
-            return short_upward_excursion(ctx)
-        raise ValueError(f"MAE requires LONG or SHORT, got {action!r}")
+    def compute(self, ctx: RewardContext, action: Action, *, n: int | None = None) -> float:
+        steps = n if n is not None else ctx.reward_horizon
+        return compute_mae_n(ctx, action, steps)

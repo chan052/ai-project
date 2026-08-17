@@ -1,0 +1,3928 @@
+{
+  "purpose": "Validate whether Immediate and Deferred opportunity exist as distinct analysis axes \u2014 NOT canonical P1 target definition",
+  "market_data": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\\uc774\uc720\ucc2c\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "eval_samples": 2485,
+  "config": {
+    "reward_horizon": 10,
+    "policy_grid_size": 7,
+    "entry_delays": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      10
+    ],
+    "I_definition": "mean target-first rate across fixed+vol-scaled policies at delay=0",
+    "D_definition": "mean(proxy_pnl at best delay \u03c4* - proxy_pnl at \u03c4=0) across policies; hindsight scan for analysis only"
+  },
+  "immediate_definitions": {
+    "meaning": "Can favorable movement be captured by entering at t immediately?",
+    "captureability": "Fraction of policies where target hits before stop (delay=0)",
+    "robustness": "Fraction of policies with positive proxy PnL at delay=0",
+    "composite_I": "Same as captureability \u2014 analysis proxy, not canonical F"
+  },
+  "deferred_definitions": {
+    "meaning": "Does a better entry exist within [t, t+H] even if t is poor?",
+    "best_delay": "Per policy, delay maximizing proxy PnL; consensus = median across policies",
+    "improvement": "best_pnl - immediate_pnl per policy; D = mean improvement",
+    "hindsight_note": "Best entry uses future data \u2014 analysis label only, never P1 feature"
+  },
+  "execution_policies": {
+    "standard_grid": [
+      [
+        0.0005,
+        0.00025
+      ],
+      [
+        0.001,
+        0.0005
+      ],
+      [
+        0.001,
+        0.001
+      ],
+      [
+        0.002,
+        0.001
+      ],
+      [
+        0.002,
+        0.002
+      ],
+      [
+        0.003,
+        0.0015
+      ],
+      [
+        0.005,
+        0.002
+      ]
+    ],
+    "vol_scaled": "target=c*sigma_t, stop=c*sigma_t/2 for c in [1.0,1.5,2.0]"
+  },
+  "immediate_results": {
+    "mean_captureability": NaN,
+    "mean_robustness": 0.41939637826961773,
+    "mean_proxy_pnl": -6.395983556226272e-06,
+    "by_policy": {
+      "t0.0005_s0.00025": {
+        "mean_target_first": 0.33753943217665616,
+        "mean_proxy_pnl": 1.4319927537581454e-05
+      },
+      "t0.001_s0.0005": {
+        "mean_target_first": 0.3052924791086351,
+        "mean_proxy_pnl": 1.63325775247867e-06
+      },
+      "t0.001_s0.001": {
+        "mean_target_first": 0.4906574394463668,
+        "mean_proxy_pnl": -1.5391979807062764e-05
+      },
+      "t0.002_s0.001": {
+        "mean_target_first": 0.26330027051397653,
+        "mean_proxy_pnl": 3.8055903729748124e-06
+      },
+      "t0.002_s0.002": {
+        "mean_target_first": 0.49763779527559054,
+        "mean_proxy_pnl": -2.534102519506834e-05
+      },
+      "t0.003_s0.0015": {
+        "mean_target_first": 0.17674418604651163,
+        "mean_proxy_pnl": -2.3939439268097512e-05
+      },
+      "t0.005_s0.002": {
+        "mean_target_first": 0.04941860465116279,
+        "mean_proxy_pnl": -3.482519503368712e-05
+      },
+      "t0.0004687300497776202_s0.0002343650248888101": {
+        "mean_target_first": 0.3387241689128482,
+        "mean_proxy_pnl": 1.5035859612897161e-05
+      },
+      "t0.0007030950746664303_s0.00035154753733321515": {
+        "mean_target_first": 0.31584158415841584,
+        "mean_proxy_pnl": 4.942141637556347e-06
+      },
+      "t0.0009374600995552404_s0.0004687300497776202": {
+        "mean_target_first": 0.3029801324503311,
+        "mean_proxy_pnl": -4.198973171835427e-06
+      }
+    }
+  },
+  "deferred_results": {
+    "mean_improvement": 0.0005854363574011751,
+    "mean_deferred_capture": NaN,
+    "mean_deferred_robustness": 0.8611670020120724,
+    "best_entry_delay_distribution": {
+      "mean": 3.5344064386317906,
+      "median": 3.0,
+      "pct_delay_gt_0": 0.7255533199195171,
+      "histogram": {
+        "0": 682,
+        "1": 292,
+        "2": 214,
+        "3": 183,
+        "4": 184,
+        "5": 161,
+        "6": 155,
+        "7": 154,
+        "8": 175,
+        "9": 285
+      }
+    },
+    "mean_best_entry_mfe": 0.0011409473454966764,
+    "mean_best_entry_mae": 0.0003384601433073679
+  },
+  "id_correlation": {
+    "pearson_I_D": -0.5303607227440423,
+    "spearman_I_D": -0.5522615711838,
+    "mutual_information_I_D": 0.42607852255418044,
+    "interpretation_note": "Correlation is reference only. Quadrant counts (especially I-low/D-high) matter more than correlation magnitude."
+  },
+  "scatter_sample": [
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008052947168143311,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014784964665278011,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009454115428078453,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0016127866791921148,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008758867259171134,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0003585843343867762,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0008542501583095803,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000766035019711297,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.2857142857142857,
+      "D": 0.0008419807815422549,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001605277343036795,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007932713265464076,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006484500716345885,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000809538731444958,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003803650315023852,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0006897542041998077,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.000257690435789242,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 9.87307132855604e-06,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.00018286199517184628,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 2.0517495934384217e-05,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0002360876511829985,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013502811533657975,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.000717472263843962,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0007422609131430542,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0005420667111914317,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.00010831999768648581,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.00020829925208543966,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006209154781825468,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.0002506728151152915,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8,
+      "D": 0.000230438448487717,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0010165413020623742,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.1,
+      "D": 0.0017115116966072703,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0006671504555683917,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014593922664935441,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011246901690311177,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009631567552308697,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001296685585812803,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0023184920079372577,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0021114098326636163,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014122754851475857,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009005234201115161,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.3,
+      "D": 0.0017018980957648705,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.2,
+      "D": 0.002192070889035124,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0005537300952111628,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013868415366092676,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013590694441786586,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013664956290302915,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0020973854276296793,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.25,
+      "D": 0.001063282330936575,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0005547771511813891,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.00010999903025214128,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009961263447873974,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.0001482778090200606,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8571428571428571,
+      "D": 0.00027536976134025855,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.42857142857142855,
+      "D": 0.0008260413899264078,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0006316876405868957,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.00047613318834471954,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.8571428571428571,
+      "D": 0.0002702703945210641,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013691421545376288,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001737367902311148,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011116556940465139,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007973139108474794,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.8571428571428571,
+      "D": 0.0002732096536602473,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012577467238600694,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001348624287717219,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0007065970815832069,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0006706835260371984,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.000716178845992785,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.5,
+      "D": 0.00039122240836548334,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0003882407467517545,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.3,
+      "D": 0.001061117778394808,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.2,
+      "D": 0.0014326503743563904,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0019749633513519572,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0005533473227023739,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012997967090652228,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.00040130919941680385,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011141372620118019,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013017728479434495,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 9.11309411261913e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 2.8269451351821318e-05,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007575671305354167,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008920699499180712,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0003329530269405319,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012558069982804786,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.7777777777777778,
+      "D": 0.0001617568445137045,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 6.687159100969957e-05,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00182037704043108,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012881058654868258,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0004625511357577869,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.1,
+      "D": 0.0010546911316849923,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0018302033987946465,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012453046445913946,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0010891093443481032,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.00014804806396379733,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003591906310341986,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011765725715108825,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.2857142857142857,
+      "D": 0.0011021581184646404,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0006601727768297773,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0006667509303087725,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0008488813751252822,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0010138382257230485,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006507571808076708,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.000483774907293581,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 3.226075398317166e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.2222222222222222,
+      "D": 0.0011560805828562273,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.7777777777777778,
+      "D": 0.00014792754155915804,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0005165181023716254,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00039765301121865636,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007617409289999161,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008204702675441457,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005770204860442629,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013736647399534502,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0006778071415570166,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001166079834525938,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005519205435660648,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005587237536732688,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007698874489389414,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.6,
+      "D": 0.0002577406915231217,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.42857142857142855,
+      "D": 0.0004970662359770007,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009562076047555015,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00027289500843758195,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00024293321944650405,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008924080253995193,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00163885295189602,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011276278998856527,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000849220551458785,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.75,
+      "D": 0.0001969590166485545,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.75,
+      "D": 0.0006775329211529069,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011811171632806568,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.4,
+      "D": 0.00041554975885017695,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005680833530397062,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 1.5413447766318353e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00038903700518630636,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005937156551587075,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0019035021535037842,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.002122895281482426,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0007246867664715173,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0007102978644596004,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 8.201114429080092e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0016219555760872818,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.125,
+      "D": 0.0012497077146685779,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6,
+      "D": 0.0006228353140916826,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.002430070686392204,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.4444444444444444,
+      "D": 0.000559656780619155,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.0002233352494842838,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.25,
+      "D": 0.0015378420659470928,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0005720887904829997,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.625,
+      "D": 0.0004302215669779398,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.25,
+      "D": 0.0011964934321607335,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001389994607667806,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.6,
+      "D": 0.0,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0018244897942398563,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012604756370166064,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.6,
+      "D": 0.0010837432302517568,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0018924551543975788,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.5555555555555556,
+      "D": 0.0002593467699479204,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.4,
+      "D": 0.00014872748093066522,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.002606992289267732,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.002608627400670154,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 3.796336039467007e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014910525140958912,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0004841536887277078,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.125,
+      "D": 0.0015204013939060024,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.375,
+      "D": 0.000570830609606368,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0020920178799683827,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.75,
+      "D": 0.00015184984741033075,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.25,
+      "D": 0.0013086066440230583,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0016932190355069855,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012493293034723095,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 0.00041035911115972753,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 1.0,
+      "D": 5.7140000329053074e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000810781217017436,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007643248973746542,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00036763413233712166,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0005664831937159276,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012687315458236995,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.000214243853674106,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00026741141706687356,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005699655240692963,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 2.0415009296707335e-05,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 7.139105743841261e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 4.7409584969003785e-08,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0005350247739531873,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0004895196565820937,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003357085022346498,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011383383138014115,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0010946394343525736,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00047336324006091996,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0004446548831032051,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012825211136862063,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0007097228599245528,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0010033534260526966,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.42857142857142855,
+      "D": 0.001040580093286518,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0021952779332469422,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 5.435470005577589e-06,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 1.7635650124348456e-06,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011944765248266872,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.5,
+      "D": 0.000517154869711765,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012623977323396407,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 5.040789610198419e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8333333333333334,
+      "D": 0.00012966054768559227,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012663308428741181,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014727144740676274,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008161347019818874,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012547201066342784,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0017499862059155143,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0010990717943312144,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.75,
+      "D": 0.0005588349284875892,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009155399453355227,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0018735566792289992,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012949791981956885,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0005690482004155294,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 1.129419839912705e-05,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00037420302221410494,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003879440188914922,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007361259548478718,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009835678550336967,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009300185536432084,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007053619590538285,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005116012169995703,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012933775677064587,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00026532068113521083,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0018445654042167632,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.002169133225707533,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.75,
+      "D": 0.00015138337220245858,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001290948886590727,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007798813317715684,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0010960786971440986,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012380468981687527,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0009419898424420867,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.6,
+      "D": 0.001479976184192586,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0024615724871253734,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0002664188135104076,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 1.845404629539102e-06,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003312628995993836,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008131741348167493,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0016570624829681457,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008549231926738446,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.75,
+      "D": 0.0003030919446300801,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0005703865897621315,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0006158517400519366,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014669226861124803,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008079663564687325,
+      "archetype": "choppy"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.6,
+      "D": 0.0005478724991399515,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011278646283073308,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0012653943205227355,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001692702171527026,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.3,
+      "D": 0.0010016288869323195,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012790102497913219,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0008554620068932543,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.002261590035098947,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8571428571428571,
+      "D": 0.0003695610102953562,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.5714285714285714,
+      "D": 0.0006902024631576194,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014406101838620388,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0015588062054228743,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0017700319831810503,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.000570574204783089,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6,
+      "D": 0.00106254419346123,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.2,
+      "D": 0.002005454520031274,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8,
+      "D": 0.00015187809886244038,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.4444444444444444,
+      "D": 0.0006759413222042338,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013643383525700496,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 2.211379150364014e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0007084776973962562,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0005822253279268422,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.2857142857142857,
+      "D": 0.0007057231478384282,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007838916058165789,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 3.167875705194711e-06,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006912333572591207,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0016915522965468273,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001555510763550817,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0006338362011751106,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0015520064780225116,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.2,
+      "D": 0.0012689459063819671,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.7142857142857143,
+      "D": 0.00032187029289210324,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004983185346180855,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0015414494985732646,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0006987677060395549,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 1.5729946656631734e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.6,
+      "D": 0.0003995820668510473,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0010091633787162112,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007945508638889338,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000446347745812506,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00025573596336858964,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004010781085622551,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007937021433054404,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005061490362090824,
+      "archetype": "choppy"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0008593947418883193,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001346844100574572,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008774899222613758,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.3333333333333333,
+      "D": 0.00033896934192975334,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 1.0819358708360181e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.00024361505860825614,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 8.195774956446219e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.5,
+      "D": 0.0005177135349930103,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.000682416418281765,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.75,
+      "D": 0.000151653784758652,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 5.2985592965560064e-05,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004185186963744658,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003792305865194808,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00021604277707450235,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00024575738879183525,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005691756102435956,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004906629514726643,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0001554471147303146,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000397214411736885,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 5.8808931189974166e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 4.579553128147544e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6,
+      "D": 0.00045270377760913815,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.42857142857142855,
+      "D": 0.0008402332215482442,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0010079944652933307,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006738767028780982,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004321697744480581,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 1.9960313819870432e-05,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00028627867780117966,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005090443459414348,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005840182197788521,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008770162877504088,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011772432535971451,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007405063078491654,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005847018209313372,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000693696168962518,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007618676842605243,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 2.5142334406054284e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0010074674658458423,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 8.456715880079476e-05,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00013858234988757434,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007782706386857562,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006436123297113127,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003178679511288185,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00035268560984078474,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005923472304661693,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009447381287439749,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0016222275239407668,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 0.00015545699774469583,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004393388416504281,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004866885005727798,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 1.2700778274808354e-07,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003655453398655039,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00026237154209622616,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5866716941790454e-07,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005795376599463995,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004055265691311665,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003421783929036321,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00047712769224285287,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0001529438799710951,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00045495105568105605,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0007614249805700396,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 3.1826294096069105e-08,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004595203159130952,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004682804970701305,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 7.664281843136007e-05,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00015102021207410063,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011189724263146177,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008445833752479774,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00016025587264991087,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 8.187705747895302e-05,
+      "archetype": "choppy"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0002129274269909185,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00042209746958911946,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0008024918549040289,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007052811337650615,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 7.924530572902349e-07,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 6.339895733064146e-07,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004447044615744496,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00044407280060998656,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5855240390006429e-07,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 1.0,
+      "D": 1.6490961159096513e-06,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0002346507841631258,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005917872852532627,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0002472326625245815,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 6.504837410825702e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 5.2186095131771714e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 3.907346915150564e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00034664548842594083,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004923682222546735,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005615008545307022,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 1.585322952442263e-07,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5858602851347072e-07,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00018512866002260166,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00038091240299844317,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00018231592029880478,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00032735243883237516,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006224288588282108,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00034660002843968466,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00031561876986322453,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00029753426014019266,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003789992838444706,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004587462326249249,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00025031031110586715,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0001409665201827427,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00014081473967133862,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00043448426167507534,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005093117458468001,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5852550107415468e-06,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009957957590496004,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007770202388696262,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005228367675008337,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000988963780042236,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 5.7467465815263814e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00015016083584209452,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00034051404957636654,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 3.0417330527633424e-05,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 7.921301559875607e-05,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 4.912300087245037e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00013637866955243375,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005148666495777209,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005860517754809847,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005079774607024235,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003028726754903563,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00039862764099684813,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00039065657421636534,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00041665206260240416,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00019301515749845408,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005022776304731499,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005709493148735502,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5857377417078853e-07,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0002641737844847371,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00023738306202040295,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 7.772084278643247e-06,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5858428601404933e-07,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 1.58589715999009e-07,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5854790417170085e-07,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0002780586131039253,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009679455211432385,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006234021411915637,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00046050512870766583,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005234096344847802,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 2.5091880615335895e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 3.2217844686645194e-05,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00024183359914100287,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00046050226354466363,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0001611480482257061,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 1.0,
+      "D": 5.3886787521454074e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 1.7793603828778188e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00039516683200901,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00044892810215074096,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00013019643306879156,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 3.2509964130958314e-05,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0001339908669465497,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00015903719002197556,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00011099840402037809,
+      "archetype": "flat_no_opportunity"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 1.2693332807111116e-07,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00041528656718829547,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5849985247217866e-07,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00015438199318702208,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 1.5851124073496155e-07,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00034822024075110443,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 5.575621825414101e-06,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 1.4358376021002479e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8888888888888888,
+      "D": 7.070231833641234e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8571428571428571,
+      "D": 6.129153767085504e-05,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0015052682910767223,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.000821131614398181,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005471517031163662,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00089473297336369,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012868347277267393,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007706841670125053,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0002894384163270308,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005138304891380298,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004840194686072578,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003592239031577408,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00029598459841182975,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 1.0,
+      "D": 5.646306860252828e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 2.749596153899923e-05,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.42857142857142855,
+      "D": 0.0002141354896399865,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001010459281541764,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001076349718229802,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 1.0,
+      "D": 0.000202935216176574,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0003415749666953388,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009368309758384536,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006298457063038695,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006576578587095602,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005685894511981854,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001815132928285747,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0017498249472386027,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.3,
+      "D": 0.00183203362827605,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0018722537505083906,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.2,
+      "D": 0.0008878781117521658,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0018640209831445116,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.4444444444444444,
+      "D": 0.0005777999569615094,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8571428571428571,
+      "D": 0.0004438279952167837,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0014620349206415438,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0012025716668481452,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005406412996072666,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0002723749725778644,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.2,
+      "D": 0.0017194697205827935,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.25,
+      "D": 0.0012991609905055968,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.375,
+      "D": 0.0006405293984009793,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.7,
+      "D": 0.00025171836734458813,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.4444444444444444,
+      "D": 0.0007621249242225525,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.7777777777777778,
+      "D": 0.00014580688723103208,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.8888888888888888,
+      "D": 0.00010651436183772287,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.00026182320113116517,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006622877585591077,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.3,
+      "D": 0.0012800965972189222,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0013342067039662647,
+      "archetype": "dip_then_rise"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.00025251991281614823,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.9,
+      "D": 7.098719558213041e-05,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.4444444444444444,
+      "D": 0.0006042123016901797,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0005802442320469024,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005476074651673435,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.000707091548638938,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.75,
+      "D": 0.00018806120931885934,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007658047052576084,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009057709162508078,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.00026873380975982934,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.8571428571428571,
+      "D": 0.0005082247158860801,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0015464343167675492,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0017858452822657861,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00040922603683285274,
+      "archetype": "mixed"
+    },
+    {
+      "I": 1.0,
+      "D": 0.0,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.16666666666666666,
+      "D": 0.0006483429717551992,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.0,
+      "D": 0.00041306402772713064,
+      "archetype": "mixed"
+    },
+    {
+      "I": 0.625,
+      "D": 0.0002964405720273185,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 1.0,
+      "D": 7.484377933448785e-06,
+      "archetype": "rise_then_fall"
+    },
+    {
+      "I": 0.75,
+      "D": 0.0003107231278672507,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.001732346645574827,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007107556576560847,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.6666666666666666,
+      "D": 0.0003726325615084688,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004333089290085204,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0009103149220196973,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.125,
+      "D": 0.0008822868341590585,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0002750798735789836,
+      "archetype": "choppy"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0005224395048375719,
+      "archetype": "spike_reversal"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0011359032722677049,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0004912333073738838,
+      "archetype": "monotonic_rise"
+    },
+    {
+      "I": 0.6,
+      "D": 0.00048381390614973813,
+      "archetype": "slow_flat"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0007841128143990948,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.4,
+      "D": 0.0005938550573310445,
+      "archetype": "monotonic_fall"
+    },
+    {
+      "I": 0.0,
+      "D": 0.0006507159605416777,
+      "archetype": "mixed"
+    }
+  ],
+  "quadrant_analysis": {
+    "split": {
+      "I_median": 0.0,
+      "D_median": 0.000456311025042797,
+      "method": "rank-based median split (top half = HIGH)"
+    },
+    "quadrants": {
+      "Q1_Ihigh_Dlow": {
+        "count": 828,
+        "fraction": 0.33319919517102614,
+        "mean_terminal": 0.0007829302129589608,
+        "mean_mfe": 0.0015448708523493485,
+        "mean_mae": 0.00031458291173691534,
+        "mean_f_baseline": 1.775444663424235,
+        "mean_immediate_capture": 0.796544551798175,
+        "mean_deferred_improvement": 0.00011209881607601492,
+        "mean_immediate_robustness": 0.7987922705314009,
+        "mean_deferred_robustness": 0.9148550724637681,
+        "mean_proxy_pnl_immediate": 0.0006283913131920158,
+        "case_a_fraction": 0.0,
+        "case_b_fraction": 0.09178743961352658
+      },
+      "Q2_Ihigh_Dhigh": {
+        "count": 414,
+        "fraction": 0.16659959758551307,
+        "mean_terminal": 4.650308905425525e-05,
+        "mean_mfe": 0.0013627414474551268,
+        "mean_mae": 0.0013822215340218889,
+        "mean_f_baseline": -0.03301592692048773,
+        "mean_immediate_capture": 0.27729276895943566,
+        "mean_deferred_improvement": 0.0008518545592277095,
+        "mean_immediate_robustness": 0.3618357487922705,
+        "mean_deferred_robustness": 0.9364734299516908,
+        "mean_proxy_pnl_immediate": -3.236258265108339e-05,
+        "case_a_fraction": 0.06280193236714976,
+        "case_b_fraction": 0.07246376811594203
+      },
+      "Q3_Ilow_Dhigh": {
+        "count": 828,
+        "fraction": 0.33319919517102614,
+        "mean_terminal": -0.000830585402131728,
+        "mean_mfe": 0.0003840542879053357,
+        "mean_mae": 0.0017103055650981448,
+        "mean_f_baseline": -1.8701072644630188,
+        "mean_immediate_capture": 0.0,
+        "mean_deferred_improvement": 0.00112896191899843,
+        "mean_immediate_robustness": 0.07693236714975844,
+        "mean_deferred_robustness": 0.8498792270531401,
+        "mean_proxy_pnl_immediate": -0.0005874075517118799,
+        "case_a_fraction": 0.09057971014492754,
+        "case_b_fraction": 0.007246376811594203
+      },
+      "Q4_Ilow_Dlow": {
+        "count": 415,
+        "fraction": 0.16700201207243462,
+        "mean_terminal": -0.00014416779251432907,
+        "mean_mfe": 0.00020600545739123564,
+        "mean_mae": 0.00031959829052982945,
+        "mean_f_baseline": 0.09083484556895068,
+        "mean_immediate_capture": 0.0,
+        "mean_deferred_improvement": 0.00017962234212050136,
+        "mean_immediate_robustness": 0.40313253012048195,
+        "mean_deferred_robustness": 0.7014457831325301,
+        "mean_proxy_pnl_immediate": -8.778425162705144e-05,
+        "case_a_fraction": 0.0,
+        "case_b_fraction": 0.004819277108433735
+      }
+    },
+    "Q3_Ilow_Dhigh_fraction": 0.33319919517102614
+  },
+  "case_ab_analysis": {
+    "case_a_dip_then_rise": {
+      "count": 101,
+      "archetype": "dip_then_rise",
+      "mean_I": 0.04991749174917491,
+      "mean_D": 0.0013552580509553988,
+      "mean_terminal": 0.0008317591005472985,
+      "mean_mfe": 0.0012323940657872543,
+      "mean_mae": 0.0013541315079557555,
+      "mean_time_to_mfe": 8.633663366336634,
+      "mean_best_entry_delay": 3.099009900990099,
+      "mean_entry_improvement": 0.0013552580509553988,
+      "mean_f_baseline": -1.550080386244333
+    },
+    "case_b_rise_then_fall": {
+      "count": 114,
+      "archetype": "rise_then_fall",
+      "mean_I": 0.6880499860763019,
+      "mean_D": 0.00039079436662509327,
+      "mean_terminal": -0.0009412547987692671,
+      "mean_mfe": 0.0015497937082602233,
+      "mean_mae": 0.001363769657054502,
+      "mean_time_to_mfe": 4.456140350877193,
+      "mean_best_entry_delay": 2.008771929824561,
+      "mean_entry_improvement": 0.00039079436662509327,
+      "mean_f_baseline": 1.2812885165992518
+    },
+    "hypothesis_check_note": "Pre-specified Case A: I\u2193 D\u2191 and Case B: I\u2191 D? \u2014 report actual data, not assumed."
+  },
+  "same_terminal_pairs": {
+    "total_pairs": 102902,
+    "I_diff_rate": 0.5356455656838546,
+    "D_diff_rate": 0.9404676293949583,
+    "example_pairs": [
+      {
+        "t_a": 2505,
+        "t_b": 2507,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.00021870804355928917,
+        "I_a": 1.0,
+        "I_b": 0.5,
+        "D_a": 0.0,
+        "D_b": 0.00028926096976878546,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.7549514378986024
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2526,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 3.469734658018341e-05,
+        "I_a": 1.0,
+        "I_b": 0.0,
+        "D_a": 0.0,
+        "D_b": 0.0007241493910420795,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.08807064860086394
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2568,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.00031937790302562024,
+        "I_a": 1.0,
+        "I_b": 1.0,
+        "D_a": 0.0,
+        "D_b": 0.0,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 1.1661127862184655
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2594,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.0003195506319238616,
+        "I_a": 1.0,
+        "I_b": 0.16666666666666666,
+        "D_a": 0.0,
+        "D_b": 0.0010134403185854594,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -0.06615254610627685
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2599,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -5.817247655829001e-05,
+        "I_a": 1.0,
+        "I_b": 0.4,
+        "D_a": 0.0,
+        "D_b": 0.0008020716631677075,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -0.28042068312282165
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2614,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.00017601200274624133,
+        "I_a": 1.0,
+        "I_b": 1.0,
+        "D_a": 0.0,
+        "D_b": 3.731087456114287e-05,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.6967181877384457
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2654,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.001134781106516258,
+        "I_a": 1.0,
+        "I_b": 1.0,
+        "D_a": 0.0,
+        "D_b": 0.0001216848667261905,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 3.2357084686391264
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2698,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.0013329679177525137,
+        "I_a": 1.0,
+        "I_b": 1.0,
+        "D_a": 0.0,
+        "D_b": 0.0,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 3.848020268287042
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2704,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -0.0003857748363811244,
+        "I_a": 1.0,
+        "I_b": 0.0,
+        "D_a": 0.0,
+        "D_b": 0.001628732350233671,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -1.6451845909128449
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2713,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -0.00045226950475228965,
+        "I_a": 1.0,
+        "I_b": 0.0,
+        "D_a": 0.0,
+        "D_b": 0.0020973854276296793,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -1.4915116482185546
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2715,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -0.0006903754256965721,
+        "I_a": 1.0,
+        "I_b": 0.0,
+        "D_a": 0.0,
+        "D_b": 0.0016854374704111095,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -2.0543855800077666
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2763,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.0003680009210274591,
+        "I_a": 1.0,
+        "I_b": 0.5,
+        "D_a": 0.0,
+        "D_b": 0.0006949348777777162,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.7799092338417494
+      }
+    ]
+  },
+  "timing_sensitivity": {
+    "by_delay_mean_proxy_pnl": {
+      "delay_0": 9.541064361502519e-06,
+      "delay_1": 6.736591371760297e-06,
+      "delay_2": 6.511671966215305e-06,
+      "delay_3": 4.6271702169435844e-06,
+      "delay_5": 9.668192653610871e-06,
+      "delay_10": NaN
+    },
+    "by_delay_captureability": {
+      "delay_0": 0.35374007936507934,
+      "delay_1": 0.3525322420634921,
+      "delay_2": 0.34986673031785814,
+      "delay_3": 0.353083258460617,
+      "delay_5": 0.3565285312437211,
+      "delay_10": NaN
+    },
+    "deferred_best_delay_mean": 3.5344064386317906
+  },
+  "policy_robustness": {
+    "immediate_mean_robustness": 0.41939637826961773,
+    "deferred_mean_robustness": 0.8611670020120724,
+    "immediate_robustness_by_policy": {
+      "t0.0005_s0.00025": {
+        "mean_target_first": 0.33753943217665616,
+        "mean_proxy_pnl": 1.4319927537581454e-05
+      },
+      "t0.001_s0.0005": {
+        "mean_target_first": 0.3052924791086351,
+        "mean_proxy_pnl": 1.63325775247867e-06
+      },
+      "t0.001_s0.001": {
+        "mean_target_first": 0.4906574394463668,
+        "mean_proxy_pnl": -1.5391979807062764e-05
+      },
+      "t0.002_s0.001": {
+        "mean_target_first": 0.26330027051397653,
+        "mean_proxy_pnl": 3.8055903729748124e-06
+      },
+      "t0.002_s0.002": {
+        "mean_target_first": 0.49763779527559054,
+        "mean_proxy_pnl": -2.534102519506834e-05
+      },
+      "t0.003_s0.0015": {
+        "mean_target_first": 0.17674418604651163,
+        "mean_proxy_pnl": -2.3939439268097512e-05
+      },
+      "t0.005_s0.002": {
+        "mean_target_first": 0.04941860465116279,
+        "mean_proxy_pnl": -3.482519503368712e-05
+      },
+      "t0.0004687300497776202_s0.0002343650248888101": {
+        "mean_target_first": 0.3387241689128482,
+        "mean_proxy_pnl": 1.5035859612897161e-05
+      },
+      "t0.0007030950746664303_s0.00035154753733321515": {
+        "mean_target_first": 0.31584158415841584,
+        "mean_proxy_pnl": 4.942141637556347e-06
+      },
+      "t0.0009374600995552404_s0.0004687300497776202": {
+        "mean_target_first": 0.3029801324503311,
+        "mean_proxy_pnl": -4.198973171835427e-06
+      }
+    },
+    "deferred_improvement_by_policy": {
+      "t0.0005_s0.00025": {
+        "mean_improvement": 0.00037399426197917116,
+        "mean_best_delay": 2.560160965794769
+      },
+      "t0.001_s0.0005": {
+        "mean_improvement": 0.0005775756930641266,
+        "mean_best_delay": 3.419718309859155
+      },
+      "t0.001_s0.001": {
+        "mean_improvement": 0.0006010970677582702,
+        "mean_best_delay": 3.2792756539235413
+      },
+      "t0.002_s0.001": {
+        "mean_improvement": 0.0006906582508673043,
+        "mean_best_delay": 4.062776659959758
+      },
+      "t0.002_s0.002": {
+        "mean_improvement": 0.0007201183603764654,
+        "mean_best_delay": 4.101408450704225
+      },
+      "t0.003_s0.0015": {
+        "mean_improvement": 0.0007225180061734075,
+        "mean_best_delay": 4.288128772635815
+      },
+      "t0.005_s0.002": {
+        "mean_improvement": 0.0007405663421101418,
+        "mean_best_delay": 4.340845070422535
+      },
+      "t0.0004687300497776202_s0.0002343650248888101": {
+        "mean_improvement": 0.0003702077000681514,
+        "mean_best_delay": 2.5207243460764586
+      },
+      "t0.0007030950746664303_s0.00035154753733321515": {
+        "mean_improvement": 0.0004889007999247936,
+        "mean_best_delay": 3.0482897384305834
+      },
+      "t0.0009374600995552404_s0.0004687300497776202": {
+        "mean_improvement": 0.0005687270916899192,
+        "mean_best_delay": 3.429778672032193
+      }
+    },
+    "spearman_I_immediate_robustness": 0.7149299988019103,
+    "spearman_D_deferred_robustness": -0.12878016639485024
+  },
+  "baseline_f_vs_id": {
+    "pearson_f_I": 0.6282272684744983,
+    "pearson_f_D": -0.7389495939232803,
+    "spearman_f_I": 0.7040775509915861,
+    "spearman_f_D": -0.8145203469819112,
+    "top_decile_mean_I": 0.8866800535475234,
+    "top_decile_mean_D": 0.00011561825558147028,
+    "bottom_decile_mean_I": 0.03084677419354839,
+    "bottom_decile_mean_D": 0.0015919289614636921,
+    "note": "High F vs I correlation suggests F aligns with immediate capture; compare F vs D to see deferred information inclusion."
+  },
+  "sd_f_vs_id": {
+    "pearson_f_I": 0.6796095585042742,
+    "pearson_f_D": -0.6793913408863205,
+    "spearman_f_I": 0.6677211159894096,
+    "spearman_f_D": -0.7129664450416201,
+    "top_decile_mean_I": 0.9190874609549309,
+    "top_decile_mean_D": 7.433083156386734e-05,
+    "bottom_decile_mean_I": 0.012399193548387097,
+    "bottom_decile_mean_D": 0.0014790690998659867,
+    "note": "High F vs I correlation suggests F aligns with immediate capture; compare F vs D to see deferred information inclusion."
+  },
+  "representative_paths": {
+    "Ihigh_Dlow": [
+      {
+        "t_index": 3890,
+        "I": 0.0,
+        "D": 0.0001635044173449113,
+        "f_baseline": 0.0013911432479885022,
+        "terminal": 5.6390286678043006e-05,
+        "best_entry_delay": 2,
+        "aligned_returns": [
+          1.3463972942776924e-05,
+          -0.00016346847149375506,
+          -0.00012133415616693508,
+          4.704470545897835e-05,
+          -2.2809554161956837e-05,
+          4.704470545897835e-05,
+          4.704470545897835e-05,
+          4.7203105140575366e-05,
+          0.00011246377399277673,
+          5.6390286678043006e-05
+        ]
+      },
+      {
+        "t_index": 4327,
+        "I": 0.0,
+        "D": 0.0001410019015109226,
+        "f_baseline": -0.006180351469982493,
+        "terminal": 0.0002230792708304385,
+        "best_entry_delay": 2,
+        "aligned_returns": [
+          -5.390686004433768e-05,
+          -0.0001409505840570369,
+          -2.7746177963985462e-05,
+          -2.7904727552383393e-05,
+          -2.7746177963985462e-05,
+          0.00019105225398063176,
+          -1.6172058013243623e-05,
+          2.0135797722384405e-05,
+          1.9977248134101833e-05,
+          0.0002230792708304385
+        ]
+      },
+      {
+        "t_index": 4318,
+        "I": 0.0,
+        "D": 5.5805579532989054e-05,
+        "f_baseline": 0.009119306862160115,
+        "terminal": -8.957732187591488e-05,
+        "best_entry_delay": 2,
+        "aligned_returns": [
+          -2.3305958081002698e-05,
+          -5.580746424829246e-05,
+          -3.567238481783302e-05,
+          -3.583092875038902e-05,
+          -3.567238481783302e-05,
+          -3.567238481783302e-05,
+          -3.583092875038902e-05,
+          -3.567238481783302e-05,
+          -3.567238481783302e-05,
+          -8.957732187591488e-05
+        ]
+      }
+    ],
+    "Ihigh_Dhigh": [
+      {
+        "t_index": 4895,
+        "I": 0.2857142857142857,
+        "D": 0.0011872216410745992,
+        "f_baseline": 0.0029151995885365713,
+        "terminal": 0.001103508464271962,
+        "best_entry_delay": 5,
+        "aligned_returns": [
+          0.00036190669891028083,
+          0.0001224721234241763,
+          4.659607780662072e-05,
+          -0.0003091712730143962,
+          -0.0008724171054202498,
+          -0.0009862311738465259,
+          0.00019441268949725262,
+          0.0005876458055815564,
+          0.0006490392864754557,
+          0.001103508464271962
+        ]
+      },
+      {
+        "t_index": 2539,
+        "I": 0.2,
+        "D": 0.0006451356602115952,
+        "f_baseline": 0.003184618997214267,
+        "terminal": -0.0001541529397889982,
+        "best_entry_delay": 5,
+        "aligned_returns": [
+          0.0004519519557194816,
+          0.00012231871112465016,
+          -0.00011400731152249784,
+          -0.0002484010748991421,
+          -0.0006051639823459053,
+          -0.0006050071634854571,
+          -0.0004897453010796026,
+          -0.0004991544327045494,
+          6.068889898109485e-05,
+          -0.0001541529397889982
+        ]
+      },
+      {
+        "t_index": 2789,
+        "I": 0.375,
+        "D": 0.0007065970815832069,
+        "f_baseline": -0.00379450725034976,
+        "terminal": 0.0020169386872414775,
+        "best_entry_delay": 3,
+        "aligned_returns": [
+          -0.00011455934023910651,
+          -3.092786595987752e-05,
+          -0.0005199352976420042,
+          -0.0001779930245038458,
+          -0.0007624665730520093,
+          1.1519052117765132e-05,
+          0.00044687610407352673,
+          0.0007548924017965901,
+          0.0017474244267339407,
+          0.0020169386872414775
+        ]
+      }
+    ],
+    "Ilow_Dhigh": [
+      {
+        "t_index": 3273,
+        "I": 0.0,
+        "D": 0.000810781217017436,
+        "f_baseline": -0.0008990261901376361,
+        "terminal": 0.0005046363464328518,
+        "best_entry_delay": 5,
+        "aligned_returns": [
+          0.0003153977165205324,
+          -0.00016101053428371802,
+          -0.00014161357471776954,
+          -6.323724216239888e-05,
+          -0.00047230808048945137,
+          0.00012615908660821296,
+          0.0005573077650917257,
+          6.307954330410648e-05,
+          3.548224310855989e-05,
+          0.0005046363464328518
+        ]
+      },
+      {
+        "t_index": 3346,
+        "I": 0.0,
+        "D": 0.0011385959436006519,
+        "f_baseline": -0.008380088022048381,
+        "terminal": -0.00011485763010739698,
+        "best_entry_delay": 9,
+        "aligned_returns": [
+          0.00015188306642456893,
+          0.0002632744854724655,
+          8.397684066838863e-05,
+          -4.537585386954223e-05,
+          -6.113135868536983e-05,
+          -0.00015613705272479194,
+          -0.0005309605122933444,
+          -0.0007988040941624136,
+          -0.0008804176091084052,
+          -0.00011485763010739698
+        ]
+      },
+      {
+        "t_index": 4861,
+        "I": 0.0,
+        "D": 0.0005476074651673435,
+        "f_baseline": 0.012958173168934472,
+        "terminal": -0.0006114939083311634,
+        "best_entry_delay": 5,
+        "aligned_returns": [
+          0.0005403422693586492,
+          0.00027529847008195203,
+          -0.00010712186887432701,
+          -0.00021219280358751122,
+          -0.0005641646584603327,
+          -0.0004770788386979402,
+          -0.0005597472618057403,
+          -0.0004666664037264172,
+          -5.9161562338538234e-05,
+          -0.0006114939083311634
+        ]
+      }
+    ],
+    "Ilow_Dlow": [
+      {
+        "t_index": 4310,
+        "I": 0.0,
+        "D": 0.00038603431705340864,
+        "f_baseline": 0.00021712157895492079,
+        "terminal": -0.00046782884310612993,
+        "best_entry_delay": 9,
+        "aligned_returns": [
+          4.0253565768635075e-05,
+          4.358161648177496e-05,
+          6.0380348652894954e-05,
+          6.323296354988847e-05,
+          -0.0002117274167987414,
+          -0.0002218700475435816,
+          -0.00022171156893816105,
+          -0.0004120443740095087,
+          -0.0004353407290016032,
+          -0.00046782884310612993
+        ]
+      },
+      {
+        "t_index": 4033,
+        "I": 0.0,
+        "D": 0.0004393388416504281,
+        "f_baseline": 0.003492474255112199,
+        "terminal": -0.0001239158945855727,
+        "best_entry_delay": 5,
+        "aligned_returns": [
+          3.173262344831212e-07,
+          3.5381875150466986e-05,
+          0.0002838483167905786,
+          5.9657332092293086e-05,
+          -0.00038872463730404706,
+          -0.00038856597418686324,
+          -0.0003484242055182259,
+          -0.00012407455770275654,
+          -0.0001239158945855727,
+          -0.0001239158945855727
+        ]
+      },
+      {
+        "t_index": 4438,
+        "I": 0.0,
+        "D": 0.0004082103968208458,
+        "f_baseline": -0.005141811924062573,
+        "terminal": -0.00013319191734365615,
+        "best_entry_delay": 4,
+        "aligned_returns": [
+          0.0,
+          0.0001826632009284757,
+          0.0001826632009284757,
+          -0.00036294797476139093,
+          -0.0003415421309026158,
+          -0.00015079227784978833,
+          -0.00019899506698368844,
+          8.609906085428171e-05,
+          8.609906085428171e-05,
+          -0.00013319191734365615
+        ]
+      }
+    ]
+  },
+  "confirmed": [
+    "Q3 (I-low/D-high) occupies 33.3% of samples \u2014 deferred opportunity exists independently of immediate capture for a non-trivial subset.",
+    "Case A (n=101): mean I=0.050, mean D=0.001355, terminal=0.0832%",
+    "Case B (n=114): mean I=0.688, mean D=0.000391, terminal=-0.0941%",
+    "Baseline F correlates with Immediate (spearman=0.704) more strongly than typical random pairing."
+  ],
+  "hypothesis": [
+    "I-D spearman=-0.552 \u2014 partial overlap exists; quadrant structure still required for interpretation."
+  ],
+  "unresolved": [
+    "Canonical scalar vs multi-head P1 target \u2014 NOT decided by this experiment",
+    "Which execution policy family represents P2 \u2014 still unresolved",
+    "Single BTC ~10d sample \u2014 generalization unknown",
+    "Deferred best-entry objective varies by policy \u2014 no single hindsight ground truth"
+  ],
+  "next_experiments": [
+    "Case A dedicated: quantify gap between F(t) and best-entry-within-window (analysis only)",
+    "Expand policy grid + volatility regimes; cluster robustness profiles",
+    "Multi-asset (ETH, equities) I/D quadrant stability",
+    "Same-terminal pair path visualization (15+ pairs)",
+    "Dual-axis label stability before any P1 target formula discussion"
+  ]
+}

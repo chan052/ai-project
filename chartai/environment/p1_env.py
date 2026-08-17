@@ -1,4 +1,4 @@
-"""P1 Gymnasium environment — 3-action direction judgment at each 3m bar."""
+"""P1 Gymnasium environment — LONG/SHORT direction judgment at each 3m bar."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ class P1TradingEnv(Env):
     """Optional sequential interface for P1 — not the primary supervised training path.
 
     P1 learning is defined as supervised regression:
-    ``State(t) -> [F_long, F_hold, F_short]`` (see :mod:`chartai.features.target`).
+    ``State(t) -> [F_LONG, F_SHORT]`` (see :mod:`chartai.features.target`).
     Use :class:`P1RegressionSampleBuilder` for dataset/target generation.
 
     This environment remains for validation, causality checks, and sequential
@@ -66,7 +66,7 @@ class P1TradingEnv(Env):
         self._t_index: int | None = None
         self._current_state: MultiTimeframeState | None = None
 
-        self.action_space = Discrete(3)
+        self.action_space = Discrete(2)
         self.observation_space = self._obs_adapter.gymnasium_space()
 
     @property
@@ -113,7 +113,7 @@ class P1TradingEnv(Env):
         p1_action = action_from_env_int(action)
         sample = self._assembler.assemble(self._t_index)
         breakdown = self._reward_engine.compute(p1_action, sample.reward_context)
-        reward = float(breakdown.total)
+        reward = float(breakdown.f_position)
 
         next_t = self._t_index + 1
         terminated = next_t > self._bounds.last_t
@@ -148,9 +148,8 @@ class P1TradingEnv(Env):
             info["action"] = action.name
         if reward_breakdown is not None:
             info["reward_breakdown"] = {
-                "total": reward_breakdown.total,
-                "components": dict(reward_breakdown.components),
-                "multipliers": dict(reward_breakdown.multipliers),
+                "f_position": reward_breakdown.f_position,
+                "fn_values": list(reward_breakdown.fn_values),
             }
         return info
 
@@ -160,4 +159,6 @@ class P1TradingEnv(Env):
             raise RuntimeError("compute_reward_at_current_t called before reset()")
         sample = self._assembler.assemble(self._t_index)
         p1_action = action_from_env_int(action)
-        return float(self._reward_engine.compute(p1_action, sample.reward_context).total)
+        return float(
+            self._reward_engine.compute(p1_action, sample.reward_context).f_position
+        )

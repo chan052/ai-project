@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from chartai.core.types import Action
 from chartai.features.future_context import FutureContextBuilder
 from chartai.features.state import MultiTimeframeState, StateBuilder
-from chartai.reward.base import RewardBreakdown
+from chartai.reward.base import FTargetBreakdown
 from chartai.reward.context import RewardContext
 from chartai.reward.engine import RewardEngine
 
@@ -17,13 +17,7 @@ class P1DecisionSample:
     """Single P1 unit at decision time t — shared by regression targets and env steps.
 
     ``state`` uses past-only MTF data through t.
-    ``reward_context`` uses future 3m bars t+1..t+10 and past-only sigma inputs.
-
-    For supervised P1 learning, :meth:`compute_target_vector` produces
-    ``[F_long, F_hold, F_short]`` **candidates** via :class:`RewardEngine`.
-    Those values come from ``RewardBreakdown.total`` and are **not** the
-    finalized F definition. All three share the same ``reward_context``
-    (identical future market path).
+    ``reward_context`` uses future 3m bars t+1..t+10.
     """
 
     t_index: int
@@ -34,24 +28,22 @@ class P1DecisionSample:
     def decision_time(self):
         return self.state.decision_time
 
-    def compute_reward(self, action: Action, engine: RewardEngine) -> RewardBreakdown:
+    def compute_f_target(self, action: Action, engine: RewardEngine) -> FTargetBreakdown:
         return engine.compute(action, self.reward_context)
 
-    def compute_all_action_rewards(self, engine: RewardEngine) -> dict[Action, RewardBreakdown]:
+    def compute_all_action_targets(
+        self,
+        engine: RewardEngine,
+    ) -> dict[Action, FTargetBreakdown]:
         return {
-            action: self.compute_reward(action, engine)
-            for action in (Action.LONG, Action.HOLD, Action.SHORT)
+            action: self.compute_f_target(action, engine)
+            for action in (Action.LONG, Action.SHORT)
         }
 
     def compute_target_vector(self, engine: RewardEngine):
-        """Build F target **candidates** ``[F_long, F_hold, F_short]`` at this t.
-
-        Sourced from ``RewardEngine.compute(...).total`` — a temporary bridge
-        to the current reward-component design, not finalized F.
-        """
         from chartai.features.target import ActionTargetVector
 
-        return ActionTargetVector.from_breakdowns(self.compute_all_action_rewards(engine))
+        return ActionTargetVector.from_breakdowns(self.compute_all_action_targets(engine))
 
 
 class P1SampleAssembler:

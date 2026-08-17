@@ -13,14 +13,13 @@ from chartai.core.temporal import TemporalSplit, WindowSpec
 
 @dataclass(frozen=True)
 class RewardContext:
-    """Inputs for reward at 3m decision index ``t_index``.
+    """Inputs for F-target computation at 3m decision index ``t_index``.
 
-    ``future_closes``:
-        Close prices at t+1 .. t+reward_horizon (inclusive).
+    ``future_closes`` / ``future_highs`` / ``future_lows``:
+        OHLC at t+1 .. t+reward_horizon (inclusive).
 
     ``past_closes_for_sigma``:
-        Historical closes at or before ``t`` for sigma_market_t only.
-        Must not include any future bar.
+        Historical closes at or before ``t`` (legacy / optional diagnostics).
 
     ``price_at_t``:
         Close at decision time ``t`` (reference for returns / excursions).
@@ -29,6 +28,8 @@ class RewardContext:
     t_index: int
     price_at_t: float
     future_closes: tuple[float, ...]
+    future_highs: tuple[float, ...]
+    future_lows: tuple[float, ...]
     past_closes_for_sigma: tuple[float, ...]
     reward_horizon: int = 10
 
@@ -41,6 +42,16 @@ class RewardContext:
             raise ValueError(
                 f"future_closes length must be {self.reward_horizon}, "
                 f"got {len(self.future_closes)}"
+            )
+        if len(self.future_highs) != self.reward_horizon:
+            raise ValueError(
+                f"future_highs length must be {self.reward_horizon}, "
+                f"got {len(self.future_highs)}"
+            )
+        if len(self.future_lows) != self.reward_horizon:
+            raise ValueError(
+                f"future_lows length must be {self.reward_horizon}, "
+                f"got {len(self.future_lows)}"
             )
         if not self.past_closes_for_sigma:
             raise ValueError("past_closes_for_sigma must be non-empty")
@@ -59,11 +70,21 @@ class RewardContext:
 
     @property
     def future_prices(self) -> tuple[float, ...]:
-        """Price path including anchor at t: [price_at_t, future_closes...]."""
+        """Close path including anchor at t: [price_at_t, future_closes...]."""
         return (self.price_at_t,) + self.future_closes
 
+    def return_from_t(self, k: int) -> float:
+        """Simple return R_k = (C_{t+k} - C_t) / C_t for k in 1..reward_horizon."""
+        if k < 1 or k > self.reward_horizon:
+            raise ValueError(f"k must be in 1..{self.reward_horizon}, got {k}")
+        return (self.future_closes[k - 1] - self.price_at_t) / self.price_at_t
+
+    def position_return_at_n(self, action_sign: float, n: int) -> float:
+        """Direction-aligned return at t+n: sign * R_n."""
+        return action_sign * self.return_from_t(n)
+
     def per_step_simple_returns(self) -> tuple[float, ...]:
-        """Per-step simple returns r_k for k=1..H (candidate — TODO finalize)."""
+        """Bar-to-bar simple returns (legacy helper — Path uses :meth:`return_from_t`)."""
         prices = self.future_prices
         returns: list[float] = []
         for k in range(1, len(prices)):
@@ -74,7 +95,7 @@ class RewardContext:
         return tuple(returns)
 
     def per_step_log_returns(self) -> tuple[float, ...]:
-        """Log returns per step (candidate — TODO finalize)."""
+        """Log returns per step (legacy helper)."""
         import math
 
         prices = self.future_prices
@@ -87,6 +108,5 @@ class RewardContext:
         return tuple(returns)
 
     def horizon_simple_return(self) -> float:
-        """Cumulative simple return over reward horizon."""
-        last = self.future_closes[-1]
-        return (last - self.price_at_t) / self.price_at_t
+        """Cumulative simple return over full reward horizon."""
+        return self.return_from_t(self.reward_horizon)

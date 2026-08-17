@@ -1,0 +1,583 @@
+{
+  "purpose": "Validate entry opportunity vs future-path observables; Case A/B; execution proxies",
+  "market_data": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\\uc774\uc720\ucc2c\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "eval_samples": 2485,
+  "sd_representative": "S_time_to_favorable__D_occupancy",
+  "case_ab_analysis": {
+    "case_a_dip_then_rise": {
+      "count": 101,
+      "mean_f_baseline": -1.550080386244333,
+      "mean_f_sd": -2.3939583819224186,
+      "mean_mfe": 0.0012323940657872543,
+      "mean_mae": 0.0013541315079557555,
+      "mean_terminal": 0.0008317591005472985,
+      "mean_early": -0.0006019007706075618,
+      "mean_policy_robustness": 0.4217821782178217,
+      "mean_captureability": 0.03564356435643565,
+      "target_first_rate": NaN,
+      "mean_proxy_pnl_grid": -0.00020658684782157028
+    },
+    "case_b_rise_then_fall": {
+      "count": 114,
+      "mean_f_baseline": 1.2812885165992518,
+      "mean_f_sd": 2.051040037038266,
+      "mean_mfe": 0.0015497937082602233,
+      "mean_mae": 0.001363769657054502,
+      "mean_terminal": -0.0009412547987692671,
+      "mean_early": 0.0006621347695865496,
+      "mean_policy_robustness": 0.312280701754386,
+      "mean_captureability": 0.312280701754386,
+      "target_first_rate": NaN,
+      "mean_proxy_pnl_grid": -0.00012072161040631634
+    },
+    "case_a_execution": {
+      "archetype": "dip_then_rise",
+      "by_policy": {
+        "target_0.001_stop_0.0005": {
+          "target_hit_rate": 0.5148514851485149,
+          "stop_hit_rate": 0.9801980198019802,
+          "target_first_rate": 0.010101010101010102,
+          "mean_proxy_pnl": -0.00047347417898336045,
+          "mean_time_to_target": 8.0
+        },
+        "target_0.001_stop_0.001": {
+          "target_hit_rate": 0.5148514851485149,
+          "stop_hit_rate": 0.7227722772277227,
+          "target_first_rate": 0.1111111111111111,
+          "mean_proxy_pnl": -0.0005638266283818004,
+          "mean_time_to_target": 8.0
+        },
+        "target_0.002_stop_0.001": {
+          "target_hit_rate": 0.16831683168316833,
+          "stop_hit_rate": 0.7227722772277227,
+          "target_first_rate": 0.05194805194805195,
+          "mean_proxy_pnl": -0.000542102188110934,
+          "mean_time_to_target": 8.588235294117647
+        },
+        "target_0.003_stop_0.0015": {
+          "target_hit_rate": 0.04950495049504951,
+          "stop_hit_rate": 0.3564356435643564,
+          "target_first_rate": 0.1,
+          "mean_proxy_pnl": 6.966497325358167e-05,
+          "mean_time_to_target": 9.2
+        },
+        "target_0.005_stop_0.002": {
+          "target_hit_rate": 0.0,
+          "stop_hit_rate": 0.12871287128712872,
+          "target_first_rate": 0.0,
+          "mean_proxy_pnl": 0.00047680378311466153,
+          "mean_time_to_target": NaN
+        }
+      }
+    },
+    "case_b_execution": {
+      "archetype": "rise_then_fall",
+      "by_policy": {
+        "target_0.001_stop_0.0005": {
+          "target_hit_rate": 0.7456140350877193,
+          "stop_hit_rate": 0.7543859649122807,
+          "target_first_rate": 0.7128712871287128,
+          "mean_proxy_pnl": 0.0004891927847193964,
+          "mean_time_to_target": 3.0823529411764707
+        },
+        "target_0.001_stop_0.001": {
+          "target_hit_rate": 0.7456140350877193,
+          "stop_hit_rate": 0.5087719298245614,
+          "target_first_rate": 0.84375,
+          "mean_proxy_pnl": 0.0005470484535517974,
+          "mean_time_to_target": 3.0823529411764707
+        },
+        "target_0.002_stop_0.001": {
+          "target_hit_rate": 0.19298245614035087,
+          "stop_hit_rate": 0.5087719298245614,
+          "target_first_rate": 0.3,
+          "mean_proxy_pnl": -0.0001812141225314201,
+          "mean_time_to_target": 4.409090909090909
+        },
+        "target_0.003_stop_0.0015": {
+          "target_hit_rate": 0.06140350877192982,
+          "stop_hit_rate": 0.3157894736842105,
+          "target_first_rate": 0.1111111111111111,
+          "mean_proxy_pnl": -0.0006406899443187432,
+          "mean_time_to_target": 5.285714285714286
+        },
+        "target_0.005_stop_0.002": {
+          "target_hit_rate": 0.0,
+          "stop_hit_rate": 0.16666666666666666,
+          "target_first_rate": 0.0,
+          "mean_proxy_pnl": -0.0008179452234526121,
+          "mean_time_to_target": NaN
+        }
+      }
+    },
+    "f_ranking_gap_a_minus_b": 2.831368902843585,
+    "interpretation_note": "Positive gap means Case B ranked higher than Case A by F. If Case B is 'opportunity at t' and Case A is 'poor entry at t', positive gap may align with opportunity hypothesis \u2014 must cross-check execution proxies."
+  },
+  "archetype_summary": {
+    "monotonic_fall": {
+      "count": 684,
+      "mean_f_baseline": -2.1081263205448812,
+      "mean_f_sd": -2.8081231758350507,
+      "mean_mfe": 0.0002441008756883478,
+      "mean_mae": 0.0019414780161175888,
+      "mean_terminal": -0.001300854030469643,
+      "mean_robustness": 0.009356725146198832
+    },
+    "monotonic_rise": {
+      "count": 598,
+      "mean_f_baseline": 2.297839032400336,
+      "mean_f_sd": 3.0287278518303706,
+      "mean_mfe": 0.0019756417235002547,
+      "mean_mae": 0.00027404709509927923,
+      "mean_terminal": 0.0014237181486938056,
+      "mean_robustness": 0.9474916387959869
+    },
+    "mixed": {
+      "count": 387,
+      "mean_f_baseline": 0.03449780944904079,
+      "mean_f_sd": -0.145121665276459,
+      "mean_mfe": 0.000730515399187991,
+      "mean_mae": 0.0005951989681153911,
+      "mean_terminal": 0.00025076666735538973,
+      "mean_robustness": 0.5782945736434109
+    },
+    "slow_flat": {
+      "count": 226,
+      "mean_f_baseline": 0.11477344122969094,
+      "mean_f_sd": 0.2704490028887436,
+      "mean_mfe": 0.0004771303567345591,
+      "mean_mae": 0.00041512946368533446,
+      "mean_terminal": 8.940807345484277e-06,
+      "mean_robustness": 0.5185840707964601
+    },
+    "spike_reversal": {
+      "count": 165,
+      "mean_f_baseline": -0.12323145278168965,
+      "mean_f_sd": 0.6515938424973848,
+      "mean_mfe": 0.0008116640620002697,
+      "mean_mae": 0.0012162945936597862,
+      "mean_terminal": -0.0007279003661160407,
+      "mean_robustness": 0.08727272727272728
+    },
+    "rise_then_fall": {
+      "count": 114,
+      "mean_f_baseline": 1.2812885165992518,
+      "mean_f_sd": 2.051040037038266,
+      "mean_mfe": 0.0015497937082602233,
+      "mean_mae": 0.001363769657054502,
+      "mean_terminal": -0.0009412547987692671,
+      "mean_robustness": 0.312280701754386
+    },
+    "flat_no_opportunity": {
+      "count": 109,
+      "mean_f_baseline": 0.18951581105124846,
+      "mean_f_sd": -0.1463965707246824,
+      "mean_mfe": 6.478850692653125e-05,
+      "mean_mae": 5.3255777453327144e-05,
+      "mean_terminal": 1.8446743081872634e-05,
+      "mean_robustness": 0.46788990825688076
+    },
+    "choppy": {
+      "count": 101,
+      "mean_f_baseline": -0.15469663533381964,
+      "mean_f_sd": 0.39653562497795564,
+      "mean_mfe": 0.0006509185108089531,
+      "mean_mae": 0.0006607699824060145,
+      "mean_terminal": 6.789830230995787e-06,
+      "mean_robustness": 0.45148514851485144
+    },
+    "dip_then_rise": {
+      "count": 101,
+      "mean_f_baseline": -1.550080386244333,
+      "mean_f_sd": -2.3939583819224186,
+      "mean_mfe": 0.0012323940657872543,
+      "mean_mae": 0.0013541315079557555,
+      "mean_terminal": 0.0008317591005472985,
+      "mean_robustness": 0.4217821782178217
+    }
+  },
+  "same_terminal_pairs": {
+    "terminal_tolerance": 0.0002,
+    "total_pairs": 102902,
+    "early_favor_inversion_rate_baseline": 0.9767448640454024,
+    "early_favor_inversion_rate_sd": 0.9178830343433558,
+    "note": "Inversion = pair with similar terminal but higher early return gets higher F. High rate suggests F rewards early movement over entry quality when terminal matches.",
+    "example_pairs": [
+      {
+        "t_a": 2505,
+        "t_b": 2507,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.00021870804355928917,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.7549514378986024,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 1.8836082549728215,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.00048607008964646957,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.00026770666555129803,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2526,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 3.469734658018341e-05,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.08807064860086394,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 1.707750853442091,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.000677918266062953,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.00046891703892713084,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2568,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.00031937790302562024,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 1.1661127862184655,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 2.795330118700542,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.000786370867867964,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 9.361184608520848e-05,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2594,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.0003195506319238616,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -0.06615254610627685,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": -0.271729005531019,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.001997191449524107,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0008737712591667967,
+        "robust_a": 1.0,
+        "robust_b": 0.8
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2599,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -5.817247655829001e-05,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -0.28042068312282165,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 0.8422129709056365,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0006604837485906983,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.000930759624932572,
+        "robust_a": 1.0,
+        "robust_b": 0.8
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2614,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.00017601200274624133,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.6967181877384457,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 2.2573785593655638,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0012737792792645657,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0002883116522658655,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2654,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.001134781106516258,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 3.2357084686391264,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 2.6684860194950155,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.002510663368681173,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0013045328141858697,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2698,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.0013329679177525137,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 3.848020268287042,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 4.043817789063584,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0020124138274685913,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 2.7437706157272974e-05,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2704,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -0.0003857748363811244,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -1.6451845909128449,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": -1.4395545521330837,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0011312135245451404,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0015304375652971517,
+        "robust_a": 1.0,
+        "robust_b": 0.2
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2713,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -0.00045226950475228965,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -1.4915116482185546,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": -0.7621973025573966,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0003558945267200972,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.002104029544914843,
+        "robust_a": 1.0,
+        "robust_b": 0.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2715,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -0.0006903754256965721,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -2.0543855800077666,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": -0.7186936049421202,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0009608934781619521,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0019630513541731053,
+        "robust_a": 1.0,
+        "robust_b": 0.2
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2763,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.0003680009210274591,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.7799092338417494,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 1.3946117911354992,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.00181540181792519,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.00043291442882495814,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2773,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -0.00043769831233874984,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": -1.0675941418372108,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": -2.8984347863136697,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.00018668400641531558,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0007680217865280863,
+        "robust_a": 1.0,
+        "robust_b": 0.8
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2775,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": 0.00013390122512991486,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.4472602193385291,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 1.8797739471135078,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0011850447728276954,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0002530367166687759,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      },
+      {
+        "t_a": 2505,
+        "t_b": 2809,
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145397,
+        "early_b": -2.637044081277178e-05,
+        "f_baseline_a": 1.6981440534301493,
+        "f_baseline_b": 0.22928593709431716,
+        "f_sd_a": 3.0634039175171375,
+        "f_sd_b": 1.121886760695447,
+        "mfe_a": 0.0008585786644690701,
+        "mfe_b": 0.0016557049443474492,
+        "mae_a": 1.5670353422509101e-07,
+        "mae_b": 0.0004317451646194015,
+        "robust_a": 1.0,
+        "robust_b": 1.0
+      }
+    ]
+  },
+  "mfe_limitations": {
+    "high_mfe_q90_count": 249,
+    "high_mfe_hard_capture_count": 19,
+    "hard_capture_fraction": 0.07630522088353414,
+    "high_mfe_mean_captureability": 0.6192771084337348,
+    "spearman_mfe_captureability": 0.5374337028423918,
+    "case_b_mean_mfe": 0.0015497937082602233,
+    "case_a_mean_mfe": 0.0012323940657872543
+  },
+  "execution_proxy": {
+    "policies": {
+      "t0.001_s0.0005": {
+        "mean_proxy_pnl": 1.63325775247867e-06,
+        "target_hit_rate": 0.32515090543259556,
+        "stop_hit_rate": 0.5529175050301811,
+        "target_first_rate": 0.3052924791086351
+      },
+      "t0.001_s0.001": {
+        "mean_proxy_pnl": -1.5391979807062764e-05,
+        "target_hit_rate": 0.32515090543259556,
+        "stop_hit_rate": 0.33440643863179076,
+        "target_first_rate": 0.4906574394463668
+      },
+      "t0.002_s0.001": {
+        "mean_proxy_pnl": 3.8055903729748124e-06,
+        "target_hit_rate": 0.1283702213279678,
+        "stop_hit_rate": 0.33440643863179076,
+        "target_first_rate": 0.26330027051397653
+      },
+      "t0.003_s0.0015": {
+        "mean_proxy_pnl": -2.3939439268097512e-05,
+        "target_hit_rate": 0.04909456740442656,
+        "stop_hit_rate": 0.2152917505030181,
+        "target_first_rate": 0.17674418604651163
+      },
+      "t0.005_s0.002": {
+        "mean_proxy_pnl": -3.482519503368712e-05,
+        "target_hit_rate": 0.006841046277665996,
+        "stop_hit_rate": 0.13158953722334005,
+        "target_first_rate": 0.04941860465116279
+      }
+    },
+    "fixed_horizon_mean_pnl": -3.220758618110103e-05
+  },
+  "captureability": {
+    "mean_captureability": 0.1352112676056338,
+    "spearman_f_baseline_capture": 0.6537191833595108,
+    "spearman_f_sd_capture": 0.5717578720385866,
+    "spearman_mfe_capture": 0.5374337028423918,
+    "top_f_baseline_capture": 0.6240963855421687,
+    "bottom_f_baseline_capture": 0.020161290322580645
+  },
+  "timing_sensitivity": {
+    "delay_0_mean_pnl": -1.176310717272884e-05,
+    "delay_1_mean_pnl": -1.2348181029081612e-05,
+    "delay_2_mean_pnl": -1.1811487292438528e-05,
+    "delay_3_mean_pnl": -1.1518209775562061e-05,
+    "delay_1_vs_0_retention": 1.0497380367076128
+  },
+  "opportunity_robustness": {
+    "mean_robustness": 0.443943661971831,
+    "robust_count_ge_0.6": 1078,
+    "fragile_count_le_0.2": 1236,
+    "robust_mean_f_baseline": 1.4539139233589722,
+    "fragile_mean_f_baseline": -1.2937619733633399,
+    "spearman_f_baseline_robustness": 0.681257350672998,
+    "spearman_f_sd_robustness": 0.6267604241857611
+  },
+  "ranking_behavior": {
+    "baseline_top_decile": {
+      "mean_mfe": 0.003007985154954159,
+      "mean_mae": 0.0002623329139226623,
+      "mean_terminal": 0.0019528052754177704,
+      "mean_early": 0.0011608118564673709,
+      "mean_robustness": 0.9397590361445783,
+      "mean_captureability": 0.6240963855421687,
+      "case_b_fraction": 0.06827309236947791,
+      "case_a_fraction": 0.0
+    },
+    "baseline_bottom_decile": {
+      "mean_mfe": 0.00039364917583386286,
+      "mean_mae": 0.0031727744540284825,
+      "mean_terminal": -0.0017053978183049557,
+      "mean_early": -0.001221270209022503,
+      "mean_robustness": 0.029032258064516134,
+      "mean_captureability": 0.020161290322580645
+    },
+    "ranking_spearman_note": {
+      "F_vs_mfe": 0.6246929836116359,
+      "F_vs_robustness": 0.681257350672998,
+      "F_vs_captureability": 0.6537191833595108,
+      "F_vs_terminal": 0.71558957672956,
+      "F_vs_early": 0.9435464614926921
+    }
+  },
+  "key_questions": {
+    "A_high_F_good_for_P2_proxy": {
+      "top_decile_mean_robustness": 0.9397590361445783,
+      "top_decile_mean_captureability": 0.6240963855421687
+    },
+    "C_high_mfe_hard_capture_count": 26,
+    "C_fraction_of_samples": 0.010462776659959759,
+    "D_pos_terminal_poor_early_count": 101,
+    "E_neg_terminal_executable_count": 119,
+    "E_fraction": 0.04788732394366197,
+    "F_case_ranking": {
+      "mean_f_case_a": -1.550080386244333,
+      "mean_f_case_b": 1.2812885165992518
+    }
+  }
+}

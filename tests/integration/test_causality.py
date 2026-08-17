@@ -40,8 +40,8 @@ def test_a_future_mutation_does_not_change_state(
     sample_after = _assemble(mtf_dataset, t_index)
     ctx_fp_after = mtf_dataset.future_context_builder().fingerprint(t_index)
     engine = RewardEngine(reward_engine_config)
-    reward_before = sample_before.compute_reward(Action.LONG, engine).total
-    reward_after = sample_after.compute_reward(Action.LONG, engine).total
+    reward_before = sample_before.compute_f_target(Action.LONG, engine).f_position
+    reward_after = sample_after.compute_f_target(Action.LONG, engine).f_position
 
     assert sample_after.state.fingerprint() == fp_before
     assert ctx_fp_after != ctx_fp_before
@@ -49,8 +49,7 @@ def test_a_future_mutation_does_not_change_state(
 
 
 def _future_reward_slice(ctx) -> tuple:
-    """Future-only portion of reward context — excludes past sigma series."""
-    return (ctx.t_index, ctx.price_at_t, ctx.future_closes)
+    return (ctx.t_index, ctx.price_at_t, ctx.future_closes, ctx.future_highs, ctx.future_lows)
 
 
 def test_b_past_state_mutation_does_not_change_future_context(
@@ -61,28 +60,26 @@ def test_b_past_state_mutation_does_not_change_future_context(
     sample_before = _assemble(mtf_dataset, t_index)
     future_before = _future_reward_slice(sample_before.reward_context)
     engine = RewardEngine(reward_engine_config)
-    reward_before = sample_before.compute_all_action_rewards(engine)
+    reward_before = sample_before.compute_all_action_targets(engine)
 
-    # Mutate past 1H bar in the active state window (not in 3m reward series).
     state_before = sample_before.state
     h1_end_index = state_before.slice_1h.window.end_index
     mtf_dataset.set_1h_close(h1_end_index, 888.0)
 
     sample_after = _assemble(mtf_dataset, t_index)
     future_after = _future_reward_slice(sample_after.reward_context)
-    reward_after = sample_after.compute_all_action_rewards(engine)
+    reward_after = sample_after.compute_all_action_targets(engine)
 
     assert sample_after.state.slice_1h.closes != sample_before.state.slice_1h.closes
     assert future_after == future_before
     assert sample_after.reward_context.past_closes_for_sigma == (
         sample_before.reward_context.past_closes_for_sigma
     )
-    for action in (Action.LONG, Action.HOLD, Action.SHORT):
-        assert reward_after[action].total == pytest.approx(reward_before[action].total)
+    for action in (Action.LONG, Action.SHORT):
+        assert reward_after[action].f_position == pytest.approx(reward_before[action].f_position)
 
 
 def test_c_partial_higher_tf_bar_included_at_t() -> None:
-    """At decision inside an 1H interval, state includes partial bar through t."""
     t_index = 40
     ds = SyntheticMTFDataset.build_with_incomplete_higher_tf_at(t_index)
     aligner = ds.aligner()
@@ -100,11 +97,8 @@ def test_c_partial_higher_tf_bar_included_at_t() -> None:
     assert partial.bar.close == m3_contrib[-1].close
     assert all(b.end <= decision.timestamp for b in m3_contrib)
 
-    in_progress_native = [
-        b for b in ds.bars_1h if b.start < decision.timestamp < b.end
-    ]
+    in_progress_native = [b for b in ds.bars_1h if b.start < decision.timestamp < b.end]
     assert len(in_progress_native) == 1
-    # Native full-interval bar must not appear verbatim in state when partial.
     assert in_progress_native[0] not in state.slice_1h.bars
 
 
@@ -115,18 +109,18 @@ def test_d_reward_horizon_t_plus_11_mutation(
 ) -> None:
     sample_before = _assemble(mtf_dataset, t_index)
     engine = RewardEngine(reward_engine_config)
-    rewards_before = sample_before.compute_all_action_rewards(engine)
+    rewards_before = sample_before.compute_all_action_targets(engine)
 
     beyond_idx = t_index + 11
     assert beyond_idx < len(mtf_dataset.bars_3m)
     mtf_dataset.set_3m_close(beyond_idx, 99999.0)
 
     sample_after = _assemble(mtf_dataset, t_index)
-    rewards_after = sample_after.compute_all_action_rewards(engine)
+    rewards_after = sample_after.compute_all_action_targets(engine)
 
     assert sample_after.reward_context.future_closes == sample_before.reward_context.future_closes
-    for action in (Action.LONG, Action.HOLD, Action.SHORT):
-        assert rewards_after[action].total == pytest.approx(rewards_before[action].total)
+    for action in (Action.LONG, Action.SHORT):
+        assert rewards_after[action].f_position == pytest.approx(rewards_before[action].f_position)
 
 
 def test_e_future_mutation_leaves_all_tf_states_unchanged(
@@ -162,16 +156,16 @@ def test_sigma_uses_past_only(
     assert sigma_after_past_mut != pytest.approx(sigma_before)
 
 
-def test_all_actions_rewards_from_same_sample(
+def test_all_actions_targets_from_same_sample(
     mtf_dataset: SyntheticMTFDataset,
     t_index: int,
     reward_engine_config: RewardConfig,
 ) -> None:
     sample = _assemble(mtf_dataset, t_index)
     engine = RewardEngine(reward_engine_config)
-    rewards = sample.compute_all_action_rewards(engine)
-    assert set(rewards.keys()) == {Action.LONG, Action.HOLD, Action.SHORT}
-    for action, breakdown in rewards.items():
+    targets = sample.compute_all_action_targets(engine)
+    assert set(targets.keys()) == {Action.LONG, Action.SHORT}
+    for action, breakdown in targets.items():
         assert breakdown.action is action
 
 
@@ -181,6 +175,8 @@ def test_reward_window_exactly_t_plus_1_to_t_plus_10(
 ) -> None:
     ctx = mtf_dataset.future_context_builder().build(t_index)
     assert len(ctx.future_closes) == 10
+    assert len(ctx.future_highs) == 10
+    assert len(ctx.future_lows) == 10
     expected = tuple(mtf_dataset.bars_3m[i].close for i in range(t_index + 1, t_index + 11))
     assert ctx.future_closes == expected
     assert ctx.price_at_t == mtf_dataset.bars_3m[t_index].close

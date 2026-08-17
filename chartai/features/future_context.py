@@ -12,9 +12,9 @@ from chartai.reward.move_surprise import compute_sigma
 
 
 class FutureContextBuilder:
-    """Construct :class:`RewardContext` for reward computation at ``t_index``.
+    """Construct :class:`RewardContext` for F-target computation at ``t_index``.
 
-    Uses future 3m closes ``t+1 .. t+reward_horizon`` and past-only sigma inputs.
+    Uses future 3m OHLC ``t+1 .. t+reward_horizon`` and past-only sigma inputs.
     Does not reference MTF state features.
     """
 
@@ -35,16 +35,19 @@ class FutureContextBuilder:
 
     def build(self, t_index: int) -> RewardContext:
         self._validate_t_index(t_index)
-        price_at_t = self._bars_3m[t_index].close
+        bar_t = self._bars_3m[t_index]
+        price_at_t = bar_t.close
         future_start = t_index + 1
         future_end = t_index + self._reward_horizon
-        future_closes = tuple(self._bars_3m[i].close for i in range(future_start, future_end + 1))
+        future_bars = tuple(self._bars_3m[i] for i in range(future_start, future_end + 1))
         past_closes = self._past_closes_for_sigma(t_index)
 
         ctx = RewardContext(
             t_index=t_index,
             price_at_t=price_at_t,
-            future_closes=future_closes,
+            future_closes=tuple(b.close for b in future_bars),
+            future_highs=tuple(b.high for b in future_bars),
+            future_lows=tuple(b.low for b in future_bars),
             past_closes_for_sigma=past_closes,
             reward_horizon=self._reward_horizon,
         )
@@ -52,7 +55,7 @@ class FutureContextBuilder:
         return ctx
 
     def sigma_at_t(self, t_index: int) -> float:
-        """Expose sigma_market_t for causality tests — past-only, configurable strategy."""
+        """Expose sigma_market_t for causality tests — past-only."""
         past = self._past_closes_for_sigma(t_index)
         surprise_cfg = self._reward_config.surprise
         return compute_sigma(
@@ -67,6 +70,8 @@ class FutureContextBuilder:
             ctx.t_index,
             ctx.price_at_t,
             ctx.future_closes,
+            ctx.future_highs,
+            ctx.future_lows,
             ctx.past_closes_for_sigma,
         )
 

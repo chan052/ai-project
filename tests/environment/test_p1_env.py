@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import copy
-
 import numpy as np
 import pytest
 
@@ -12,7 +10,7 @@ from chartai.data.mtf_aligner import HigherTfBarKind
 from chartai.data.synthetic_mtf import SyntheticMTFDataset
 from chartai.environment.observation import action_from_env_int
 from chartai.environment.p1_env import P1TradingEnv
-from chartai.reward.config import ComponentWeights, RewardConfig
+from chartai.reward.config import RewardConfig
 from chartai.reward.engine import RewardEngine
 
 
@@ -21,14 +19,10 @@ def env_setup() -> tuple[P1TradingEnv, SyntheticMTFDataset]:
     ds = SyntheticMTFDataset.build_standard()
     reward_cfg = RewardConfig(
         use_path=True,
-        use_utility=False,
-        use_mae=False,
-        use_surprise=False,
-        use_hold_neutral_path=True,
-        use_hold_movement=False,
-        weights=ComponentWeights(path=1.0, hold_neutral_path=1.0),
-        path={"gamma": 0.9},
-        hold_neutral_path={"scale": 0.01},
+        use_utility=True,
+        use_mae=True,
+        path={"gamma": 0.75},
+        utility={"alpha": 1.0, "beta": 2.0, "lambda": 1.5},
     )
     env = P1TradingEnv(ds, RewardEngine(reward_cfg))
     return env, ds
@@ -63,18 +57,16 @@ def test_observation_can_include_partial_higher_tf_bars(env_setup) -> None:
 
 def test_action_mapping() -> None:
     assert action_from_env_int(0) is Action.LONG
-    assert action_from_env_int(1) is Action.HOLD
-    assert action_from_env_int(2) is Action.SHORT
+    assert action_from_env_int(1) is Action.SHORT
     with pytest.raises(ValueError):
-        action_from_env_int(3)
+        action_from_env_int(2)
 
 
 def test_different_actions_give_different_rewards(env_setup) -> None:
     env, _ = env_setup
     env.reset(options={"start_t": 50})
     r_long = env.compute_reward_at_current_t(0)
-    r_hold = env.compute_reward_at_current_t(1)
-    r_short = env.compute_reward_at_current_t(2)
+    r_short = env.compute_reward_at_current_t(1)
     assert r_long != r_short
 
 
@@ -82,7 +74,7 @@ def test_step_advances_one_3m_bar(env_setup) -> None:
     env, _ = env_setup
     env.reset(options={"start_t": 50})
     assert env.t_index == 50
-    env.step(1)
+    env.step(0)
     assert env.t_index == 51
 
 
@@ -134,7 +126,7 @@ def test_partial_bars_exclude_future_data(env_setup) -> None:
     env.reset(options={"start_t": t_index})
     state = ds.state_builder().build(t_index)
     decision = ds.aligner().decision_time_at_3m_index(t_index)
-    for tf_name, slice_ in (("1h", state.slice_1h), ("4h", state.slice_4h)):
+    for slice_ in (state.slice_1h, state.slice_4h):
         for sb in slice_.state_bars:
             if sb.kind is HigherTfBarKind.PARTIAL:
                 m3 = ds.aligner().contributing_3m_bars_for_interval(
@@ -163,3 +155,8 @@ def test_reset_is_deterministic_with_seed(env_setup) -> None:
     obs_b, _ = env.reset(seed=123)
     for key in ("3m", "1h", "4h"):
         np.testing.assert_array_equal(obs_a[key], obs_b[key])
+
+
+def test_action_space_is_two(env_setup) -> None:
+    env, _ = env_setup
+    assert env.action_space.n == 2

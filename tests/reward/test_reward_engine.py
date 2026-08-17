@@ -1,27 +1,26 @@
-"""Phase 1 reward engine tests — structure and causality, not optimal numeric values."""
+"""Phase 1 F-target engine tests — structure and causality, not optimal numeric values."""
 
 from __future__ import annotations
 
 import dataclasses
-from pathlib import Path
 
 import pytest
 
 from chartai.core.types import Action
-from chartai.reward.composer import DirectionalRewardComposer, HoldRewardComposer
-from chartai.reward.config import ComponentWeights, RewardConfig, UtilityConfig
+from chartai.reward.config import RewardConfig
 from chartai.reward.context import RewardContext
 from chartai.reward.engine import RewardEngine
-from chartai.reward.mae import MaeComponent, long_downward_excursion, short_upward_excursion
-from chartai.reward.move_surprise import MoveSurpriseComponent, compute_s_move
-from chartai.reward.path import DirectionalPathComponent, gamma_weights
+from chartai.reward.f_composer import FTargetComposer
+from chartai.reward.mae import compute_mae_n, long_downward_excursion, short_upward_excursion
+from chartai.reward.normalization import IdentityNormalizer
+from chartai.reward.path import compute_path_n, gamma_weights, normalized_decay_weights
 from chartai.reward.synthetic import (
     SyntheticScenario,
     build_scenario,
-    hold_quiet_path,
-    hold_quatile_volatile_path,
+    mae_adverse_long_path,
+    mae_adverse_short_path,
 )
-from chartai.reward.utility import UtilityComponent, utility_u
+from chartai.reward.utility import compute_utility_n, utility_u
 
 
 def test_long_short_directional_sign_inverts(base_reward_config: RewardConfig) -> None:
@@ -29,159 +28,158 @@ def test_long_short_directional_sign_inverts(base_reward_config: RewardConfig) -
     engine = RewardEngine(base_reward_config)
     long_bd = engine.compute(Action.LONG, ctx)
     short_bd = engine.compute(Action.SHORT, ctx)
-    assert long_bd.components["path"] > 0
-    assert short_bd.components["path"] < 0
-    assert long_bd.components["path"] == pytest.approx(-short_bd.components["path"])
+    assert long_bd.f_position > short_bd.f_position
+    # Path at each n should invert sign.
+    for long_fn, short_fn in zip(long_bd.fn_breakdowns, short_bd.fn_breakdowns):
+        assert long_fn.path_raw == pytest.approx(-short_fn.path_raw)
 
 
 def test_wrong_direction_can_be_negative(path_only_config: RewardConfig) -> None:
     ctx = build_scenario(SyntheticScenario.STEADY_UP).to_context()
     engine = RewardEngine(path_only_config)
     short_bd = engine.compute(Action.SHORT, ctx)
-    assert short_bd.components["path"] < 0
+    assert short_bd.f_position < 0
 
 
-def test_s_move_is_non_negative(base_reward_config: RewardConfig) -> None:
-    quiet = build_scenario(SyntheticScenario.QUIET_FLAT).to_context()
-    big_up = build_scenario(SyntheticScenario.QUIET_THEN_BIG_UP).to_context()
-    surprise = MoveSurpriseComponent(base_reward_config.surprise)
-    assert surprise.compute_s_move(quiet) >= 0
-    assert surprise.compute_s_move(big_up) >= 0
+def test_return_from_t_uses_anchor_price() -> None:
+    ctx = build_scenario(SyntheticScenario.STEADY_UP).to_context()
+    anchor = ctx.price_at_t
+    for k in range(1, ctx.reward_horizon + 1):
+        expected = (ctx.future_closes[k - 1] - anchor) / anchor
+        assert ctx.return_from_t(k) == pytest.approx(expected)
 
 
-def test_s_move_does_not_encode_direction(base_reward_config: RewardConfig) -> None:
-    anchor = 100.0
-    past = tuple(100.0 + 0.01 * (i % 3 - 1) for i in range(30))
-    up_ctx = RewardContext(
-        t_index=100,
-        price_at_t=anchor,
-        future_closes=(110.0,) + (110.0,) * 9,
-        past_closes_for_sigma=past,
-    )
-    down_ctx = RewardContext(
-        t_index=100,
-        price_at_t=anchor,
-        future_closes=(90.0,) + (90.0,) * 9,
-        past_closes_for_sigma=past,
-    )
-    surprise = MoveSurpriseComponent(base_reward_config.surprise)
-    assert surprise.compute_s_move(up_ctx) == pytest.approx(surprise.compute_s_move(down_ctx))
+def test_path_n_uses_cumulative_window(path_only_config: RewardConfig) -> None:
+    ctx = build_scenario(SyntheticScenario.UP_THEN_FLAT).to_context()
+    decay = path_only_config.path.gamma
+    p3 = compute_path_n(ctx, Action.LONG, 3, decay_rate=decay)
+    p5 = compute_path_n(ctx, Action.LONG, 5, decay_rate=decay)
+    # More steps included -> different path score on upward-then-flat path.
+    assert p5 != pytest.approx(p3)
 
 
-def test_gamma_temporal_weighting(path_only_config: RewardConfig) -> None:
-    early = build_scenario(SyntheticScenario.UP_THEN_FLAT).to_context()
-    late = build_scenario(SyntheticScenario.FLAT_THEN_UP).to_context()
-    low_gamma_cfg = RewardConfig(
-        use_path=True,
-        use_utility=False,
-        use_mae=False,
-        weights=ComponentWeights(path=1.0),
-        path={"gamma": 0.5},
-    )
-    high_gamma_cfg = RewardConfig(
-        use_path=True,
-        use_utility=False,
-        use_mae=False,
-        weights=ComponentWeights(path=1.0),
-        path={"gamma": 0.95},
-    )
-    path_low = DirectionalPathComponent(low_gamma_cfg.path)
-    path_high = DirectionalPathComponent(high_gamma_cfg.path)
-    early_low = path_low.compute(early, Action.LONG)
-    late_low = path_low.compute(late, Action.LONG)
-    early_high = path_high.compute(early, Action.LONG)
-    late_high = path_high.compute(late, Action.LONG)
-    # Lower gamma -> near future weighted more -> early-up beats late-up by wider margin.
-    assert early_low - late_low > early_high - late_high
-    weights = gamma_weights(10, 0.5)
+def test_path_decay_rate_baseline_075(path_only_config: RewardConfig) -> None:
+    assert path_only_config.path.gamma == pytest.approx(0.75)
+    weights = normalized_decay_weights(10, 0.75)
+    assert sum(weights) == pytest.approx(1.0)
     assert weights[0] > weights[-1]
+    legacy = gamma_weights(10, 0.75)
+    assert legacy[0] > legacy[-1]
+
+
+def test_path_decay_rate_changes_weighting(path_only_config: RewardConfig) -> None:
+    ctx = build_scenario(SyntheticScenario.UP_THEN_FLAT).to_context()
+    n = ctx.reward_horizon
+    p_low = compute_path_n(ctx, Action.LONG, n, decay_rate=0.5)
+    p_high = compute_path_n(ctx, Action.LONG, n, decay_rate=0.95)
+    assert p_low != pytest.approx(p_high)
+    weights_low = normalized_decay_weights(n, 0.5)
+    weights_high = normalized_decay_weights(n, 0.95)
+    assert weights_low[0] / weights_low[-1] > weights_high[0] / weights_high[-1]
 
 
 def test_utility_branches() -> None:
-    assert utility_u(2.0, alpha=2.0, beta=2.0, lambda_=3.0) == pytest.approx(4.0)
-    assert utility_u(-2.0, alpha=2.0, beta=2.0, lambda_=3.0) == pytest.approx(-12.0)
+    assert utility_u(2.0, alpha=1.0, beta=2.0, lambda_=1.5) == pytest.approx(2.0)
+    assert utility_u(-2.0, alpha=1.0, beta=2.0, lambda_=1.5) == pytest.approx(-6.0)
 
 
-def test_long_mae_downward_excursion() -> None:
-    ctx = build_scenario(SyntheticScenario.UP_THEN_DOWN).to_context()
-    mae = MaeComponent(RewardConfig().mae)
-    val = mae.compute(ctx, Action.LONG)
-    assert val == pytest.approx(long_downward_excursion(ctx))
-    assert val > 0
-
-
-def test_short_mae_upward_excursion() -> None:
-    ctx = build_scenario(SyntheticScenario.DOWN_THEN_UP).to_context()
-    mae = MaeComponent(RewardConfig().mae)
-    val = mae.compute(ctx, Action.SHORT)
-    assert val == pytest.approx(short_upward_excursion(ctx))
-    assert val > 0
-
-
-def test_hold_neutral_path_not_negation_of_directional(path_only_config: RewardConfig) -> None:
-    ctx = build_scenario(SyntheticScenario.FLAT_THEN_UP).to_context()
-    hold_cfg = RewardConfig(
-        use_hold_neutral_path=True,
-        use_hold_movement=False,
-        weights=ComponentWeights(hold_neutral_path=1.0),
-        path={"gamma": 0.9},
-        hold_neutral_path={"scale": 0.01},
-    )
-    hold_bd = RewardEngine(hold_cfg).compute(Action.HOLD, ctx)
-    long_bd = RewardEngine(path_only_config).compute(Action.LONG, ctx)
-    assert hold_bd.components["hold_neutral_path"] > 0
-    assert long_bd.components["path"] > 0
-    assert hold_bd.components["hold_neutral_path"] != pytest.approx(-long_bd.components["path"])
-
-
-def test_hold_neutral_flat_then_up_beats_up_then_flat() -> None:
-    cfg = RewardConfig(
-        use_hold_neutral_path=True,
-        use_hold_movement=False,
-        weights=ComponentWeights(hold_neutral_path=1.0),
-        path={"gamma": 0.8},
-        hold_neutral_path={"scale": 0.02},
-    )
-    engine = RewardEngine(cfg)
-    flat_then_up = build_scenario(SyntheticScenario.FLAT_THEN_UP).to_context()
-    up_then_flat = build_scenario(SyntheticScenario.UP_THEN_FLAT).to_context()
-    assert engine.compute(Action.HOLD, flat_then_up).total > engine.compute(
-        Action.HOLD, up_then_flat
-    ).total
-
-
-def test_hold_movement_detects_large_mid_swing() -> None:
-    cfg = RewardConfig(
-        use_hold_neutral_path=False,
-        use_hold_movement=True,
-        weights=ComponentWeights(hold_movement=-1.0),
-    )
-    engine = RewardEngine(cfg)
-    quiet = hold_quiet_path().to_context()
-    volatile = hold_quatile_volatile_path().to_context()
-    quiet_total = engine.compute(Action.HOLD, quiet).total
-    volatile_total = engine.compute(Action.HOLD, volatile).total
-    assert volatile_total < quiet_total
-
-
-def test_hold_surprise_penalizes_large_move() -> None:
-    cfg = RewardConfig(
-        use_hold_neutral_path=False,
-        use_hold_movement=False,
-        use_hold_surprise=True,
-        weights=ComponentWeights(hold_surprise=1.0),
-    )
-    engine = RewardEngine(cfg)
-    quiet = build_scenario(SyntheticScenario.QUIET_FLAT).to_context()
-    big = build_scenario(SyntheticScenario.QUIET_THEN_BIG_UP).to_context()
-    assert engine.compute(Action.HOLD, big).total < engine.compute(Action.HOLD, quiet).total
-
-
-def test_hold_does_not_include_utility(base_reward_config: RewardConfig) -> None:
+def test_utility_config_baseline_applied(base_reward_config: RewardConfig) -> None:
+    assert base_reward_config.utility.alpha == pytest.approx(1.0)
+    assert base_reward_config.utility.beta == pytest.approx(2.0)
+    assert base_reward_config.utility.lambda_ == pytest.approx(1.5)
     ctx = build_scenario(SyntheticScenario.FLAT).to_context()
-    bd = RewardEngine(base_reward_config).compute(Action.HOLD, ctx)
-    assert "utility" not in bd.components
-    assert "utility" not in bd.weighted_components
+    x = ctx.return_from_t(5)
+    expected = utility_u(x, alpha=1.0, beta=2.0, lambda_=1.5)
+    assert compute_utility_n(ctx, Action.LONG, 5, base_reward_config.utility) == pytest.approx(
+        expected
+    )
+
+
+def test_long_mae_uses_minimum_low() -> None:
+    ctx = mae_adverse_long_path().to_context()
+    mae3 = compute_mae_n(ctx, Action.LONG, 3)
+    expected = (ctx.price_at_t - min(ctx.future_lows[:3])) / ctx.price_at_t
+    assert mae3 == pytest.approx(expected)
+    assert mae3 == pytest.approx(long_downward_excursion(ctx, n=3))
+    assert mae3 > 0
+
+
+def test_short_mae_uses_maximum_high() -> None:
+    ctx = mae_adverse_short_path().to_context()
+    mae3 = compute_mae_n(ctx, Action.SHORT, 3)
+    expected = (max(ctx.future_highs[:3]) - ctx.price_at_t) / ctx.price_at_t
+    assert mae3 == pytest.approx(expected)
+    assert mae3 == pytest.approx(short_upward_excursion(ctx, n=3))
+    assert mae3 > 0
+
+
+def test_mae_accumulates_over_n() -> None:
+    ctx = mae_adverse_long_path().to_context()
+    mae1 = compute_mae_n(ctx, Action.LONG, 1)
+    mae5 = compute_mae_n(ctx, Action.LONG, 5)
+    assert mae5 >= mae1
+
+
+def test_one_fn_per_horizon_step(base_reward_config: RewardConfig) -> None:
+    ctx = build_scenario(SyntheticScenario.STEADY_UP).to_context()
+    bd = RewardEngine(base_reward_config).compute(Action.LONG, ctx)
+    assert len(bd.fn_values) == 10
+    assert len(bd.fn_breakdowns) == 10
+    assert [fb.n for fb in bd.fn_breakdowns] == list(range(1, 11))
+
+
+def test_f_position_is_simple_mean_of_fn(base_reward_config: RewardConfig) -> None:
+    ctx = build_scenario(SyntheticScenario.STEADY_UP).to_context()
+    bd = RewardEngine(base_reward_config).compute(Action.LONG, ctx)
+    assert bd.f_position == pytest.approx(sum(bd.fn_values) / len(bd.fn_values))
+
+
+def test_f_position_has_no_extra_temporal_weighting(path_only_config: RewardConfig) -> None:
+    ctx = build_scenario(SyntheticScenario.UP_THEN_FLAT).to_context()
+    composer = FTargetComposer(path_only_config)
+    bd = composer.compose(ctx, Action.LONG)
+    manual_mean = sum(bd.fn_values) / len(bd.fn_values)
+    assert bd.f_position == pytest.approx(manual_mean)
+
+
+def test_hold_not_in_p1_action_space() -> None:
+    assert list(Action) == [Action.LONG, Action.SHORT]
+    assert Action.LONG.value == 0
+    assert Action.SHORT.value == 1
+
+
+def test_s_move_not_in_f_computation(base_reward_config: RewardConfig) -> None:
+    engine = RewardEngine(base_reward_config)
+    assert "surprise" not in engine.enabled_component_names()
+    ctx = build_scenario(SyntheticScenario.QUIET_THEN_BIG_UP).to_context()
+    bd = engine.compute(Action.LONG, ctx)
+    assert "s_move" not in bd.metadata
+
+
+def test_no_excess_loss_component_in_f(base_reward_config: RewardConfig) -> None:
+    ctx = build_scenario(SyntheticScenario.STEADY_UP).to_context()
+    bd = RewardEngine(base_reward_config).compute(Action.LONG, ctx)
+    for fb in bd.fn_breakdowns:
+        assert set(fb.__dataclass_fields__) == {
+            "n",
+            "path_raw",
+            "utility_raw",
+            "mae_raw",
+            "path_normalized",
+            "utility_normalized",
+            "mae_normalized",
+            "f_n",
+        }
+
+
+def test_normalization_is_identity_placeholder(base_reward_config: RewardConfig) -> None:
+    engine = RewardEngine(base_reward_config, normalizer=IdentityNormalizer())
+    ctx = build_scenario(SyntheticScenario.STEADY_UP).to_context()
+    bd = engine.compute(Action.LONG, ctx)
+    for fb in bd.fn_breakdowns:
+        assert fb.path_normalized == pytest.approx(fb.path_raw)
+        assert fb.utility_normalized == pytest.approx(fb.utility_raw)
+        assert fb.mae_normalized == pytest.approx(fb.mae_raw)
 
 
 def test_component_off_removes_influence(base_reward_config: RewardConfig) -> None:
@@ -189,8 +187,7 @@ def test_component_off_removes_influence(base_reward_config: RewardConfig) -> No
     full = RewardEngine(base_reward_config).compute(Action.LONG, ctx)
     no_mae_cfg = base_reward_config.model_copy(update={"use_mae": False})
     no_mae = RewardEngine(no_mae_cfg).compute(Action.LONG, ctx)
-    assert "mae" not in no_mae.components
-    assert no_mae.total != full.total or full.components.get("mae", 0) == 0
+    assert no_mae.f_position != pytest.approx(full.f_position)
 
 
 def test_reward_window_stays_within_horizon() -> None:
@@ -213,32 +210,23 @@ def test_no_d_ret_component_in_engine() -> None:
 
     reward_dir = Path(chartai.reward.__file__).parent
     assert not (reward_dir / "market_relative.py").exists()
-    cfg = RewardConfig()
-    assert "dret" not in cfg.model_dump().keys()
-    assert not hasattr(cfg, "use_dret")
-    engine = RewardEngine(
-        RewardConfig(
-            use_path=True,
-            use_utility=False,
-            use_mae=False,
-            weights=ComponentWeights(path=1.0),
-            path={"gamma": 0.9},
-        )
-    )
+    engine = RewardEngine(RewardConfig(use_path=True, use_utility=False, use_mae=False))
     assert "d_ret" not in engine.enabled_component_names()
 
 
-def test_directional_path_ordering_steady_up_vs_up_down(path_only_config: RewardConfig) -> None:
+def test_directional_path_ordering_steady_up_vs_steady_down(path_only_config: RewardConfig) -> None:
     engine = RewardEngine(path_only_config)
-    steady = build_scenario(SyntheticScenario.STEADY_UP).to_context()
-    up_down = build_scenario(SyntheticScenario.UP_THEN_DOWN).to_context()
-    assert engine.compute(Action.LONG, steady).total > engine.compute(Action.LONG, up_down).total
+    up = build_scenario(SyntheticScenario.STEADY_UP).to_context()
+    down = build_scenario(SyntheticScenario.STEADY_DOWN).to_context()
+    assert engine.compute(Action.LONG, up).f_position > engine.compute(Action.LONG, down).f_position
+    assert engine.compute(Action.SHORT, down).f_position > engine.compute(Action.SHORT, up).f_position
 
 
-def test_surprise_multiplier_only_when_enabled(base_reward_config: RewardConfig) -> None:
-    ctx = build_scenario(SyntheticScenario.QUIET_THEN_BIG_UP).to_context()
-    off = RewardEngine(base_reward_config).compute(Action.LONG, ctx)
-    on_cfg = base_reward_config.model_copy(update={"use_surprise": True})
-    on = RewardEngine(on_cfg).compute(Action.LONG, ctx)
-    assert "s_move" not in off.multipliers
-    assert "s_move" in on.multipliers
+def test_fn_formula_structure(base_reward_config: RewardConfig) -> None:
+    ctx = build_scenario(SyntheticScenario.STEADY_UP).to_context()
+    composer = FTargetComposer(base_reward_config)
+    fb = composer.compose_fn(ctx, Action.LONG, 5)
+    alpha = base_reward_config.utility.alpha
+    lambda_ = base_reward_config.utility.lambda_
+    expected = fb.path_normalized + alpha * fb.utility_normalized - lambda_ * fb.mae_normalized
+    assert fb.f_n == pytest.approx(expected)

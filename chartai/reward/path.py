@@ -1,40 +1,55 @@
-"""Directional Path reward component for LONG / SHORT."""
+"""Directional Path component — t-anchored returns with exponential decay."""
 
 from __future__ import annotations
 
 from chartai.core.types import Action
 from chartai.reward.base import RewardComponent, directional_sign
-from chartai.reward.config import PathConfig, PerStepReturnMode
+from chartai.reward.config import PathConfig
 from chartai.reward.context import RewardContext
 
 
-def _require_gamma(config: PathConfig) -> float:
+def _require_decay_rate(config: PathConfig) -> float:
     if config.gamma is None:
-        raise ValueError("path.gamma must be set to compute Path reward")
+        raise ValueError("path.gamma (decay rate r) must be set to compute Path")
     return config.gamma
 
 
-def per_step_returns(ctx: RewardContext, mode: PerStepReturnMode) -> tuple[float, ...]:
-    if mode is PerStepReturnMode.SIMPLE:
-        return ctx.per_step_simple_returns()
-    if mode is PerStepReturnMode.LOG:
-        return ctx.per_step_log_returns()
-    raise ValueError(f"Unsupported per_step_return_mode: {mode}")
+def normalized_decay_weights(num_steps: int, decay_rate: float) -> tuple[float, ...]:
+    """Normalized weights w_k ∝ r^(k-1) for k=1..num_steps."""
+    if num_steps <= 0:
+        return ()
+    raw = tuple(decay_rate ** (k - 1) for k in range(1, num_steps + 1))
+    total = sum(raw)
+    if total == 0:
+        raise ValueError("decay weights sum to zero")
+    return tuple(w / total for w in raw)
 
 
 def gamma_weights(num_steps: int, gamma: float) -> tuple[float, ...]:
-    """Weights gamma^(k-1) for k=1..num_steps."""
+    """Unnormalized weights gamma^(k-1) — legacy alias for tests."""
     return tuple(gamma ** (k - 1) for k in range(1, num_steps + 1))
 
 
-class DirectionalPathComponent(RewardComponent):
-    """Gamma-weighted directional path: sum_k gamma^(k-1) * aligned_r_k.
+def compute_path_n(
+    ctx: RewardContext,
+    action: Action,
+    n: int,
+    *,
+    decay_rate: float,
+) -> float:
+    """P_n = sum_{k=1..n} w_k * aligned_R_k with t-anchored returns.
 
-    LONG: positive return -> favorable (positive contribution).
-    SHORT: negative return -> favorable (via sign flip).
-
-    Exact ``r_k`` definition remains configurable (TODO finalize).
+    aligned_R_k = sign * (C_{t+k} - C_t) / C_t
     """
+    if n < 1 or n > ctx.reward_horizon:
+        raise ValueError(f"n must be in 1..{ctx.reward_horizon}, got {n}")
+    sign = directional_sign(action)
+    weights = normalized_decay_weights(n, decay_rate)
+    return sum(weights[k - 1] * sign * ctx.return_from_t(k) for k in range(1, n + 1))
+
+
+class DirectionalPathComponent(RewardComponent):
+    """Full-horizon path (P_H) — prefer :func:`compute_path_n` for F-target steps."""
 
     name = "path"
 
@@ -45,10 +60,7 @@ class DirectionalPathComponent(RewardComponent):
     def config(self) -> PathConfig:
         return self._config
 
-    def compute(self, ctx: RewardContext, action: Action) -> float:
-        gamma = _require_gamma(self._config)
-        returns = per_step_returns(ctx, self._config.per_step_return_mode)
-        sign = directional_sign(action)
-        aligned = tuple(sign * r for r in returns)
-        weights = gamma_weights(len(aligned), gamma)
-        return sum(w * r for w, r in zip(weights, aligned))
+    def compute(self, ctx: RewardContext, action: Action, *, n: int | None = None) -> float:
+        decay_rate = _require_decay_rate(self._config)
+        steps = n if n is not None else ctx.reward_horizon
+        return compute_path_n(ctx, action, steps, decay_rate=decay_rate)

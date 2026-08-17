@@ -1,4 +1,4 @@
-"""Shared reward primitives and component protocols."""
+"""Shared reward primitives and F-target output types."""
 
 from __future__ import annotations
 
@@ -10,12 +10,43 @@ from chartai.core.types import Action
 
 
 @dataclass(frozen=True)
-class RewardBreakdown:
-    """Decomposed reward output — components vs multipliers kept separate.
+class FnBreakdown:
+    """Per-horizon-step ``f_n`` decomposition at decision time t."""
 
-    ``total`` is the composed reward scalar for one action at time t.
-    When used by :mod:`chartai.features.target`, ``total`` serves as an
-    **F target candidate** only — not the finalized P1 F definition.
+    n: int
+    path_raw: float
+    utility_raw: float
+    mae_raw: float
+    path_normalized: float
+    utility_normalized: float
+    mae_normalized: float
+    f_n: float
+
+
+@dataclass(frozen=True)
+class FTargetBreakdown:
+    """P1 F-position target for one action at decision time t.
+
+    ``F_position = mean(f_1, ..., f_10)`` with no additional temporal weighting.
+    """
+
+    action: Action
+    f_position: float
+    fn_values: tuple[float, ...]
+    fn_breakdowns: tuple[FnBreakdown, ...]
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def total(self) -> float:
+        """Alias for env / legacy callers expecting a scalar reward."""
+        return self.f_position
+
+
+@dataclass(frozen=True)
+class RewardBreakdown:
+    """Legacy decomposed reward output — retained for backward compatibility.
+
+    New P1 code should prefer :class:`FTargetBreakdown`.
     """
 
     action: Action
@@ -28,7 +59,7 @@ class RewardBreakdown:
 
 
 class RewardComponent(ABC):
-    """Independent, toggleable reward component."""
+    """Independent reward component."""
 
     name: str
 
