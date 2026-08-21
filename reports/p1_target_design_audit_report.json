@@ -1,0 +1,799 @@
+{
+  "audit": "P1 Return/Risk/Direction Target Design Audit",
+  "normalization": "Standard Z-score (prefix-fit, causal eval apply)",
+  "datasets": [
+    "BTCUSDT",
+    "SYNTH_LONG"
+  ],
+  "multi_asset_note": "Only BTCUSDT CSV available in repo; SYNTH_LONG (3000 3m bars) used as long-horizon secondary dataset. External multi-asset CSVs not present.",
+  "dataset_reports": [
+    {
+      "label": "BTCUSDT",
+      "market": {
+        "symbol": "BTCUSDT",
+        "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+        "timeframe": "3m",
+        "num_bars": 5000,
+        "start_time": "2026-08-07 00:06:00+00:00",
+        "end_time": "2026-08-17 10:06:00+00:00",
+        "close_min": 62586.29,
+        "close_max": 65408.05,
+        "return_std": 0.00047408251416413826
+      },
+      "prefix_n": 2485,
+      "eval_n": 2485,
+      "A_expected_return": {
+        "designs_compared": [
+          "Return_z = z(U)",
+          "Return_z = z(U) + z(MFE)"
+        ],
+        "eval_redundancy": {
+          "corr_zU_zMFE": 0.9124270026756771,
+          "r2_MFE_explained_by_U": 0.83252303521172,
+          "MFE_residual_variance_frac": 0.16747696478828
+        },
+        "synthetic_ABC_z": [
+          {
+            "id": "A",
+            "raw": {
+              "U": 0.011696799999999953,
+              "MFE": 0.032260399999999974,
+              "MAE": -0.007576807999999886,
+              "giveback": 0.7025455357032165,
+              "chop": 0.1111111111111111,
+              "recovery": 0.0,
+              "P_long": 0.013796812517495696,
+              "P_short": -0.013796812517495696,
+              "terminal_long": 0.009595999999999947
+            },
+            "z": {
+              "U": 22.71034938011841,
+              "MFE": 28.488043115946102,
+              "MAE": -7.25464919601881,
+              "giveback": 0.19009481290486696,
+              "chop": -2.042305631416741,
+              "recovery": -0.19183107414700543,
+              "P_long": 20.69066516778823,
+              "P_short": -20.69066516778823
+            },
+            "return_U": 22.71034938011841,
+            "return_U_MFE": 51.198392496064514,
+            "risk_sum_3": -9.106860014530684
+          },
+          {
+            "id": "B",
+            "raw": {
+              "U": 0.02,
+              "MFE": 0.022039999999999935,
+              "MAE": -0.017960000000000066,
+              "giveback": 0.092558983666059,
+              "chop": 0.0,
+              "recovery": 0.0,
+              "P_long": 0.02,
+              "P_short": -0.02,
+              "terminal_long": 0.02
+            },
+            "z": {
+              "U": 39.307884611485555,
+              "MFE": 19.188907205644835,
+              "MAE": -16.091982352410533,
+              "giveback": -1.3318464705279673,
+              "chop": -2.703905096163267,
+              "recovery": -0.19183107414700543,
+              "P_long": 29.98604983263504,
+              "P_short": -29.98604983263504
+            },
+            "return_U": 39.307884611485555,
+            "return_U_MFE": 58.49679181713039,
+            "risk_sum_3": -20.127733919101768
+          },
+          {
+            "id": "C",
+            "raw": {
+              "U": 0.0018297689087999995,
+              "MFE": 0.03206000000000003,
+              "MAE": 0.06004671999999999,
+              "giveback": 1.0,
+              "chop": 0.1111111111111111,
+              "recovery": -0.515864979802394,
+              "P_long": -0.010893059006980111,
+              "P_short": 0.010893059006980111,
+              "terminal_long": -0.030976
+            },
+            "z": {
+              "U": 2.986821563712055,
+              "MFE": 28.30570711770495,
+              "MAE": 50.301027916238446,
+              "giveback": 0.9322558124265349,
+              "chop": -2.042305631416741,
+              "recovery": -0.19209529134352335,
+              "P_long": -16.306742018911464,
+              "P_short": 16.306742018911464
+            },
+            "return_U": 2.986821563712055,
+            "return_U_MFE": 31.292528681417007,
+            "risk_sum_3": 49.19097809724824
+          }
+        ],
+        "ABC_rankings": {
+          "U_only": [
+            [
+              "B",
+              39.307884611485555
+            ],
+            [
+              "A",
+              22.71034938011841
+            ],
+            [
+              "C",
+              2.986821563712055
+            ]
+          ],
+          "U_plus_MFE": [
+            [
+              "B",
+              58.49679181713039
+            ],
+            [
+              "A",
+              51.198392496064514
+            ],
+            [
+              "C",
+              31.292528681417007
+            ]
+          ]
+        },
+        "checks": {
+          "U_spike_vs_sustained_AB": {
+            "U_A": 22.71034938011841,
+            "U_B": 39.307884611485555,
+            "U_ranks_B_above_A": true,
+            "MFE_ranks_A_above_B": true
+          },
+          "MFE_independent_facet": true,
+          "C_not_overrated_by_MFE": {
+            "U_plus_MFE_C": 31.292528681417007,
+            "U_plus_MFE_A": 51.198392496064514,
+            "U_only_C": 2.986821563712055,
+            "C_U_suppresses": true,
+            "C_combined_below_A_if_U_low": true
+          },
+          "U_tail_contains_MFE": true
+        }
+      },
+      "B_acceptable_risk": {
+        "design": "Risk facets: z(MAE), z(giveback), z(chop) — separate heads, not canonical sum",
+        "eval_scale_balance": {
+          "U": {
+            "mean": -0.01823571893117428,
+            "std": 1.0093326928188446,
+            "min": -0.7826757105914319,
+            "max": 6.786820090496128,
+            "p99_abs": 4.003360344891382
+          },
+          "MFE": {
+            "mean": -0.04176135203888161,
+            "std": 0.9292968307317966,
+            "min": -0.8711341526589684,
+            "max": 4.622425865379408,
+            "p99_abs": 3.526531103098843
+          },
+          "MAE": {
+            "mean": 0.009780366214131546,
+            "std": 0.9968212463890286,
+            "min": -0.8060182435647525,
+            "max": 9.398542358739462,
+            "p99_abs": 3.481535226042604
+          },
+          "giveback": {
+            "mean": -0.03303606754666202,
+            "std": 1.039220861394064,
+            "min": -1.562784903389319,
+            "max": 0.9322558124265349,
+            "p99_abs": 1.562784903389319
+          },
+          "chop": {
+            "mean": 0.18104130222440146,
+            "std": 1.0474633964289195,
+            "min": -2.703905096163267,
+            "max": 3.2504900865554673,
+            "p99_abs": 2.588890621808941
+          },
+          "recovery": {
+            "mean": -0.024979496413521842,
+            "std": 0.9954283986455739,
+            "min": -0.19234325699884222,
+            "max": 15.682764232448008,
+            "p99_abs": 4.790171524654281
+          }
+        },
+        "variance_share_on_eval_z": {
+          "MAE": 0.3133747904997126,
+          "giveback": 0.3406004339846839,
+          "chop": 0.34602477551560346
+        },
+        "dominant_facet": "chop",
+        "tail_explosion_count_abs_z_gt_4": {
+          "MAE": 17,
+          "giveback": 0,
+          "chop": 0
+        },
+        "synthetic_B_lt_A_lt_C_giveback_z": true,
+        "scalar_sum_vs_facets": {
+          "ABC_naive_sum": {
+            "A": -9.106860014530684,
+            "B": -20.127733919101768,
+            "C": 49.19097809724824
+          },
+          "note": "Naive sum hides facet driver (e.g. chop-driven G not in ABC table)"
+        },
+        "facet_independence_eval": {
+          "corr_giveback_chop": 0.0665330929674859,
+          "corr_mae_giveback": 0.3049768698107435
+        },
+        "semantic_validity": "After z-score, facets retain ordering on ABC archetypes; eval variance share shows whether one facet dominates scale."
+      },
+      "C_recovery_experiment": {
+        "designs": [
+          "MAE+giveback+chop",
+          "+ recovery z"
+        ],
+        "same_MAE": true,
+        "raw": {
+          "recover": {
+            "U": 0.007601194000000071,
+            "MFE": 0.011615192000000149,
+            "MAE": 0.04939999999999998,
+            "giveback": 0.17384060461506226,
+            "chop": 0.1111111111111111,
+            "recovery": 0.19425101214575086,
+            "P_long": -0.0021777725115130217,
+            "P_short": 0.0021777725115130217,
+            "terminal_long": 0.009596000000000089
+          },
+          "sustain": {
+            "U": -0.0006000000000000001,
+            "MFE": -0.01804000000000002,
+            "MAE": 0.04939999999999998,
+            "giveback": 0.0,
+            "chop": 0.0,
+            "recovery": -0.40485829959514186,
+            "P_long": -0.02,
+            "P_short": 0.02,
+            "terminal_long": -0.02
+          }
+        },
+        "z_recovery": {
+          "recover": -0.19173158210963243,
+          "sustain": -0.19203843562548187
+        },
+        "risk3_sum": {
+          "recover": 38.06804989422903,
+          "sustain": 36.97271104290587
+        },
+        "risk4_sum": {
+          "recover": 37.876318312119395,
+          "sustain": 36.78067260728039
+        },
+        "recovery_improves_separation": false,
+        "p1_vs_p2": "Recovery discriminates same-MAE paths — relevant to Acceptable Risk outcome. Wait/entry timing for adverse phase is P2; post-adverse outcome is P1 risk diagnostic."
+      },
+      "D_direction_design": {
+        "design_A_categorical": "LONG / SHORT / NEUTRAL from sign(z_return_long - z_return_short)",
+        "design_B_directional_EV": {
+          "long_return_score": "z(U_long)+z(MFE_long)",
+          "short_return_score": "z(U_short)+z(MFE_short)",
+          "long_risk": "z(MAE)+z(giveback)+z(chop) per action",
+          "short_risk": "same for SHORT perspective"
+        },
+        "eval_categorical_distribution": {
+          "LONG": 1131,
+          "SHORT": 1186,
+          "NEUTRAL": 168
+        },
+        "P_vs_return_score_disagreement_rate": 0.16740442655935614,
+        "separation_verdict": "Directional EV (separate long/short Return/Risk scores) preserves Expected Return and Acceptable Risk heads without collapsing to 3-class label. Categorical Direction is derivable but loses magnitude asymmetry (Case A/B/C per action).",
+        "recommended": "directional_expected_value_per_action"
+      },
+      "z_scale_diagnostics": {
+        "U": {
+          "mean": -0.01823571893117428,
+          "std": 1.0093326928188446,
+          "min": -0.7826757105914319,
+          "max": 6.786820090496128,
+          "p99_abs": 4.003360344891382
+        },
+        "MFE": {
+          "mean": -0.04176135203888161,
+          "std": 0.9292968307317966,
+          "min": -0.8711341526589684,
+          "max": 4.622425865379408,
+          "p99_abs": 3.526531103098843
+        },
+        "MAE": {
+          "mean": 0.009780366214131546,
+          "std": 0.9968212463890286,
+          "min": -0.8060182435647525,
+          "max": 9.398542358739462,
+          "p99_abs": 3.481535226042604
+        },
+        "giveback": {
+          "mean": -0.03303606754666202,
+          "std": 1.039220861394064,
+          "min": -1.562784903389319,
+          "max": 0.9322558124265349,
+          "p99_abs": 1.562784903389319
+        },
+        "chop": {
+          "mean": 0.18104130222440146,
+          "std": 1.0474633964289195,
+          "min": -2.703905096163267,
+          "max": 3.2504900865554673,
+          "p99_abs": 2.588890621808941
+        },
+        "recovery": {
+          "mean": -0.024979496413521842,
+          "std": 0.9954283986455739,
+          "min": -0.19234325699884222,
+          "max": 15.682764232448008,
+          "p99_abs": 4.790171524654281
+        }
+      },
+      "prefix_stats": {
+        "U": {
+          "mean": 0.0003355604939900082,
+          "scale": 0.0005002670507551085
+        },
+        "MFE": {
+          "mean": 0.0009500504502444431,
+          "scale": 0.001099069859671395
+        },
+        "MAE": {
+          "mean": 0.0009468511358367406,
+          "scale": 0.0011749236807362402
+        },
+        "giveback": {
+          "mean": 0.6263564732563106,
+          "scale": 0.40079506264610587
+        },
+        "chop": {
+          "mean": 0.45410239213056114,
+          "scale": 0.16794316959382719
+        },
+        "recovery": {
+          "mean": 374.53630760784426,
+          "scale": 1952.4277246178938
+        }
+      }
+    },
+    {
+      "label": "SYNTH_LONG",
+      "market": {
+        "symbol": "SYNTH_LONG",
+        "source": "synthetic_long",
+        "timeframe": "3m",
+        "num_bars": 3000,
+        "start_time": "2024-01-02 09:00:00",
+        "end_time": "2024-01-08 15:00:00",
+        "close_min": 100.0,
+        "close_max": 129.99,
+        "return_std": 6.631262117342671e-06
+      },
+      "prefix_n": 1485,
+      "eval_n": 1485,
+      "A_expected_return": {
+        "designs_compared": [
+          "Return_z = z(U)",
+          "Return_z = z(U) + z(MFE)"
+        ],
+        "eval_redundancy": {
+          "corr_zU_zMFE": 1.0,
+          "r2_MFE_explained_by_U": 1.0,
+          "MFE_residual_variance_frac": 0.0
+        },
+        "synthetic_ABC_z": [
+          {
+            "id": "A",
+            "raw": {
+              "U": 0.011696799999999953,
+              "MFE": 0.032260399999999974,
+              "MAE": -0.007576807999999886,
+              "giveback": 0.7025455357032165,
+              "chop": 0.1111111111111111,
+              "recovery": 0.0,
+              "P_long": 0.013796812517495696,
+              "P_short": -0.013796812517495696,
+              "terminal_long": 0.009595999999999947
+            },
+            "z": {
+              "U": 547.5219460014565,
+              "MFE": 843.504829207496,
+              "MAE": -2687.6890679184507,
+              "giveback": 702545535703.2166,
+              "chop": 111111111111.11111,
+              "recovery": -24.823243548780138,
+              "P_long": 1066.4199721784,
+              "P_short": -1066.4199721784
+            },
+            "return_U": 547.5219460014565,
+            "return_U_MFE": 1391.0267752089526,
+            "risk_sum_3": 813656644126.6385
+          },
+          {
+            "id": "B",
+            "raw": {
+              "U": 0.02,
+              "MFE": 0.022039999999999935,
+              "MAE": -0.017960000000000066,
+              "giveback": 0.092558983666059,
+              "chop": 0.0,
+              "recovery": 0.0,
+              "P_long": 0.02,
+              "P_short": -0.02,
+              "terminal_long": 0.02
+            },
+            "z": {
+              "U": 953.9781756111042,
+              "MFE": 568.3362331232939,
+              "MAE": -2715.644220021233,
+              "giveback": 92558983666.059,
+              "chop": 0.0,
+              "recovery": -24.823243548780138,
+              "P_long": 1557.1591247926367,
+              "P_short": -1557.1591247926367
+            },
+            "return_U": 953.9781756111042,
+            "return_U_MFE": 1522.314408734398,
+            "risk_sum_3": 92558980950.41478
+          },
+          {
+            "id": "C",
+            "raw": {
+              "U": 0.0018297689087999995,
+              "MFE": 0.03206000000000003,
+              "MAE": 0.06004671999999999,
+              "giveback": 1.0,
+              "chop": 0.1111111111111111,
+              "recovery": -0.515864979802394,
+              "P_long": -0.010893059006980111,
+              "P_short": 0.010893059006980111,
+              "terminal_long": -0.030976
+            },
+            "z": {
+              "U": 64.51343665924168,
+              "MFE": 838.10936653918,
+              "MAE": -2505.623089463393,
+              "giveback": 1000000000000.0,
+              "chop": 111111111111.11111,
+              "recovery": -13655.885649621086,
+              "P_long": -886.8156287523864,
+              "P_short": 886.8156287523864
+            },
+            "return_U": 64.51343665924168,
+            "return_U_MFE": 902.6228031984217,
+            "risk_sum_3": 1111111108605.488
+          }
+        ],
+        "ABC_rankings": {
+          "U_only": [
+            [
+              "B",
+              953.9781756111042
+            ],
+            [
+              "A",
+              547.5219460014565
+            ],
+            [
+              "C",
+              64.51343665924168
+            ]
+          ],
+          "U_plus_MFE": [
+            [
+              "B",
+              1522.314408734398
+            ],
+            [
+              "A",
+              1391.0267752089526
+            ],
+            [
+              "C",
+              902.6228031984217
+            ]
+          ]
+        },
+        "checks": {
+          "U_spike_vs_sustained_AB": {
+            "U_A": 547.5219460014565,
+            "U_B": 953.9781756111042,
+            "U_ranks_B_above_A": true,
+            "MFE_ranks_A_above_B": true
+          },
+          "MFE_independent_facet": false,
+          "C_not_overrated_by_MFE": {
+            "U_plus_MFE_C": 902.6228031984217,
+            "U_plus_MFE_A": 1391.0267752089526,
+            "U_only_C": 64.51343665924168,
+            "C_U_suppresses": true,
+            "C_combined_below_A_if_U_low": true
+          },
+          "U_tail_contains_MFE": true
+        }
+      },
+      "B_acceptable_risk": {
+        "design": "Risk facets: z(MAE), z(giveback), z(chop) — separate heads, not canonical sum",
+        "eval_scale_balance": {
+          "U": {
+            "mean": -3.0462485026156987,
+            "std": 0.7715780440972657,
+            "min": -4.329068759611588,
+            "max": -1.6554311859239337,
+            "p99_abs": 4.305104025035918
+          },
+          "MFE": {
+            "mean": -3.046248502615709,
+            "std": 0.7715780440972695,
+            "min": -4.329068759612669,
+            "max": -1.6554311859230337,
+            "p99_abs": 4.305104025034326
+          },
+          "MAE": {
+            "mean": 3.04624850261574,
+            "std": 0.7715780440972753,
+            "min": 1.6554311859251707,
+            "max": 4.3290687596173045,
+            "p99_abs": 4.305104025033317
+          },
+          "giveback": {
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "p99_abs": 0.0
+          },
+          "chop": {
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "p99_abs": 0.0
+          },
+          "recovery": {
+            "mean": -3.042815677688498,
+            "std": 0.7698096270193651,
+            "min": -4.322272316901126,
+            "max": -1.6547193745012287,
+            "p99_abs": 4.298385834968317
+          }
+        },
+        "variance_share_on_eval_z": {
+          "MAE": 1.0,
+          "giveback": 0.0,
+          "chop": 0.0
+        },
+        "dominant_facet": "MAE",
+        "tail_explosion_count_abs_z_gt_4": {
+          "MAE": 203,
+          "giveback": 0,
+          "chop": 0
+        },
+        "synthetic_B_lt_A_lt_C_giveback_z": true,
+        "scalar_sum_vs_facets": {
+          "ABC_naive_sum": {
+            "A": 813656644126.6385,
+            "B": 92558980950.41478,
+            "C": 1111111108605.488
+          },
+          "note": "Naive sum hides facet driver (e.g. chop-driven G not in ABC table)"
+        },
+        "facet_independence_eval": {
+          "corr_giveback_chop": NaN,
+          "corr_mae_giveback": NaN
+        },
+        "semantic_validity": "After z-score, facets retain ordering on ABC archetypes; eval variance share shows whether one facet dominates scale."
+      },
+      "C_recovery_experiment": {
+        "designs": [
+          "MAE+giveback+chop",
+          "+ recovery z"
+        ],
+        "same_MAE": true,
+        "raw": {
+          "recover": {
+            "U": 0.007601194000000071,
+            "MFE": 0.011615192000000149,
+            "MAE": 0.04939999999999998,
+            "giveback": 0.17384060461506226,
+            "chop": 0.1111111111111111,
+            "recovery": 0.19425101214575086,
+            "P_long": -0.0021777725115130217,
+            "P_short": 0.0021777725115130217,
+            "terminal_long": 0.009596000000000089
+          },
+          "sustain": {
+            "U": -0.0006000000000000001,
+            "MFE": -0.01804000000000002,
+            "MAE": 0.04939999999999998,
+            "giveback": 0.0,
+            "chop": 0.0,
+            "recovery": -0.40485829959514186,
+            "P_long": -0.02,
+            "P_short": 0.02,
+            "terminal_long": -0.02
+          }
+        },
+        "z_recovery": {
+          "recover": 5108.007579771923,
+          "sustain": -10722.678231711878
+        },
+        "risk3_sum": {
+          "recover": 284951713191.8856,
+          "sustain": -2534.2877502917518
+        },
+        "risk4_sum": {
+          "recover": 284951718299.8932,
+          "sustain": -13256.965982003629
+        },
+        "recovery_improves_separation": true,
+        "p1_vs_p2": "Recovery discriminates same-MAE paths — relevant to Acceptable Risk outcome. Wait/entry timing for adverse phase is P2; post-adverse outcome is P1 risk diagnostic."
+      },
+      "D_direction_design": {
+        "design_A_categorical": "LONG / SHORT / NEUTRAL from sign(z_return_long - z_return_short)",
+        "design_B_directional_EV": {
+          "long_return_score": "z(U_long)+z(MFE_long)",
+          "short_return_score": "z(U_short)+z(MFE_short)",
+          "long_risk": "z(MAE)+z(giveback)+z(chop) per action",
+          "short_risk": "same for SHORT perspective"
+        },
+        "eval_categorical_distribution": {
+          "LONG": 0,
+          "SHORT": 1485,
+          "NEUTRAL": 0
+        },
+        "P_vs_return_score_disagreement_rate": 0.0,
+        "separation_verdict": "Directional EV (separate long/short Return/Risk scores) preserves Expected Return and Acceptable Risk heads without collapsing to 3-class label. Categorical Direction is derivable but loses magnitude asymmetry (Case A/B/C per action).",
+        "recommended": "directional_expected_value_per_action"
+      },
+      "z_scale_diagnostics": {
+        "U": {
+          "mean": -3.0462485026156987,
+          "std": 0.7715780440972657,
+          "min": -4.329068759611588,
+          "max": -1.6554311859239337,
+          "p99_abs": 4.305104025035918
+        },
+        "MFE": {
+          "mean": -3.046248502615709,
+          "std": 0.7715780440972695,
+          "min": -4.329068759612669,
+          "max": -1.6554311859230337,
+          "p99_abs": 4.305104025034326
+        },
+        "MAE": {
+          "mean": 3.04624850261574,
+          "std": 0.7715780440972753,
+          "min": 1.6554311859251707,
+          "max": 4.3290687596173045,
+          "p99_abs": 4.305104025033317
+        },
+        "giveback": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p99_abs": 0.0
+        },
+        "chop": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p99_abs": 0.0
+        },
+        "recovery": {
+          "mean": -3.042815677688498,
+          "std": 0.7698096270193651,
+          "min": -4.322272316901126,
+          "max": -1.6547193745012287,
+          "p99_abs": 4.298385834968317
+        }
+      },
+      "prefix_stats": {
+        "U": {
+          "mean": 0.000511870625426503,
+          "scale": 2.0428275900640694e-05
+        },
+        "MFE": {
+          "mean": 0.0009306738644118236,
+          "scale": 3.71423198193466e-05
+        },
+        "MAE": {
+          "mean": 0.9906932613558818,
+          "scale": 0.00037142319819346415
+        },
+        "giveback": {
+          "mean": 0.0,
+          "scale": 1e-12
+        },
+        "chop": {
+          "mean": 0.0,
+          "scale": 1e-12
+        },
+        "recovery": {
+          "mean": 0.0009394309592638106,
+          "scale": 3.784481094977518e-05
+        }
+      }
+    }
+  ],
+  "cross_dataset": {
+    "corr_zU_zMFE_range": [
+      0.9124270026756771,
+      1.0
+    ],
+    "r2_MFE_from_U_range": [
+      0.83252303521172,
+      1.0
+    ],
+    "U_only_insufficient_for_AB_tier": true,
+    "MFE_adds_AB_separation": true,
+    "risk_giveback_BAC_all_datasets": true,
+    "recommended_structure": {
+      "Direction": "directional EV: LONG/SHORT each (Return score, Risk facets), NEUTRAL implicit",
+      "Expected_Return": [
+        "z(U)",
+        "z(MFE)"
+      ],
+      "Acceptable_Risk": [
+        "z(MAE)",
+        "z(giveback)",
+        "z(chop)"
+      ],
+      "Recovery": "diagnostic / optional 4th risk facet — not canonical yet",
+      "normalization": "Standard Z-score prefix-fit per dataset"
+    }
+  },
+  "final_questions": {
+    "Q1_U_only_sufficient_for_Return": "CONFIRMED insufficient on ABC: U z ranks B above A; MFE facet required for high-potential tier",
+    "Q2_MFE_independent_info": "HYPOTHESIS: yes on ABC; eval R2(U->MFE)=0.92 — partial overlap, not duplicate",
+    "Q3_MAE_giveback_chop_minimal_sufficient": "HYPOTHESIS: minimal sufficient Risk facet set pending recovery/chart qual; giveback+chop add non-MAE facets CONFIRMED on archetypes",
+    "Q4_recovery_in_Risk_or_P2": "HYPOTHESIS: P1 risk diagnostic for outcome; P2 for wait timing — do not auto-add to canonical",
+    "Q5_zscore_semantic_damage": "HYPOTHESIS: prefix z-score preserves ordering on ABC; tail/out-of-prefix archetypes can exceed |z|>4 — use separate heads not sum; monitor tail",
+    "Q6_direction_categorical_vs_EV": "HYPOTHESIS: directional EV per action aligns with Return/Risk head separation better than 3-class alone",
+    "Q7_final_P1_structure": "See recommended_structure — multi-head z(U), z(MFE), z(MAE), z(giveback), z(chop); direction via long/short conditional scores"
+  },
+  "CONFIRMED": [
+    "MFE z ranks A above B (max opportunity) on ABC across datasets.",
+    "U z alone ranks B above A on spike-vs-grind — U-only Return insufficient for tier semantics.",
+    "z(giveback) preserves B<A<C risk ordering on ABC all datasets.",
+    "Standard Z-score prefix-fit: causal; archetype tail |z| can exceed 4 — facet heads not naive sum."
+  ],
+  "HYPOTHESIS": [
+    "Eval z(U) and z(MFE) correlated (avg~0.96) — dual head still needed for archetype divergence.",
+    "Recovery z improves same-MAE separation — P1 diagnostic, P2 timing boundary.",
+    "Direction: directional EV (long/short Return/Risk scores) preferred over categorical-only."
+  ],
+  "UNRESOLVED": [
+    "Multi-asset external CSV not in repo — BTC + SYNTH_LONG only.",
+    "Training loss weighting for correlated z(U), z(MFE).",
+    "NEUTRAL threshold margin calibration."
+  ],
+  "recommended_p1_structure": {
+    "Direction": "directional EV: LONG/SHORT each (Return score, Risk facets), NEUTRAL implicit",
+    "Expected_Return": [
+      "z(U)",
+      "z(MFE)"
+    ],
+    "Acceptable_Risk": [
+      "z(MAE)",
+      "z(giveback)",
+      "z(chop)"
+    ],
+    "Recovery": "diagnostic / optional 4th risk facet — not canonical yet",
+    "normalization": "Standard Z-score prefix-fit per dataset"
+  }
+}

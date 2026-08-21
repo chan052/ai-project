@@ -1,0 +1,1855 @@
+{
+  "audit": "P1 Target Normalization — Semantic Preservation & Scale Matching",
+  "fixed_structure": {
+    "Expected_Return": "U + MFE",
+    "Acceptable_Risk": "MAE + Giveback + Chop",
+    "Recovery": "diagnostic_only"
+  },
+  "primary_evidence": "BTCUSDT real eval",
+  "1_executive_summary": {
+    "eval_n": 2485,
+    "normalizations_compared": [
+      "raw",
+      "zscore",
+      "stdscale",
+      "rmsscale"
+    ],
+    "headline": "For P1 goal 'preserve facet meaning/sign/zero/magnitude while enabling U+MFE and MAE+Giveback+Chop summation', scale-only Std (X/sigma_prefix) is most semantically aligned among tested options. It preserves sign and zero, maintains 2x magnitude ratios, and improves facet balance vs Raw. Standard Z-score improves scale balance but re-centers labels so raw favorable U>0 can become z(U)<0 (~63.2% flip on eval). Raw preserves semantics but fails scale balance. RMS-scale is near-Std-scale; choose between them after regime sensitivity check. No canonical adoption in this step.",
+    "best_semantic_preservation": [
+      "raw",
+      "stdscale",
+      "rmsscale",
+      "zscore"
+    ],
+    "best_scale_balance": [
+      "zscore",
+      "rmsscale",
+      "stdscale",
+      "raw"
+    ],
+    "no_canonical_adoption": true
+  },
+  "2_normalization_definitions": {
+    "methods": {
+      "raw": {
+        "formula": "X_norm = X",
+        "zero_at_zero": true,
+        "sign_preserved": true
+      },
+      "zscore": {
+        "formula": "X_norm = (X - mu_prefix) / sigma_prefix",
+        "zero_at_zero": false,
+        "sign_preserved": "conditional"
+      },
+      "stdscale": {
+        "formula": "X_norm = X / sigma_prefix",
+        "zero_at_zero": true,
+        "sign_preserved": true
+      },
+      "rmsscale": {
+        "formula": "X_norm = X / RMS_prefix, RMS=sqrt(mean(X^2))",
+        "zero_at_zero": true,
+        "sign_preserved": true
+      }
+    },
+    "prefix_fit_protocol": "first 50% t-indices; eval apply only",
+    "prefix_params": {
+      "U": {
+        "mu": 0.0003355604939900082,
+        "sigma": 0.0005002670507551085,
+        "rms": 0.0006023852315570433
+      },
+      "MFE": {
+        "mu": 0.0009500504502444431,
+        "sigma": 0.001099069859671395,
+        "rms": 0.0014527733527456268
+      },
+      "MAE": {
+        "mu": 0.0009468511358367406,
+        "sigma": 0.0011749236807362402,
+        "rms": 0.0015089641244874314
+      },
+      "giveback": {
+        "mu": 0.6263564732563106,
+        "sigma": 0.40079506264610587,
+        "rms": 0.7436122066181937
+      },
+      "chop": {
+        "mu": 0.45410239213056114,
+        "sigma": 0.16794316959382719,
+        "rms": 0.4841630828056998
+      }
+    }
+  },
+  "3_return_results": {
+    "composites": {
+      "raw": {
+        "mean": 0.0012305895715812923,
+        "std": 0.0014964153681602688
+      },
+      "zscore": {
+        "mean": -0.05999707097005589,
+        "std": 1.8957855359523268
+      },
+      "stdscale": {
+        "mean": 1.4751788214259898,
+        "std": 1.8957855359523268
+      },
+      "rmsscale": {
+        "mean": 1.164271249157965,
+        "std": 1.5074148687033593
+      }
+    },
+    "sign_preservation": {
+      "U": {
+        "positive_raw_count": 1972,
+        "flip_counts": {
+          "raw": 0,
+          "zscore": 1246,
+          "stdscale": 0,
+          "rmsscale": 0
+        },
+        "flip_rates": {
+          "raw": 0.0,
+          "zscore": 0.6318458417849898,
+          "stdscale": 0.0,
+          "rmsscale": 0.0
+        }
+      },
+      "MFE": {
+        "positive_raw_count": 2317,
+        "flip_counts": {
+          "raw": 0,
+          "zscore": 1464,
+          "stdscale": 0,
+          "rmsscale": 0
+        },
+        "flip_rates": {
+          "raw": 0.0,
+          "zscore": 0.631851532153647,
+          "stdscale": 0.0,
+          "rmsscale": 0.0
+        }
+      }
+    },
+    "zero_preservation_at_X_eq_0": {
+      "U": {
+        "raw": 0.0,
+        "zscore": -0.6707627325915418,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "MFE": {
+        "raw": 0.0,
+        "zscore": -0.8644131598045037,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "MAE": {
+        "raw": 0.0,
+        "zscore": -0.8058830980778403,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "giveback": {
+        "raw": 0.0,
+        "zscore": -1.562784903389319,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "chop": {
+        "raw": 0.0,
+        "zscore": -2.703905096163267,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      }
+    },
+    "magnitude_ratio_2x_tests": {
+      "U": {
+        "raw": {
+          "pairs_tested": 32460,
+          "ratio_preserved_count": 13814,
+          "ratio_preserved_rate": 0.425569932224276,
+          "median_ratio_error": 0.19677719753598794
+        },
+        "zscore": {
+          "pairs_tested": 32460,
+          "ratio_preserved_count": 1830,
+          "ratio_preserved_rate": 0.056377079482439925,
+          "median_ratio_error": 0.9929453520658421
+        },
+        "stdscale": {
+          "pairs_tested": 32460,
+          "ratio_preserved_count": 13814,
+          "ratio_preserved_rate": 0.425569932224276,
+          "median_ratio_error": 0.196777197535988
+        },
+        "rmsscale": {
+          "pairs_tested": 32460,
+          "ratio_preserved_count": 13814,
+          "ratio_preserved_rate": 0.425569932224276,
+          "median_ratio_error": 0.196777197535988
+        }
+      },
+      "MFE": {
+        "raw": {
+          "pairs_tested": 47422,
+          "ratio_preserved_count": 20880,
+          "ratio_preserved_rate": 0.4403019695499979,
+          "median_ratio_error": 0.18660383097336558
+        },
+        "zscore": {
+          "pairs_tested": 47422,
+          "ratio_preserved_count": 2414,
+          "ratio_preserved_rate": 0.05090464341444899,
+          "median_ratio_error": 0.980895354744138
+        },
+        "stdscale": {
+          "pairs_tested": 47422,
+          "ratio_preserved_count": 20880,
+          "ratio_preserved_rate": 0.4403019695499979,
+          "median_ratio_error": 0.18660383097336564
+        },
+        "rmsscale": {
+          "pairs_tested": 47422,
+          "ratio_preserved_count": 20880,
+          "ratio_preserved_rate": 0.4403019695499979,
+          "median_ratio_error": 0.18660383097336553
+        }
+      }
+    },
+    "contribution_balance": {
+      "raw": {
+        "U": {
+          "mean_share": 0.27379434357549975,
+          "median_share": 0.22501614152600896,
+          "p90_share": 0.507384573654929,
+          "p95_share": 1.0,
+          "p99_share": 1.0
+        },
+        "MFE": {
+          "mean_share": 0.7262056564245003,
+          "median_share": 0.774983858473991,
+          "p90_share": 0.9705809090415718,
+          "p95_share": 0.9916371885049017,
+          "p99_share": 0.9984414959726788
+        }
+      },
+      "zscore": {
+        "U": {
+          "mean_share": 0.5123852928714333,
+          "median_share": 0.48259778516917906,
+          "p90_share": 0.7321571163151622,
+          "p95_share": 0.833926156818323,
+          "p99_share": 0.9644833470111808
+        },
+        "MFE": {
+          "mean_share": 0.48761470712856675,
+          "median_share": 0.5174022148308208,
+          "p90_share": 0.6489503281900323,
+          "p95_share": 0.7687634417967696,
+          "p99_share": 0.9267287536262371
+        }
+      },
+      "stdscale": {
+        "U": {
+          "mean_share": 0.39674033618181964,
+          "median_share": 0.38945763341552625,
+          "p90_share": 0.6935179437984305,
+          "p95_share": 1.0,
+          "p99_share": 1.0
+        },
+        "MFE": {
+          "mean_share": 0.6032596638181803,
+          "median_share": 0.6105423665844737,
+          "p90_share": 0.9375657853722875,
+          "p95_share": 0.9818092740688923,
+          "p99_share": 0.9965823946117807
+        }
+      },
+      "rmsscale": {
+        "U": {
+          "mean_share": 0.4130737020326437,
+          "median_share": 0.4118464285495859,
+          "p90_share": 0.7129741633024606,
+          "p95_share": 1.0,
+          "p99_share": 1.0
+        },
+        "MFE": {
+          "mean_share": 0.5869262979673563,
+          "median_share": 0.588153571450414,
+          "p90_share": 0.9318790637241697,
+          "p95_share": 0.9800667233095444,
+          "p99_share": 0.9962496049385331
+        }
+      }
+    },
+    "archetype_ordering": {
+      "raw": {
+        "return_AB": {
+          "A": 0.043957199999999925,
+          "B": 0.04203999999999994,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": true,
+        "risk_G_gt_B": true
+      },
+      "zscore": {
+        "return_AB": {
+          "A": 51.198392496064514,
+          "B": 58.49679181713039,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      },
+      "stdscale": {
+        "return_AB": {
+          "A": 52.733568388460554,
+          "B": 60.031967709526434,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      },
+      "rmsscale": {
+        "return_AB": {
+          "A": 41.623553820956666,
+          "B": 48.372328284882215,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      }
+    },
+    "semantic_note": "Z-score may flip sign when raw>0 but below prefix mean; stdscale/rmsscale preserve sign and zero."
+  },
+  "4_risk_results": {
+    "sign_preservation": {
+      "MAE": {
+        "positive_raw_count": 2344,
+        "flip_counts": {
+          "raw": 0,
+          "zscore": 1480,
+          "stdscale": 0,
+          "rmsscale": 0
+        },
+        "flip_rates": {
+          "raw": 0.0,
+          "zscore": 0.6313993174061433,
+          "stdscale": 0.0,
+          "rmsscale": 0.0
+        }
+      },
+      "giveback": {
+        "positive_raw_count": 2188,
+        "flip_counts": {
+          "raw": 0,
+          "zscore": 827,
+          "stdscale": 0,
+          "rmsscale": 0
+        },
+        "flip_rates": {
+          "raw": 0.0,
+          "zscore": 0.3779707495429616,
+          "stdscale": 0.0,
+          "rmsscale": 0.0
+        }
+      },
+      "chop": {
+        "positive_raw_count": 2480,
+        "flip_counts": {
+          "raw": 0,
+          "zscore": 1303,
+          "stdscale": 0,
+          "rmsscale": 0
+        },
+        "flip_rates": {
+          "raw": 0.0,
+          "zscore": 0.5254032258064516,
+          "stdscale": 0.0,
+          "rmsscale": 0.0
+        }
+      }
+    },
+    "zero_preservation_at_X_eq_0": {
+      "U": {
+        "raw": 0.0,
+        "zscore": -0.6707627325915418,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "MFE": {
+        "raw": 0.0,
+        "zscore": -0.8644131598045037,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "MAE": {
+        "raw": 0.0,
+        "zscore": -0.8058830980778403,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "giveback": {
+        "raw": 0.0,
+        "zscore": -1.562784903389319,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "chop": {
+        "raw": 0.0,
+        "zscore": -2.703905096163267,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      }
+    },
+    "magnitude_ratio_2x_tests": {
+      "MAE": {
+        "raw": {
+          "pairs_tested": 47756,
+          "ratio_preserved_count": 21329,
+          "ratio_preserved_rate": 0.4466245079152358,
+          "median_ratio_error": 0.18346503950609716
+        },
+        "zscore": {
+          "pairs_tested": 47756,
+          "ratio_preserved_count": 2936,
+          "ratio_preserved_rate": 0.061479185861462435,
+          "median_ratio_error": 0.9392634469093841
+        },
+        "stdscale": {
+          "pairs_tested": 47756,
+          "ratio_preserved_count": 21329,
+          "ratio_preserved_rate": 0.4466245079152358,
+          "median_ratio_error": 0.1834650395060971
+        },
+        "rmsscale": {
+          "pairs_tested": 47756,
+          "ratio_preserved_count": 21329,
+          "ratio_preserved_rate": 0.4466245079152358,
+          "median_ratio_error": 0.18346503950609727
+        }
+      },
+      "giveback": {
+        "raw": {
+          "pairs_tested": 31104,
+          "ratio_preserved_count": 13872,
+          "ratio_preserved_rate": 0.44598765432098764,
+          "median_ratio_error": 0.18014678207427726
+        },
+        "zscore": {
+          "pairs_tested": 31104,
+          "ratio_preserved_count": 3287,
+          "ratio_preserved_rate": 0.10567772633744855,
+          "median_ratio_error": 0.7160669865508065
+        },
+        "stdscale": {
+          "pairs_tested": 31104,
+          "ratio_preserved_count": 13872,
+          "ratio_preserved_rate": 0.44598765432098764,
+          "median_ratio_error": 0.1801467820742772
+        },
+        "rmsscale": {
+          "pairs_tested": 31104,
+          "ratio_preserved_count": 13872,
+          "ratio_preserved_rate": 0.44598765432098764,
+          "median_ratio_error": 0.1801467820742772
+        }
+      },
+      "chop": {
+        "raw": {
+          "pairs_tested": 67996,
+          "ratio_preserved_count": 28568,
+          "ratio_preserved_rate": 0.42014236131537147,
+          "median_ratio_error": 0.19999999999999996
+        },
+        "zscore": {
+          "pairs_tested": 67996,
+          "ratio_preserved_count": 10094,
+          "ratio_preserved_rate": 0.14844990881816578,
+          "median_ratio_error": 1.1817416912074048
+        },
+        "stdscale": {
+          "pairs_tested": 67996,
+          "ratio_preserved_count": 28568,
+          "ratio_preserved_rate": 0.42014236131537147,
+          "median_ratio_error": 0.19999999999999973
+        },
+        "rmsscale": {
+          "pairs_tested": 67996,
+          "ratio_preserved_count": 28568,
+          "ratio_preserved_rate": 0.42014236131537147,
+          "median_ratio_error": 0.19999999999999996
+        }
+      }
+    },
+    "contribution_balance": {
+      "raw": {
+        "MAE": {
+          "mean_share": 0.0017866895289812424,
+          "median_share": 0.00055487406909789,
+          "p90_share": 0.0021419562691681517,
+          "p95_share": 0.002998167491408115,
+          "p99_share": 0.007900677377653424
+        },
+        "giveback": {
+          "mean_share": 0.4672048943965184,
+          "median_share": 0.5727592100468334,
+          "p90_share": 0.7496650132819296,
+          "p95_share": 0.8170747549799334,
+          "p99_share": 0.8985106416171558
+        },
+        "chop": {
+          "mean_share": 0.5306060015875788,
+          "median_share": 0.4266252629470093,
+          "p90_share": 0.9976218061787838,
+          "p95_share": 0.9992596236345761,
+          "p99_share": 0.9999996432673994
+        }
+      },
+      "zscore": {
+        "MAE": {
+          "mean_share": 0.2598703143485356,
+          "median_share": 0.232893023628299,
+          "p90_share": 0.4861267894723886,
+          "p95_share": 0.5755144971518619,
+          "p99_share": 0.7719798013228995
+        },
+        "giveback": {
+          "mean_share": 0.41538699639969795,
+          "median_share": 0.4025859022279356,
+          "p90_share": 0.644135212699046,
+          "p95_share": 0.7152888742031454,
+          "p99_share": 0.8788594951391607
+        },
+        "chop": {
+          "mean_share": 0.32474268925176647,
+          "median_share": 0.3333062503750767,
+          "p90_share": 0.5758641271060988,
+          "p95_share": 0.6484141541086541,
+          "p99_share": 0.7527476525899695
+        }
+      },
+      "stdscale": {
+        "MAE": {
+          "mean_share": 0.13666208160386759,
+          "median_share": 0.1010585789908912,
+          "p90_share": 0.3085794365758479,
+          "p95_share": 0.3815770220331859,
+          "p99_share": 0.5832592631892127
+        },
+        "giveback": {
+          "mean_share": 0.2683627326945799,
+          "median_share": 0.30336015737317096,
+          "p90_share": 0.47748708106056975,
+          "p95_share": 0.5340695427914819,
+          "p99_share": 0.6451068035487907
+        },
+        "chop": {
+          "mean_share": 0.594572771214631,
+          "median_share": 0.5639708262925367,
+          "p90_share": 0.9065842869198338,
+          "p95_share": 0.966914959324179,
+          "p99_share": 0.9999490113517844
+        }
+      },
+      "rmsscale": {
+        "MAE": {
+          "mean_share": 0.21316749352473155,
+          "median_share": 0.17814147607742079,
+          "p90_share": 0.45418075328375934,
+          "p95_share": 0.5419455456792887,
+          "p99_share": 0.7450124170222819
+        },
+        "giveback": {
+          "mean_share": 0.3063541757202339,
+          "median_share": 0.34157107667179143,
+          "p90_share": 0.5386198137539703,
+          "p95_share": 0.6048327666820824,
+          "p99_share": 0.7118278086960432
+        },
+        "chop": {
+          "mean_share": 0.4800759162681131,
+          "median_share": 0.4257763315956623,
+          "p90_share": 0.8390119142534379,
+          "p95_share": 0.9317753067960334,
+          "p99_share": 0.9998855985372371
+        }
+      }
+    },
+    "higher_MAE_implies_higher_composite_rate": {
+      "raw": 1.0,
+      "zscore": 1.0,
+      "stdscale": 1.0,
+      "rmsscale": 1.0
+    },
+    "archetype_ordering": {
+      "raw": {
+        "return_AB": {
+          "A": 0.043957199999999925,
+          "B": 0.04203999999999994,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": true,
+        "risk_G_gt_B": true
+      },
+      "zscore": {
+        "return_AB": {
+          "A": 51.198392496064514,
+          "B": 58.49679181713039,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      },
+      "stdscale": {
+        "return_AB": {
+          "A": 52.733568388460554,
+          "B": 60.031967709526434,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      },
+      "rmsscale": {
+        "return_AB": {
+          "A": 41.623553820956666,
+          "B": 48.372328284882215,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      }
+    },
+    "facet_semantics": {
+      "MAE": "adverse magnitude",
+      "giveback": "capture erosion after peak",
+      "chop": "intra-path whip"
+    }
+  },
+  "5_zscore_semantic_audit": {
+    "sign_flip_rates_by_facet": {
+      "U": 0.6318458417849898,
+      "MFE": 0.631851532153647,
+      "MAE": 0.6313993174061433,
+      "giveback": 0.3779707495429616,
+      "chop": 0.5254032258064516
+    },
+    "aggregate_zscore_flip_rate": 0.5596941333388387,
+    "U_positive_z_negative_examples": [
+      {
+        "t_index": 2506,
+        "U_raw": 0.0001702669353072292,
+        "z_U": -0.33041064454131663,
+        "prefix_mu_U": 0.0003355604939900082,
+        "note": "favorable raw U mapped to negative z — below-prefix-average utility"
+      },
+      {
+        "t_index": 2507,
+        "U_raw": 0.00016624651553715978,
+        "z_U": -0.3384471917494547,
+        "prefix_mu_U": 0.0003355604939900082,
+        "note": "favorable raw U mapped to negative z — below-prefix-average utility"
+      },
+      {
+        "t_index": 2509,
+        "U_raw": 2.763450383618125e-05,
+        "z_U": -0.6155232284217801,
+        "prefix_mu_U": 0.0003355604939900082,
+        "note": "favorable raw U mapped to negative z — below-prefix-average utility"
+      },
+      {
+        "t_index": 2511,
+        "U_raw": 0.00012009239227216728,
+        "z_U": -0.43070616262376465,
+        "prefix_mu_U": 0.0003355604939900082,
+        "note": "favorable raw U mapped to negative z — below-prefix-average utility"
+      },
+      {
+        "t_index": 2512,
+        "U_raw": 9.449934362468749e-07,
+        "z_U": -0.6688737546250328,
+        "prefix_mu_U": 0.0003355604939900082,
+        "note": "favorable raw U mapped to negative z — below-prefix-average utility"
+      }
+    ],
+    "semantic_damage_assessment": "PARTIAL: z-score re-centers on prefix mean; raw>0 no longer means norm>0. This changes P1 'favorable at t' semantics from absolute to relative-to-prefix.",
+    "zero_at_zero": {
+      "U": {
+        "raw": 0.0,
+        "zscore": -0.6707627325915418,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "MFE": {
+        "raw": 0.0,
+        "zscore": -0.8644131598045037,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "MAE": {
+        "raw": 0.0,
+        "zscore": -0.8058830980778403,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "giveback": {
+        "raw": 0.0,
+        "zscore": -1.562784903389319,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      },
+      "chop": {
+        "raw": 0.0,
+        "zscore": -2.703905096163267,
+        "stdscale": 0.0,
+        "rmsscale": 0.0
+      }
+    }
+  },
+  "6_stdscale_audit": {
+    "method": "stdscale",
+    "formula": "X/sigma",
+    "zero_preservation": {
+      "U": 0.0,
+      "MFE": 0.0,
+      "MAE": 0.0,
+      "giveback": 0.0,
+      "chop": 0.0
+    },
+    "all_facets_zero_at_zero": true,
+    "sign_preserved": true,
+    "prefix_scales": {
+      "U": 0.0005002670507551085,
+      "MFE": 0.001099069859671395,
+      "MAE": 0.0011749236807362402,
+      "giveback": 0.40079506264610587,
+      "chop": 0.16794316959382719
+    }
+  },
+  "7_rmsscale_audit": {
+    "method": "rmsscale",
+    "formula": "X/RMS",
+    "zero_preservation": {
+      "U": 0.0,
+      "MFE": 0.0,
+      "MAE": 0.0,
+      "giveback": 0.0,
+      "chop": 0.0
+    },
+    "all_facets_zero_at_zero": true,
+    "sign_preserved": true,
+    "prefix_scales": {
+      "U": 0.0006023852315570433,
+      "MFE": 0.0014527733527456268,
+      "MAE": 0.0015089641244874314,
+      "giveback": 0.7436122066181937,
+      "chop": 0.4841630828056998
+    }
+  },
+  "8_archetype_results": {
+    "paths": [
+      {
+        "id": "A",
+        "description": "0->1->3->1 spike giveback",
+        "raw": {
+          "U": 0.011696799999999953,
+          "MFE": 0.032260399999999974,
+          "MAE": -0.007576807999999886,
+          "giveback": 0.7025455357032165,
+          "chop": 0.1111111111111111,
+          "recovery": 0.0,
+          "terminal": 0.009595999999999947,
+          "P_long": 0.013796812517495696,
+          "P_short": -0.013796812517495696
+        },
+        "Return_raw": 0.043957199999999925,
+        "Risk_raw": 0.8212334548143275,
+        "facets_return_raw": {
+          "U": 0.011696799999999953,
+          "MFE": 0.032260399999999974
+        },
+        "facets_risk_raw": {
+          "MAE": 0.007576807999999886,
+          "giveback": 0.7025455357032165,
+          "chop": 0.1111111111111111
+        },
+        "Return_zscore": 51.198392496064514,
+        "Risk_zscore": 3.7906721813512565,
+        "facets_return_zscore": {
+          "U": 22.71034938011841,
+          "MFE": 28.488043115946102
+        },
+        "facets_risk_zscore": {
+          "MAE": 5.64288299986313,
+          "giveback": 0.19009481290486696,
+          "chop": -2.042305631416741
+        },
+        "Return_stdscale": 52.733568388460554,
+        "Risk_stdscale": 8.863245278981683,
+        "facets_return_stdscale": {
+          "U": 23.381112112709953,
+          "MFE": 29.3524562757506
+        },
+        "facets_risk_stdscale": {
+          "MAE": 6.448766097940971,
+          "giveback": 1.752879716294186,
+          "chop": 0.661599464746526
+        },
+        "Return_rmsscale": 41.623553820956666,
+        "Risk_rmsscale": 6.195463397189083,
+        "facets_return_rmsscale": {
+          "U": 19.41747471093557,
+          "MFE": 22.206079110021097
+        },
+        "facets_risk_rmsscale": {
+          "MAE": 5.021198235957793,
+          "giveback": 0.9447740763942801,
+          "chop": 0.2294910848370099
+        }
+      },
+      {
+        "id": "B",
+        "description": "0->2->2->2 grind hold",
+        "raw": {
+          "U": 0.02,
+          "MFE": 0.022039999999999935,
+          "MAE": -0.017960000000000066,
+          "giveback": 0.092558983666059,
+          "chop": 0.0,
+          "recovery": 0.0,
+          "terminal": 0.02,
+          "P_long": 0.02,
+          "P_short": -0.02
+        },
+        "Return_raw": 0.04203999999999994,
+        "Risk_raw": 0.11051898366605906,
+        "facets_return_raw": {
+          "U": 0.02,
+          "MFE": 0.022039999999999935
+        },
+        "facets_risk_raw": {
+          "MAE": 0.017960000000000066,
+          "giveback": 0.092558983666059,
+          "chop": 0.0
+        },
+        "Return_zscore": 58.49679181713039,
+        "Risk_zscore": 10.444464589563621,
+        "facets_return_zscore": {
+          "U": 39.307884611485555,
+          "MFE": 19.188907205644835
+        },
+        "facets_risk_zscore": {
+          "MAE": 14.480216156254855,
+          "giveback": -1.3318464705279673,
+          "chop": -2.703905096163267
+        },
+        "Return_stdscale": 60.031967709526434,
+        "Risk_stdscale": 15.517037687194048,
+        "facets_return_stdscale": {
+          "U": 39.978647344077096,
+          "MFE": 20.053320365449338
+        },
+        "facets_risk_stdscale": {
+          "MAE": 15.286099254332695,
+          "giveback": 0.23093843286135177,
+          "chop": 0.0
+        },
+        "Return_rmsscale": 48.372328284882215,
+        "Risk_rmsscale": 12.026676884265205,
+        "facets_return_rmsscale": {
+          "U": 33.20134517292874,
+          "MFE": 15.170983111953475
+        },
+        "facets_risk_rmsscale": {
+          "MAE": 11.902204769845515,
+          "giveback": 0.12447211441969139,
+          "chop": 0.0
+        }
+      },
+      {
+        "id": "C",
+        "description": "0->3->-1->-3 rise crash",
+        "raw": {
+          "U": 0.0018297689087999995,
+          "MFE": 0.03206000000000003,
+          "MAE": 0.06004671999999999,
+          "giveback": 1.0,
+          "chop": 0.1111111111111111,
+          "recovery": -0.515864979802394,
+          "terminal": -0.030976,
+          "P_long": -0.010893059006980111,
+          "P_short": 0.010893059006980111
+        },
+        "Return_raw": 0.033889768908800036,
+        "Risk_raw": 1.171157831111111,
+        "facets_return_raw": {
+          "U": 0.0018297689087999995,
+          "MFE": 0.03206000000000003
+        },
+        "facets_risk_raw": {
+          "MAE": 0.06004671999999999,
+          "giveback": 1.0,
+          "chop": 0.1111111111111111
+        },
+        "Return_zscore": 31.292528681417007,
+        "Risk_zscore": 49.19097809724824,
+        "facets_return_zscore": {
+          "U": 2.986821563712055,
+          "MFE": 28.30570711770495
+        },
+        "facets_risk_zscore": {
+          "MAE": 50.301027916238446,
+          "giveback": 0.9322558124265349,
+          "chop": -2.042305631416741
+        },
+        "Return_stdscale": 32.82770457381305,
+        "Risk_stdscale": 54.263551194878666,
+        "facets_return_stdscale": {
+          "U": 3.657584296303597,
+          "MFE": 29.170120277509454
+        },
+        "facets_risk_stdscale": {
+          "MAE": 51.10691101431629,
+          "giveback": 2.495040715815854,
+          "chop": 0.661599464746526
+        },
+        "Return_rmsscale": 25.105675507623594,
+        "Risk_rmsscale": 41.36761642053842,
+        "facets_return_rmsscale": {
+          "U": 3.0375394563880977,
+          "MFE": 22.0681360512355
+        },
+        "facets_risk_rmsscale": {
+          "MAE": 39.7933383740298,
+          "giveback": 1.344786961671607,
+          "chop": 0.2294910848370099
+        }
+      },
+      {
+        "id": "REC",
+        "description": "0->-2->-1->1 adverse recovery",
+        "raw": {
+          "U": 0.007601194000000071,
+          "MFE": 0.011615192000000149,
+          "MAE": 0.04939999999999998,
+          "giveback": 0.17384060461506226,
+          "chop": 0.1111111111111111,
+          "recovery": 0.19425101214575086,
+          "terminal": 0.009596000000000089,
+          "P_long": -0.0021777725115130217,
+          "P_short": 0.0021777725115130217
+        },
+        "Return_raw": 0.01921638600000022,
+        "Risk_raw": 0.33435171572617334,
+        "facets_return_raw": {
+          "U": 0.007601194000000071,
+          "MFE": 0.011615192000000149
+        },
+        "facets_risk_raw": {
+          "MAE": 0.04939999999999998,
+          "giveback": 0.17384060461506226,
+          "chop": 0.1111111111111111
+        },
+        "Return_zscore": 24.227298560542117,
+        "Risk_zscore": 38.06804989422903,
+        "facets_return_zscore": {
+          "U": 14.523509983404336,
+          "MFE": 9.703788577137779
+        },
+        "facets_risk_zscore": {
+          "MAE": 41.23940104245846,
+          "giveback": -1.1290455168126932,
+          "chop": -2.042305631416741
+        },
+        "Return_stdscale": 25.76247445293816,
+        "Risk_stdscale": 43.14062299185945,
+        "facets_return_stdscale": {
+          "U": 15.194272715995877,
+          "MFE": 10.568201736942283
+        },
+        "facets_risk_stdscale": {
+          "MAE": 42.0452841405363,
+          "giveback": 0.43373938657662575,
+          "chop": 0.661599464746526
+        },
+        "Return_rmsscale": 20.61367847994454,
+        "Risk_rmsscale": 33.20095984319693,
+        "facets_return_rmsscale": {
+          "U": 12.618493286019863,
+          "MFE": 7.995185193924678
+        },
+        "facets_risk_rmsscale": {
+          "MAE": 32.73769017986447,
+          "giveback": 0.23377857849544473,
+          "chop": 0.2294910848370099
+        }
+      },
+      {
+        "id": "G",
+        "description": "0->2->0->2 round-trip",
+        "raw": {
+          "U": 0.017673575999999965,
+          "MFE": 0.022039999999999935,
+          "MAE": 0.030388000000000092,
+          "giveback": 0.11107078039927337,
+          "chop": 0.2222222222222222,
+          "recovery": 0.6447281821771719,
+          "terminal": 0.019591999999999957,
+          "P_long": 0.01572789888502281,
+          "P_short": -0.01572789888502281
+        },
+        "Return_raw": 0.0397135759999999,
+        "Risk_raw": 0.36368100262149566,
+        "facets_return_raw": {
+          "U": 0.017673575999999965,
+          "MFE": 0.022039999999999935
+        },
+        "facets_risk_raw": {
+          "MAE": 0.030388000000000092,
+          "giveback": 0.11107078039927337,
+          "chop": 0.2222222222222222
+        },
+        "Return_zscore": 53.846427583690456,
+        "Risk_zscore": 22.391559531511266,
+        "facets_return_zscore": {
+          "U": 34.657520378045625,
+          "MFE": 19.188907205644835
+        },
+        "facets_risk_zscore": {
+          "MAE": 25.05792448213717,
+          "giveback": -1.2856587839556906,
+          "chop": -1.380706166670215
+        },
+        "Return_stdscale": 55.3816034760865,
+        "Risk_stdscale": 27.464132629141695,
+        "facets_return_stdscale": {
+          "U": 35.32828311063716,
+          "MFE": 20.053320365449338
+        },
+        "facets_risk_stdscale": {
+          "MAE": 25.863807580215013,
+          "giveback": 0.2771261194336285,
+          "chop": 1.323198929493052
+        },
+        "Return_rmsscale": 44.510307972752884,
+        "Risk_rmsscale": 20.746667111546987,
+        "facets_return_rmsscale": {
+          "U": 29.339324860799405,
+          "MFE": 15.170983111953475
+        },
+        "facets_risk_rmsscale": {
+          "MAE": 20.138318404569333,
+          "giveback": 0.1493665373036331,
+          "chop": 0.4589821696740198
+        }
+      }
+    ],
+    "ordering_checks": {
+      "raw": {
+        "return_AB": {
+          "A": 0.043957199999999925,
+          "B": 0.04203999999999994,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": true,
+        "risk_G_gt_B": true
+      },
+      "zscore": {
+        "return_AB": {
+          "A": 51.198392496064514,
+          "B": 58.49679181713039,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      },
+      "stdscale": {
+        "return_AB": {
+          "A": 52.733568388460554,
+          "B": 60.031967709526434,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      },
+      "rmsscale": {
+        "return_AB": {
+          "A": 41.623553820956666,
+          "B": 48.372328284882215,
+          "MFE_facet_A_gt_B": true,
+          "U_facet_B_gt_A": true
+        },
+        "risk_B_lt_A_lt_C": false,
+        "risk_G_gt_B": true
+      }
+    }
+  },
+  "9_btc_realdata_summary": {
+    "market": {
+      "symbol": "BTCUSDT",
+      "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+      "timeframe": "3m",
+      "num_bars": 5000,
+      "start_time": "2026-08-07 00:06:00+00:00",
+      "end_time": "2026-08-17 10:06:00+00:00",
+      "close_min": 62586.29,
+      "close_max": 65408.05,
+      "return_std": 0.00047408251416413826
+    },
+    "prefix_n": 2485,
+    "eval_n": 2485
+  },
+  "10_matched_path_results": {
+    "U_similar_MFE_diff": [
+      {
+        "pair_type": "U_similar_MFE_diff",
+        "t_indices": [
+          2505,
+          2529
+        ],
+        "raw": {
+          "composite_diff": 0.0009028829271767497,
+          "composite_a": 0.001321167497743927,
+          "composite_b": 0.0022240504249206768,
+          "MFE_facet_diff": 0.000923387423976224,
+          "U_facet_diff": 2.0504496799474354e-05,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 0.7991664291816656,
+          "composite_a": 0.1706945151848755,
+          "composite_b": 0.969860944366541,
+          "MFE_facet_diff": 0.8401535315073626,
+          "U_facet_diff": 0.040987102325697106,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 0.7991664291816658,
+          "composite_a": 1.705870407580921,
+          "composite_b": 2.505036836762587,
+          "MFE_facet_diff": 0.8401535315073626,
+          "U_facet_diff": 0.04098710232569713,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 0.601564378301346,
+          "composite_a": 1.3589214265593594,
+          "composite_b": 1.9604858048607054,
+          "MFE_facet_diff": 0.6356032220931742,
+          "U_facet_diff": 0.03403884379182809,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "U_similar_MFE_diff",
+        "t_indices": [
+          2505,
+          2530
+        ],
+        "raw": {
+          "composite_diff": 0.0017219027624826135,
+          "composite_a": 0.001321167497743927,
+          "composite_b": 0.0030430702602265406,
+          "MFE_facet_diff": 0.001475571314996941,
+          "U_facet_diff": 0.00024633144748567235,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 1.8349636194874315,
+          "composite_a": 0.1706945151848755,
+          "composite_b": 2.005658134672307,
+          "MFE_facet_diff": 1.3425637160481445,
+          "U_facet_diff": 0.492399903439287,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 1.8349636194874317,
+          "composite_a": 1.705870407580921,
+          "composite_b": 3.5408340270683527,
+          "MFE_facet_diff": 1.3425637160481445,
+          "U_facet_diff": 0.49239990343928697,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 1.424619488545479,
+          "composite_a": 1.3589214265593594,
+          "composite_b": 2.7835409151048385,
+          "MFE_facet_diff": 1.01569271779953,
+          "U_facet_diff": 0.40892677074594885,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "U_similar_MFE_diff",
+        "t_indices": [
+          2505,
+          2574
+        ],
+        "raw": {
+          "composite_diff": 0.0021981031880472205,
+          "composite_a": 0.001321167497743927,
+          "composite_b": 0.0035192706857911475,
+          "MFE_facet_diff": 0.0019421149720026437,
+          "U_facet_diff": 0.0002559882160445766,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 2.2787563847625174,
+          "composite_a": 0.1706945151848755,
+          "composite_b": 2.4494508999473927,
+          "MFE_facet_diff": 1.7670532540882398,
+          "U_facet_diff": 0.5117031306742772,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 2.278756384762517,
+          "composite_a": 1.705870407580921,
+          "composite_b": 3.984626792343438,
+          "MFE_facet_diff": 1.7670532540882395,
+          "U_facet_diff": 0.5117031306742772,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 1.7617903893454834,
+          "composite_a": 1.3589214265593594,
+          "composite_b": 3.120711815904843,
+          "MFE_facet_diff": 1.3368327332905714,
+          "U_facet_diff": 0.4249576560549121,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "U_similar_MFE_diff",
+        "t_indices": [
+          2506,
+          2529
+        ],
+        "raw": {
+          "composite_diff": 0.0015355844911725174,
+          "composite_a": 0.0006884659337481594,
+          "composite_b": 0.0022240504249206768,
+          "MFE_facet_diff": 0.001263767090004364,
+          "U_facet_diff": 0.00027181740116815354,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 1.693196067732734,
+          "composite_a": -0.723335123366193,
+          "composite_b": 0.969860944366541,
+          "MFE_facet_diff": 1.1498514665684771,
+          "U_facet_diff": 0.543344601164257,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 1.6931960677327342,
+          "composite_a": 0.8118407690298526,
+          "composite_b": 2.505036836762587,
+          "MFE_facet_diff": 1.1498514665684771,
+          "U_facet_diff": 0.5433446011642569,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 1.3211348585676395,
+          "composite_a": 0.639350946293066,
+          "composite_b": 1.9604858048607054,
+          "MFE_facet_diff": 0.8698996905580241,
+          "U_facet_diff": 0.45123516800961544,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "U_similar_MFE_diff",
+        "t_indices": [
+          2506,
+          2547
+        ],
+        "raw": {
+          "composite_diff": 0.0012257120456168132,
+          "composite_a": 0.0006884659337481594,
+          "composite_b": 0.0019141779793649726,
+          "MFE_facet_diff": 0.0010819953030222138,
+          "U_facet_diff": 0.00014371674259459937,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 1.2717445877471463,
+          "composite_a": -0.723335123366193,
+          "composite_b": 0.5484094643809533,
+          "MFE_facet_diff": 0.9844645392656967,
+          "U_facet_diff": 0.28728004848144956,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 1.2717445877471463,
+          "composite_a": 0.8118407690298526,
+          "composite_b": 2.083585356776999,
+          "MFE_facet_diff": 0.9844645392656968,
+          "U_facet_diff": 0.28728004848144956,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 0.9833586090532003,
+          "composite_a": 0.639350946293066,
+          "composite_b": 1.6227095553462663,
+          "MFE_facet_diff": 0.744779150152588,
+          "U_facet_diff": 0.23857945890061222,
+          "facet_diff_preserved": true
+        }
+      }
+    ],
+    "MFE_similar_U_diff": [
+      {
+        "pair_type": "MFE_similar_U_diff",
+        "t_indices": [
+          2530,
+          2535
+        ],
+        "raw": {
+          "composite_diff": 0.0012171659687220944,
+          "composite_a": 0.0030430702602265406,
+          "composite_b": 0.004260236228948635,
+          "MFE_facet_diff": 0.00026068803409375584,
+          "U_facet_diff": 0.0009564779346283383,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 2.149124387304465,
+          "composite_a": 2.005658134672307,
+          "composite_b": 4.154782521976772,
+          "MFE_facet_diff": 0.23718968525958628,
+          "U_facet_diff": 1.9119347020448783,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 2.149124387304465,
+          "composite_a": 3.5408340270683527,
+          "composite_b": 5.689958414372818,
+          "MFE_facet_diff": 0.23718968525958628,
+          "U_facet_diff": 1.9119347020448783,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 1.767259343671256,
+          "composite_a": 2.7835409151048385,
+          "composite_b": 4.5508002587760945,
+          "MFE_facet_diff": 0.1794416407769841,
+          "U_facet_diff": 1.5878177028942717,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "MFE_similar_U_diff",
+        "t_indices": [
+          2535,
+          2574
+        ],
+        "raw": {
+          "composite_diff": 0.0007409655431574874,
+          "composite_a": 0.004260236228948635,
+          "composite_b": 0.0035192706857911475,
+          "MFE_facet_diff": 0.00020585562291194686,
+          "U_facet_diff": 0.0009468211660694341,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 1.7053316220293793,
+          "composite_a": 4.154782521976772,
+          "composite_b": 2.4494508999473927,
+          "MFE_facet_diff": 0.18729985278050898,
+          "U_facet_diff": 1.892631474809888,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 1.7053316220293797,
+          "composite_a": 5.689958414372818,
+          "composite_b": 3.984626792343438,
+          "MFE_facet_diff": 0.18729985278050876,
+          "U_facet_diff": 1.892631474809888,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 1.4300884428712517,
+          "composite_a": 4.5508002587760945,
+          "composite_b": 3.120711815904843,
+          "MFE_facet_diff": 0.14169837471405722,
+          "U_facet_diff": 1.5717868175853085,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "MFE_similar_U_diff",
+        "t_indices": [
+          2535,
+          2590
+        ],
+        "raw": {
+          "composite_diff": 0.0013338998950937955,
+          "composite_a": 0.004260236228948635,
+          "composite_b": 0.0029263363338548395,
+          "MFE_facet_diff": 0.00019099185971361296,
+          "U_facet_diff": 0.001142908035380182,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 2.458371769832592,
+          "composite_a": 4.154782521976772,
+          "composite_b": 1.69641075214418,
+          "MFE_facet_diff": 0.17377590517377728,
+          "U_facet_diff": 2.2845958646588143,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 2.458371769832592,
+          "composite_a": 5.689958414372818,
+          "composite_b": 3.2315866445402257,
+          "MFE_facet_diff": 0.17377590517377728,
+          "U_facet_diff": 2.2845958646588143,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 2.028771281693801,
+          "composite_a": 4.5508002587760945,
+          "composite_b": 2.5220289770822935,
+          "MFE_facet_diff": 0.1314670725152367,
+          "U_facet_diff": 1.897304209178564,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "MFE_similar_U_diff",
+        "t_indices": [
+          2536,
+          2588
+        ],
+        "raw": {
+          "composite_diff": 0.0013722976897252996,
+          "composite_a": 0.0038279877546620743,
+          "composite_b": 0.0024556900649367747,
+          "MFE_facet_diff": 0.00010865477164923769,
+          "U_facet_diff": 0.0012636429180760622,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 2.6247973894719534,
+          "composite_a": 3.598664739314785,
+          "composite_b": 0.9738673498428316,
+          "MFE_facet_diff": 0.09886065994178361,
+          "U_facet_diff": 2.52593672953017,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 2.6247973894719534,
+          "composite_a": 5.1338406317108305,
+          "composite_b": 2.509043242238877,
+          "MFE_facet_diff": 0.09886065994178406,
+          "U_facet_diff": 2.5259367295301693,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 2.1725235101328386,
+          "composite_a": 4.107979420883757,
+          "composite_b": 1.935455910750918,
+          "MFE_facet_diff": 0.07479127521432627,
+          "U_facet_diff": 2.0977322349185124,
+          "facet_diff_preserved": true
+        }
+      },
+      {
+        "pair_type": "MFE_similar_U_diff",
+        "t_indices": [
+          2536,
+          2590
+        ],
+        "raw": {
+          "composite_diff": 0.0009016514208072348,
+          "composite_a": 0.0038279877546620743,
+          "composite_b": 0.0029263363338548395,
+          "MFE_facet_diff": 9.174211560573735e-05,
+          "U_facet_diff": 0.000993393536412972,
+          "facet_diff_preserved": false
+        },
+        "zscore": {
+          "composite_diff": 1.9022539871706048,
+          "composite_a": 3.598664739314785,
+          "composite_b": 1.69641075214418,
+          "MFE_facet_diff": 0.0834725061363859,
+          "U_facet_diff": 1.985726493306991,
+          "facet_diff_preserved": true
+        },
+        "stdscale": {
+          "composite_diff": 1.9022539871706048,
+          "composite_a": 5.1338406317108305,
+          "composite_b": 3.2315866445402257,
+          "MFE_facet_diff": 0.08347250613638568,
+          "U_facet_diff": 1.9857264933069905,
+          "facet_diff_preserved": true
+        },
+        "rmsscale": {
+          "composite_diff": 1.585950443801463,
+          "composite_a": 4.107979420883757,
+          "composite_b": 2.5220289770822935,
+          "MFE_facet_diff": 0.06314964094870823,
+          "U_facet_diff": 1.6491000847501716,
+          "facet_diff_preserved": true
+        }
+      }
+    ],
+    "interpretation": "Compare composite_diff vs facet_diff across normalizations"
+  },
+  "11_contribution_dominance": {
+    "return": {
+      "raw": {
+        "dominant_facet_counts": {
+          "U": 251,
+          "MFE": 2234
+        },
+        "dominance_pct_samples": {
+          ">50%": 1.0,
+          ">65%": 0.883702213279678,
+          ">80%": 0.5392354124748491
+        },
+        "contribution": {
+          "U": {
+            "mean_share": 0.27379434357549975,
+            "median_share": 0.22501614152600896,
+            "p90_share": 0.507384573654929,
+            "p95_share": 1.0,
+            "p99_share": 1.0
+          },
+          "MFE": {
+            "mean_share": 0.7262056564245003,
+            "median_share": 0.774983858473991,
+            "p90_share": 0.9705809090415718,
+            "p95_share": 0.9916371885049017,
+            "p99_share": 0.9984414959726788
+          }
+        }
+      },
+      "zscore": {
+        "dominant_facet_counts": {
+          "U": 1111,
+          "MFE": 1374
+        },
+        "dominance_pct_samples": {
+          ">50%": 1.0,
+          ">65%": 0.2720321931589537,
+          ">80%": 0.10221327967806841
+        },
+        "contribution": {
+          "U": {
+            "mean_share": 0.5123852928714333,
+            "median_share": 0.48259778516917906,
+            "p90_share": 0.7321571163151622,
+            "p95_share": 0.833926156818323,
+            "p99_share": 0.9644833470111808
+          },
+          "MFE": {
+            "mean_share": 0.48761470712856675,
+            "median_share": 0.5174022148308208,
+            "p90_share": 0.6489503281900323,
+            "p95_share": 0.7687634417967696,
+            "p99_share": 0.9267287536262371
+          }
+        }
+      },
+      "stdscale": {
+        "dominant_facet_counts": {
+          "U": 736,
+          "MFE": 1749
+        },
+        "dominance_pct_samples": {
+          ">50%": 1.0,
+          ">65%": 0.5517102615694165,
+          ">80%": 0.3392354124748491
+        },
+        "contribution": {
+          "U": {
+            "mean_share": 0.39674033618181964,
+            "median_share": 0.38945763341552625,
+            "p90_share": 0.6935179437984305,
+            "p95_share": 1.0,
+            "p99_share": 1.0
+          },
+          "MFE": {
+            "mean_share": 0.6032596638181803,
+            "median_share": 0.6105423665844737,
+            "p90_share": 0.9375657853722875,
+            "p95_share": 0.9818092740688923,
+            "p99_share": 0.9965823946117807
+          }
+        }
+      },
+      "rmsscale": {
+        "dominant_facet_counts": {
+          "U": 862,
+          "MFE": 1623
+        },
+        "dominance_pct_samples": {
+          ">50%": 1.0,
+          ">65%": 0.5275653923541247,
+          ">80%": 0.3215291750503018
+        },
+        "contribution": {
+          "U": {
+            "mean_share": 0.4130737020326437,
+            "median_share": 0.4118464285495859,
+            "p90_share": 0.7129741633024606,
+            "p95_share": 1.0,
+            "p99_share": 1.0
+          },
+          "MFE": {
+            "mean_share": 0.5869262979673563,
+            "median_share": 0.588153571450414,
+            "p90_share": 0.9318790637241697,
+            "p95_share": 0.9800667233095444,
+            "p99_share": 0.9962496049385331
+          }
+        }
+      }
+    },
+    "risk": {
+      "raw": {
+        "dominant_facet_counts": {
+          "MAE": 3,
+          "giveback": 1463,
+          "chop": 1019
+        },
+        "dominance_pct_samples": {
+          ">50%": 0.9979879275653923,
+          ">65%": 0.5835010060362174,
+          ">80%": 0.2881287726358149
+        },
+        "contribution": {
+          "MAE": {
+            "mean_share": 0.0017866895289812424,
+            "median_share": 0.00055487406909789,
+            "p90_share": 0.0021419562691681517,
+            "p95_share": 0.002998167491408115,
+            "p99_share": 0.007900677377653424
+          },
+          "giveback": {
+            "mean_share": 0.4672048943965184,
+            "median_share": 0.5727592100468334,
+            "p90_share": 0.7496650132819296,
+            "p95_share": 0.8170747549799334,
+            "p99_share": 0.8985106416171558
+          },
+          "chop": {
+            "mean_share": 0.5306060015875788,
+            "median_share": 0.4266252629470093,
+            "p90_share": 0.9976218061787838,
+            "p95_share": 0.9992596236345761,
+            "p99_share": 0.9999996432673994
+          }
+        }
+      },
+      "zscore": {
+        "dominant_facet_counts": {
+          "MAE": 406,
+          "giveback": 1260,
+          "chop": 819
+        },
+        "dominance_pct_samples": {
+          ">50%": 0.5935613682092555,
+          ">65%": 0.16941649899396377,
+          ">80%": 0.03822937625754527
+        },
+        "contribution": {
+          "MAE": {
+            "mean_share": 0.2598703143485356,
+            "median_share": 0.232893023628299,
+            "p90_share": 0.4861267894723886,
+            "p95_share": 0.5755144971518619,
+            "p99_share": 0.7719798013228995
+          },
+          "giveback": {
+            "mean_share": 0.41538699639969795,
+            "median_share": 0.4025859022279356,
+            "p90_share": 0.644135212699046,
+            "p95_share": 0.7152888742031454,
+            "p99_share": 0.8788594951391607
+          },
+          "chop": {
+            "mean_share": 0.32474268925176647,
+            "median_share": 0.3333062503750767,
+            "p90_share": 0.5758641271060988,
+            "p95_share": 0.6484141541086541,
+            "p99_share": 0.7527476525899695
+          }
+        }
+      },
+      "stdscale": {
+        "dominant_facet_counts": {
+          "MAE": 102,
+          "giveback": 381,
+          "chop": 2002
+        },
+        "dominance_pct_samples": {
+          ">50%": 0.7283702213279678,
+          ">65%": 0.3879275653923541,
+          ">80%": 0.20241448692152916
+        },
+        "contribution": {
+          "MAE": {
+            "mean_share": 0.13666208160386759,
+            "median_share": 0.1010585789908912,
+            "p90_share": 0.3085794365758479,
+            "p95_share": 0.3815770220331859,
+            "p99_share": 0.5832592631892127
+          },
+          "giveback": {
+            "mean_share": 0.2683627326945799,
+            "median_share": 0.30336015737317096,
+            "p90_share": 0.47748708106056975,
+            "p95_share": 0.5340695427914819,
+            "p99_share": 0.6451068035487907
+          },
+          "chop": {
+            "mean_share": 0.594572771214631,
+            "median_share": 0.5639708262925367,
+            "p90_share": 0.9065842869198338,
+            "p95_share": 0.966914959324179,
+            "p99_share": 0.9999490113517844
+          }
+        }
+      },
+      "rmsscale": {
+        "dominant_facet_counts": {
+          "MAE": 375,
+          "giveback": 810,
+          "chop": 1300
+        },
+        "dominance_pct_samples": {
+          ">50%": 0.6144869215291751,
+          ">65%": 0.2865191146881288,
+          ">80%": 0.13038229376257546
+        },
+        "contribution": {
+          "MAE": {
+            "mean_share": 0.21316749352473155,
+            "median_share": 0.17814147607742079,
+            "p90_share": 0.45418075328375934,
+            "p95_share": 0.5419455456792887,
+            "p99_share": 0.7450124170222819
+          },
+          "giveback": {
+            "mean_share": 0.3063541757202339,
+            "median_share": 0.34157107667179143,
+            "p90_share": 0.5386198137539703,
+            "p95_share": 0.6048327666820824,
+            "p99_share": 0.7118278086960432
+          },
+          "chop": {
+            "mean_share": 0.4800759162681131,
+            "median_share": 0.4257763315956623,
+            "p90_share": 0.8390119142534379,
+            "p95_share": 0.9317753067960334,
+            "p99_share": 0.9998855985372371
+          }
+        }
+      }
+    }
+  },
+  "12_semantic_vs_scale_comparison_table": [
+    {
+      "normalization": "raw",
+      "semantic_preservation_score": 0.713,
+      "scale_balance_score": 0.0,
+      "U_sign_flip_rate": 0.0,
+      "Return_U_mean_share": 0.27379434357549975,
+      "Return_MFE_mean_share": 0.7262056564245003,
+      "Risk_MAE_mean_share": 0.0017866895289812424,
+      "Risk_giveback_mean_share": 0.4672048943965184,
+      "Risk_chop_mean_share": 0.5306060015875788,
+      "archetype_B_lt_A_lt_C_risk": true,
+      "archetype_MFE_A_gt_B": true,
+      "main_issue": "MAE/giveback/chop and U/MFE on different raw scales — composite dominated by larger-magnitude facet"
+    },
+    {
+      "normalization": "zscore",
+      "semantic_preservation_score": 0.242,
+      "scale_balance_score": 0.417,
+      "U_sign_flip_rate": 0.6318458417849898,
+      "Return_U_mean_share": 0.5123852928714333,
+      "Return_MFE_mean_share": 0.48761470712856675,
+      "Risk_MAE_mean_share": 0.2598703143485356,
+      "Risk_giveback_mean_share": 0.41538699639969795,
+      "Risk_chop_mean_share": 0.32474268925176647,
+      "archetype_B_lt_A_lt_C_risk": false,
+      "archetype_MFE_A_gt_B": true,
+      "main_issue": "sign flip rate ~56.0%; raw>0 can map to z<0; zero not preserved"
+    },
+    {
+      "normalization": "stdscale",
+      "semantic_preservation_score": 0.613,
+      "scale_balance_score": 0.126,
+      "U_sign_flip_rate": 0.0,
+      "Return_U_mean_share": 0.39674033618181964,
+      "Return_MFE_mean_share": 0.6032596638181803,
+      "Risk_MAE_mean_share": 0.13666208160386759,
+      "Risk_giveback_mean_share": 0.2683627326945799,
+      "Risk_chop_mean_share": 0.594572771214631,
+      "archetype_B_lt_A_lt_C_risk": false,
+      "archetype_MFE_A_gt_B": true,
+      "main_issue": "scale balance improved; sign/zero/magnitude preserved; relative magnitude uses sigma not RMS"
+    },
+    {
+      "normalization": "rmsscale",
+      "semantic_preservation_score": 0.613,
+      "scale_balance_score": 0.187,
+      "U_sign_flip_rate": 0.0,
+      "Return_U_mean_share": 0.4130737020326437,
+      "Return_MFE_mean_share": 0.5869262979673563,
+      "Risk_MAE_mean_share": 0.21316749352473155,
+      "Risk_giveback_mean_share": 0.3063541757202339,
+      "Risk_chop_mean_share": 0.4800759162681131,
+      "archetype_B_lt_A_lt_C_risk": false,
+      "archetype_MFE_A_gt_B": true,
+      "main_issue": "similar to stdscale; RMS denominator differs when mean!=0"
+    }
+  ],
+  "13_normalization_tradeoffs": {
+    "raw": "Best semantic fidelity per facet; worst cross-facet scale balance",
+    "zscore": "Best statistical balance on eval; worst sign/zero semantic for P1 labels",
+    "stdscale": "Strong semantic preservation + improved balance; prefix sigma fit",
+    "rmsscale": "Like stdscale; slightly different when prefix mean far from zero"
+  },
+  "14_unresolved": [
+    "Optimal composite: sum of normalized facets vs separate heads (out of scope)",
+    "Rolling/refit scale under regime shift",
+    "Whether Return/Risk sums are training labels or only facet targets"
+  ],
+  "15_next_experiments": [
+    "Conditional scale within MAE buckets for recovery-like low-variance facets",
+    "Per-regime prefix refit impact on stdscale/rmsscale",
+    "Training with separate heads vs composite label ablation"
+  ],
+  "final_question_answer": {
+    "most_semantically_aligned": "raw",
+    "best_scale_balance": "zscore",
+    "recommended_for_next_validation": "stdscale",
+    "recommended_with_caution": "rmsscale",
+    "not_recommended_as_composite_label": [
+      "zscore"
+    ],
+    "raw_role": "diagnostic baseline only",
+    "summary": "For P1 goal 'preserve facet meaning/sign/zero/magnitude while enabling U+MFE and MAE+Giveback+Chop summation', scale-only Std (X/sigma_prefix) is most semantically aligned among tested options. It preserves sign and zero, maintains 2x magnitude ratios, and improves facet balance vs Raw. Standard Z-score improves scale balance but re-centers labels so raw favorable U>0 can become z(U)<0 (~63.2% flip on eval). Raw preserves semantics but fails scale balance. RMS-scale is near-Std-scale; choose between them after regime sensitivity check. No canonical adoption in this step.",
+    "no_canonical_adoption": true
+  },
+  "11_test_result": {
+    "pytest_pass_count": 157
+  }
+}

@@ -1,0 +1,687 @@
+{
+  "audit": "Reward Logic Audit 4",
+  "purpose": "Audit f_n temporal aggregation and MAE scalar adequacy for P1 entry-attractiveness semantics \u2014 not predictive performance or canonical reward selection.",
+  "meta": {
+    "market_data": {
+      "symbol": "BTCUSDT",
+      "source": "csv:C:\\Users\\\uc774\uc720\ucc2c\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+      "timeframe": "3m",
+      "num_bars": 5000,
+      "start_time": "2026-08-07 00:06:00+00:00",
+      "end_time": "2026-08-17 10:06:00+00:00",
+      "close_min": 62586.29,
+      "close_max": 65408.05,
+      "return_std": 0.00047408251416413826
+    },
+    "num_valid_samples": 4970,
+    "eval_samples": 2485,
+    "norm_prefix_fraction": 0.5,
+    "baseline_fn": "f_n = norm(P_n) + norm(U_n) - norm(MAE_n); F = mean(f_1..f_H)",
+    "primary_S": "time_to_favorable",
+    "primary_D": "favorable_occupancy"
+  },
+  "1_fn_time_profile_audit": {
+    "aggregation_comparison": {
+      "A_mean_f1_f10": {
+        "horizons": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "mean_F_long": -0.021872340641481053
+      },
+      "B_early_only_f1_f3": {
+        "horizons": [
+          1,
+          2,
+          3
+        ],
+        "mean_F_long": 0.10578773971824225
+      },
+      "C_middle_only_f4_f7": {
+        "horizons": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "mean_F_long": -0.03143534064942323
+      },
+      "D_late_only_f8_f10": {
+        "horizons": [
+          8,
+          9,
+          10
+        ],
+        "mean_F_long": -0.13678175432394804
+      }
+    },
+    "individual_fn_profile_eval_mean": {
+      "f_1": 0.15520450781300832,
+      "f_2": 0.10251807470823353,
+      "f_3": 0.059640636633484866,
+      "f_4": 0.021189274164350087,
+      "f_5": -0.014293872222539925,
+      "f_6": -0.05156504617102242,
+      "f_7": -0.0810717183684806,
+      "f_8": -0.10997134060586997,
+      "f_9": -0.13653624176539136,
+      "f_10": -0.16383768060058282
+    },
+    "semantic_questions": {
+      "Q1_early_terminal_mixed_in_mean": {
+        "F_early_vs_F_late_corr": 0.7083860113398976,
+        "F_mean_vs_F_early_corr": 0.8666524516402541,
+        "F_mean_vs_terminal_return": 0.7383658326352072,
+        "F_late_vs_terminal_return": 0.8693355460959318,
+        "interpretation": "High F_mean~terminal and F_late~terminal with divergent F_early indicates horizon mixing \u2014 late outcome dominates mean F."
+      },
+      "Q2_late_U_MAE_overwrites_early": {
+        "case_a_F_early_vs_F_late_gap": -0.4665807956372685,
+        "case_b_F_early_vs_F_late_gap": 1.7684433414180967,
+        "note": "Case A: early adverse should depress F_early; late favorable may lift F_late."
+      },
+      "Q3_early_vs_late_different_meaning": {
+        "early_aligns_early_return": 0.8735759003537729,
+        "late_aligns_terminal_return": 0.8693355460959318,
+        "early_vs_late_rank_inversion_rate": 0.2523145843703335
+      },
+      "Q4_mean_vs_timing_structure": {
+        "F_mean_vs_S_at_h10": 0.5461342933430298,
+        "F_early_vs_S_at_h3": 0.6124810735127503
+      },
+      "Q5_fn_profile_vs_SD": {
+        "f1_vs_S": 0.6129333792448969,
+        "f2_vs_S": 0.5852724263850129,
+        "f3_vs_S": 0.5537941999845726,
+        "f4_vs_S": 0.5341344885951701,
+        "f5_vs_S": 0.5176588319563151,
+        "f6_vs_S": 0.5021822877063459,
+        "f7_vs_S": 0.48683865122496695,
+        "f8_vs_S": 0.4764839921796805,
+        "f9_vs_S": 0.4657319173239175,
+        "f10_vs_S": 0.45738689275498084,
+        "f1_vs_D": 0.6129333792448969,
+        "f2_vs_D": 0.6569386620578521,
+        "f3_vs_D": 0.6776579606359389,
+        "f4_vs_D": 0.6956342772946221,
+        "f5_vs_D": 0.7063696627102605,
+        "f6_vs_D": 0.7125922960531097,
+        "f7_vs_D": 0.7205392200513424,
+        "f8_vs_D": 0.7286040886530117,
+        "f9_vs_D": 0.7335574179126517,
+        "f10_vs_D": 0.7363510040106113
+      },
+      "Q6_path_decay_implicit_immediate": {
+        "P_decay_weight_early_fraction": 0.6126240112700311,
+        "P_decay_weight_late_fraction": 0.08177543412155505,
+        "decay_rate": 0.75,
+        "note": "Path P_n already weights early bars via w_k \u221d r^(k-1). Mean(f_n) adds a second layer of horizon mixing on top."
+      }
+    },
+    "by_archetype": {
+      "dip_then_rise": {
+        "count": 101,
+        "F_mean": -1.5500803862443329,
+        "F_early": -1.507480571935747,
+        "F_middle": -1.9639157044351636,
+        "F_late": -1.0408997762984784,
+        "fn_profile_mean": [
+          -1.0843783562066414,
+          -1.564635660458572,
+          -1.8734276991420267,
+          -2.097728564899474,
+          -2.1140509160297647,
+          -1.954229008852104,
+          -1.6896543279593121,
+          -1.3825427117410476,
+          -1.033647836895861,
+          -0.7065087802585264
+        ],
+        "mean_terminal_return": 0.0008317591005472985,
+        "mean_early_return": -0.0006019007706075618,
+        "semantic_note": "Case A: F_early should reflect adverse entry; F_late may rise with recovery."
+      },
+      "rise_then_fall": {
+        "count": 114,
+        "F_mean": 1.2812885165992518,
+        "F_early": 1.852182645869817,
+        "F_middle": 1.7512798287569764,
+        "F_late": 0.08373930445172031,
+        "fn_profile_mean": [
+          1.475782600308553,
+          1.926255556665525,
+          2.154509780635372,
+          2.2121127315683884,
+          2.0881669668469995,
+          1.5819362872279505,
+          1.1229033293845683,
+          0.693201298561596,
+          0.06729623857307118,
+          -0.5092796237795061
+        ],
+        "mean_terminal_return": -0.0009412547987692671,
+        "mean_early_return": 0.0006621347695865496,
+        "semantic_note": "Case B: F_early high (immediate scalp); F_late may fall with terminal loss."
+      },
+      "monotonic_rise": {
+        "count": 598,
+        "F_mean": 2.297839032400336,
+        "F_early": 1.3186114793733168,
+        "F_middle": 2.42860943206528,
+        "F_late": 3.1027060525407633,
+        "fn_profile_mean": [
+          0.9272200294147546,
+          1.3142005104947796,
+          1.714413898210417,
+          2.0705709521437403,
+          2.338131767160455,
+          2.555553187746115,
+          2.7501818212108082,
+          2.936201797327808,
+          3.110157893504628,
+          3.261758466789853
+        ],
+        "mean_terminal_return": 0.0014237181486938056,
+        "mean_early_return": 0.0006332077103958543,
+        "semantic_note": "F_early \u2248 F_late \u2248 F_mean \u2014 consistent favorable entry."
+      },
+      "monotonic_fall": {
+        "count": 684,
+        "F_mean": -2.1081263205448812,
+        "F_early": -1.0983699776966798,
+        "F_middle": -2.2619217390158917,
+        "F_late": -2.912822105431735,
+        "fn_profile_mean": [
+          -0.6173746784467872,
+          -1.1195842174676347,
+          -1.5581510371756173,
+          -1.8863595788617877,
+          -2.165847031271367,
+          -2.3993473544124124,
+          -2.5961329915179987,
+          -2.772669275902832,
+          -2.9185845648265962,
+          -3.047212475565777
+        ],
+        "mean_terminal_return": -0.001300854030469643,
+        "mean_early_return": -0.0006272332702832844,
+        "semantic_note": "All F aggregates negative \u2014 direction avoid for LONG."
+      },
+      "spike_reversal": {
+        "count": 165,
+        "F_mean": -0.12323145278168963,
+        "F_early": 0.542294615843122,
+        "F_middle": -0.04158769892245048,
+        "F_late": -0.8976158598854869,
+        "fn_profile_mean": [
+          0.5253005348649629,
+          0.5850951600893372,
+          0.5164881525750661,
+          0.2693081153744436,
+          0.09273385154413855,
+          -0.11768285879972483,
+          -0.41070990380865907,
+          -0.6727085983652664,
+          -0.8988057446071674,
+          -1.1213332366840272
+        ],
+        "mean_terminal_return": -0.0007279003661160407,
+        "mean_early_return": 0.00010006474528001572,
+        "semantic_note": "F_early elevated; F_late depressed \u2014 horizon split visible."
+      }
+    },
+    "case_a_vs_b": {
+      "case_a": {
+        "count": 101,
+        "F_mean": -1.5500803862443329,
+        "F_early": -1.507480571935747,
+        "F_late": -1.0408997762984784
+      },
+      "case_b": {
+        "count": 114,
+        "F_mean": 1.2812885165992518,
+        "F_early": 1.852182645869817,
+        "F_late": 0.08373930445172031
+      }
+    }
+  },
+  "2_mae_role_decomposition_audit": {
+    "candidate_summary": {
+      "A_full_mae": {
+        "field": "full_mae",
+        "mean": 0.0009583423197079966,
+        "std": 0.001171188887843484
+      },
+      "B_early_mae": {
+        "field": "early_mae",
+        "mean": 0.00047031644230398286,
+        "std": 0.0006628417757429272
+      },
+      "C_time_to_mae": {
+        "field": "time_to_mae",
+        "mean": 5.800402414486921,
+        "std": 3.4839672798516155
+      },
+      "D_adverse_duration": {
+        "field": "adverse_duration",
+        "mean": 4.979879275653923,
+        "std": 3.7267316455657826
+      },
+      "E_recovery_after_mae": {
+        "field": "recovery_after_mae",
+        "mean": 325.765646263091,
+        "std": 1943.5020033876115
+      },
+      "F_early_to_full_ratio": {
+        "field": "early_to_full_ratio",
+        "mean": 0.555704545493218,
+        "std": 0.40207177849643816
+      }
+    },
+    "semantic_questions": {
+      "Q1_full_mae_conflates_entry_and_later": {
+        "full_vs_early_corr": 0.6870187529498478,
+        "case_a_mean_full": 0.0013541315079557555,
+        "case_a_mean_early": 0.001049544443393961,
+        "sustained_mean_full": 0.0018589482505371477,
+        "similar_mae_different_archetype_pairs": 50
+      },
+      "Q2_early_mae_entry_risk": {
+        "early_mae_case_a_vs_b": {
+          "case_a": 0.001049544443393961,
+          "case_b": 0.00020307973149871273
+        },
+        "early_mae_vs_early_return": -0.6847610488806406
+      },
+      "Q3_time_to_mae_immediate_vs_delayed": {
+        "case_a_mean_time_to_mae": 4.237623762376238,
+        "monotonic_fall_mean_time_to_mae": 7.3654970760233915
+      },
+      "Q4_recovery_reward_vs_diagnostic": {
+        "recovery_case_a_mean": 0.7263202180061626,
+        "recovery_sustained_mean": -0.708971874700917,
+        "interpretation": "Recovery uses terminal outcome relative to MAE \u2014 overlaps deferred opportunity / hindsight narrative. Treat as diagnostic unless explicitly assigned to a separate P1 output head, not silent reward injection."
+      },
+      "Q5_mae_vs_SD_overlap": {
+        "corr_with_S_at_h10": {
+          "A_full_mae": -0.2996406136170334,
+          "B_early_mae": -0.4003419259468484,
+          "C_time_to_mae": -0.06257937982790504,
+          "D_adverse_duration": -0.6840593050666615,
+          "E_recovery_after_mae": 0.11167684592254871,
+          "F_early_to_full_ratio": -0.12230323982948225
+        },
+        "corr_with_D_at_h10": {
+          "A_full_mae": -0.5098750669746068,
+          "B_early_mae": -0.4180800884345882,
+          "C_time_to_mae": -0.317398957807625,
+          "D_adverse_duration": -0.9821723568725816,
+          "E_recovery_after_mae": 0.22072526893646133,
+          "F_early_to_full_ratio": 0.12358547454004505
+        }
+      }
+    },
+    "by_archetype": {
+      "dip_then_rise": {
+        "count": 101,
+        "mean_full_mae": 0.0013541315079557555,
+        "mean_early_mae": 0.001049544443393961,
+        "mean_recovery": 0.7263202180061626,
+        "mean_time_to_mae": 4.237623762376238
+      },
+      "rise_then_fall": {
+        "count": 114,
+        "mean_full_mae": 0.001363769657054502,
+        "mean_early_mae": 0.00020307973149871273,
+        "mean_recovery": -0.650441988119755,
+        "mean_time_to_mae": 8.894736842105264
+      },
+      "monotonic_rise": {
+        "count": 598,
+        "mean_full_mae": 0.00027404709509927923,
+        "mean_early_mae": 0.00022890211972991526,
+        "mean_recovery": 1264.6522164802252,
+        "mean_time_to_mae": 3.6555183946488294
+      },
+      "monotonic_fall": {
+        "count": 684,
+        "mean_full_mae": 0.0019414780161175888,
+        "mean_early_mae": 0.0009460144146014577,
+        "mean_recovery": -0.7187268557977775,
+        "mean_time_to_mae": 7.3654970760233915
+      },
+      "spike_reversal": {
+        "count": 165,
+        "mean_full_mae": 0.0012162945936597862,
+        "mean_early_mae": 0.0002897588453712779,
+        "mean_recovery": -0.6127472841848091,
+        "mean_time_to_mae": 7.7696969696969695
+      },
+      "choppy": {
+        "count": 101,
+        "mean_full_mae": 0.0006607699824060145,
+        "mean_early_mae": 0.0003732685398171063,
+        "mean_recovery": 0.16835170795369836,
+        "mean_time_to_mae": 5.8316831683168315
+      },
+      "mixed": {
+        "count": 387,
+        "mean_full_mae": 0.0005951989681153911,
+        "mean_early_mae": 0.00028904469522773684,
+        "mean_recovery": 85.16418555483764,
+        "mean_time_to_mae": 5.24031007751938
+      },
+      "slow_flat": {
+        "count": 226,
+        "mean_full_mae": 0.00041512946368533446,
+        "mean_early_mae": 0.0002449224870558095,
+        "mean_recovery": 61.64563767480482,
+        "mean_time_to_mae": 5.349557522123894
+      }
+    },
+    "similar_full_mae_different_meaning": [
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 0.0,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 0.0,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.0018549874306089114
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 4.950181530230688e-05,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 30.231746031733085,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.0014965263083291
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 1.5710430377872404e-07,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 8462.999998275598,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.0013295737226084307
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 3.09204063224095e-05,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 12.20304568527242,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.00037732313095954924
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 0.0,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 0.0,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.0007347207660931185
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 1.5701084021740456e-07,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 12714.99999740903,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.0019963928329574886
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 1.5699821908695348e-07,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 13601.000007125345,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.002135332778920321
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 1.5690901779287557e-07,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 9536.00000499567,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.0014962843944567273
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 0.0,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 0.0,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.0008637957622420824
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 1.5676379325052408e-07,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 28657.000015012483,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.004492380025533683
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 1.56739639972766e-07,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 22724.999995370308,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.003561908317655451
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 0.0,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 0.0,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.003476234401547448
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 1.566023553313278e-07,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 18654.999996199767,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.002921416938110795
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 5.4169561059023164e-05,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 53.962427745678106,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.002923121024662636
+      },
+      {
+        "full_mae": 1.5670353422509101e-07,
+        "archetype_a": "mixed",
+        "archetype_b": "monotonic_rise",
+        "early_mae_a": 1.5670353422509101e-07,
+        "early_mae_b": 0.0,
+        "recovery_a": 1477.000000774162,
+        "recovery_b": 0.0,
+        "terminal_a": 0.00023145112017177333,
+        "terminal_b": 0.001950800504938809
+      }
+    ],
+    "case_a_vs_sustained_adverse": {
+      "case_a": {
+        "count": 101,
+        "mean_full_mae": 0.0013541315079557555,
+        "mean_early_mae": 0.001049544443393961,
+        "mean_recovery": 0.7263202180061626,
+        "mean_time_to_mae": 4.237623762376238
+      },
+      "sustained_adverse_proxy": {
+        "count": 798,
+        "mean_full_mae": 0.0018589482505371477,
+        "mean_early_mae": 0.0008398808884439225,
+        "mean_recovery": -0.708971874700917,
+        "mean_time_to_mae": 7.583959899749374
+      }
+    }
+  },
+  "3_synthetic_mae_path_comparison": {
+    "paths": {
+      "dip_then_rise_case_a": {
+        "full_mae": 0.09788704479360007,
+        "early_mae": 0.06069038400000011,
+        "time_to_mae": 5,
+        "adverse_duration": 10,
+        "recovery_after_mae": -0.020415374108858755,
+        "early_to_full_ratio": 0.6200042521251811,
+        "terminal_return": -0.00199840063987196
+      },
+      "sustained_adverse": {
+        "full_mae": 0.09742668914121311,
+        "early_mae": 0.031641598000000076,
+        "time_to_mae": 10,
+        "adverse_duration": 10,
+        "recovery_after_mae": -0.9814346133902184,
+        "early_to_full_ratio": 0.32477340941082183,
+        "terminal_return": -0.09561792499119548
+      },
+      "rise_then_fall_case_b": {
+        "full_mae": 0.0039944038385921485,
+        "early_mae": -0.017960000000000066,
+        "time_to_mae": 10,
+        "adverse_duration": 1,
+        "recovery_after_mae": -0.5003000999959755,
+        "early_to_full_ratio": -4.496290491832236,
+        "terminal_return": -0.00199840063987196
+      },
+      "spike_reversal": {
+        "full_mae": 0.0020000000000000282,
+        "early_mae": 0.0020000000000000282,
+        "time_to_mae": 1,
+        "adverse_duration": 0,
+        "recovery_after_mae": 83.19999999999891,
+        "early_to_full_ratio": 1.0,
+        "terminal_return": 0.16640000000000016
+      },
+      "mae_flash_recovery": {
+        "full_mae": 0.05,
+        "early_mae": 0.05,
+        "time_to_mae": 1,
+        "adverse_duration": 0,
+        "recovery_after_mae": 1.0,
+        "early_to_full_ratio": 1.0,
+        "terminal_return": 0.05
+      },
+      "small_adverse_then_rise": {
+        "full_mae": 0.011955049999999972,
+        "early_mae": 0.011955049999999972,
+        "time_to_mae": 2,
+        "adverse_duration": 2,
+        "recovery_after_mae": 13.381130039336396,
+        "early_to_full_ratio": 1.0,
+        "terminal_return": 0.15997207867676821
+      },
+      "large_adverse_then_rise": {
+        "full_mae": 0.060981799999999996,
+        "early_mae": 0.060981799999999996,
+        "time_to_mae": 2,
+        "adverse_duration": 5,
+        "recovery_after_mae": 1.6794242148482366,
+        "early_to_full_ratio": 1.0,
+        "terminal_return": 0.10241431158503218
+      },
+      "late_pullback": {
+        "full_mae": 0.0020000000000000282,
+        "early_mae": 0.0020000000000000282,
+        "time_to_mae": 1,
+        "adverse_duration": 0,
+        "recovery_after_mae": 4.5426081601503725,
+        "early_to_full_ratio": 1.0,
+        "terminal_return": 0.009085216320300873
+      }
+    },
+    "narrative_checks": {
+      "case_a_vs_sustained": {
+        "case_a_recovery_gt_sustained": true,
+        "similar_full_mae_possible": false,
+        "early_mae_distinguishes_small_vs_large": true
+      }
+    }
+  },
+  "CONFIRMED": [
+    "F_late aligns more strongly with terminal return than F_early \u2014 mean(f_n) mixes immediate entry signal with terminal outcome.",
+    "mean(f_1..f_10) correlates with terminal return \u2014 behaves partly as 'average of outcome horizons' rather than pure entry-attractiveness.",
+    "Case A (dip\u2192rise): F_late > F_early on average \u2014 late favorable U/MAE can lift aggregate F despite poor immediate entry at t.",
+    "Path decay (r=0.75) already assigns 61% weight to early bars \u2014 immediate preference exists before mean(f_n) aggregation.",
+    "Found 50 full-MAE-matched pairs with different archetype/recovery \u2014 full MAE alone under-specifies entry risk.",
+    "Synthetic: early MAE distinguishes small vs large immediate adverse when full MAE may be similar \u2014 early MAE better targets entry-time pain."
+  ],
+  "HYPOTHESIS": [
+    "Splitting F aggregation (early vs late heads or non-mean composer) may better serve P1 'start now vs wait' without adopting I/D as reward ground truth.",
+    "Early MAE (k\u22643) as entry-risk term alongside full MAE diagnostic may reduce Case A false penalty if paired with magnitude-free S/D \u2014 not auto-adopted.",
+    "Recovery-after-MAE belongs in diagnostic or separate P1 output axis, not silent reward injection \u2014 it encodes deferred outcome."
+  ],
+  "UNRESOLVED": [
+    "Optimal f_n aggregation (mean vs weighted vs multi-head) requires human chart qualitative review after reward logic sign-off.",
+    "Whether time-to-MAE adds information beyond early MAE + S/D without redundancy.",
+    "P\u2192S+D replacement remains Audit 3 hypothesis \u2014 not decided by time-profile or MAE audit."
+  ],
+  "RECOMMENDATION": [
+    "Review non-mean f_n composition: treat F_early and F_late as distinct semantic probes in next experiments; do not pick by correlation alone.",
+    "If MAE is split, prioritize early_MAE for entry-risk reward term; keep recovery and time-to-MAE as diagnostics until P1 output structure is chosen.",
+    "When modifying reward (future phase), address double immediate bias: Path decay AND mean(f_n) early mixing AND scalar collapse."
+  ],
+  "DO_NOT_CONCLUDE": [
+    "Adopt mean(f_n) winner by terminal correlation alone.",
+    "Auto-insert recovery-after-MAE into canonical reward from this audit.",
+    "Declare MAE decomposition or S+D canonical from Audit 4.",
+    "Use captureability/robustness/I/D as ground truth.",
+    "Finalize P1 output or training target."
+  ]
+}

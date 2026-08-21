@@ -1,0 +1,1057 @@
+{
+  "1_dataset": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\\uc774\uc720\ucc2c\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826,
+    "bars_1h_resampled": 251,
+    "bars_4h_resampled": 63,
+    "resample_note": "1H/4H native bars resampled from 3m for analysis-only MTF audit; partial HTF state still built via MultiTimeframeAligner from 3m.",
+    "eval_prefix_fraction": 0.5
+  },
+  "2_methodology": {
+    "question": "When 3m local pattern is similar, does 1H/4H context change conditional future behavior distribution?",
+    "not_goal": "Predictive model competition or correlation winner selection",
+    "pattern_matching": "Last 8 3m returns z-scored and discretized to 5 levels per step",
+    "htf_encoding": [
+      "recent_return",
+      "slope",
+      "volatility",
+      "favorable_occupancy",
+      "momentum",
+      "dist_from_high/low",
+      "regime bullish/bearish/neutral"
+    ],
+    "future_horizons": [
+      3,
+      5,
+      10,
+      15
+    ],
+    "comparison_conditions": [
+      "3m-only (pattern groups)",
+      "3m + 1H regime",
+      "3m + 1H + 4H interaction"
+    ]
+  },
+  "3_leakage_check": {
+    "samples_checked": 20,
+    "all_passed": true,
+    "partial_bar_rule": "Partial 1H/4H OHLCV aggregated from 3m bars with end <= t only; completed HTF bars have end <= t.",
+    "checks": [
+      {
+        "t_index": 2507,
+        "decision_time": "2026-08-12 05:30:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2508,
+        "decision_time": "2026-08-12 05:33:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2509,
+        "decision_time": "2026-08-12 05:36:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2510,
+        "decision_time": "2026-08-12 05:39:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2511,
+        "decision_time": "2026-08-12 05:42:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2512,
+        "decision_time": "2026-08-12 05:45:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2513,
+        "decision_time": "2026-08-12 05:48:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2514,
+        "decision_time": "2026-08-12 05:51:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2515,
+        "decision_time": "2026-08-12 05:54:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2516,
+        "decision_time": "2026-08-12 05:57:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2517,
+        "decision_time": "2026-08-12 06:00:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2518,
+        "decision_time": "2026-08-12 06:03:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2519,
+        "decision_time": "2026-08-12 06:06:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2520,
+        "decision_time": "2026-08-12 06:09:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2521,
+        "decision_time": "2026-08-12 06:12:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2522,
+        "decision_time": "2026-08-12 06:15:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2523,
+        "decision_time": "2026-08-12 06:18:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2524,
+        "decision_time": "2026-08-12 06:21:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2525,
+        "decision_time": "2026-08-12 06:24:00+00:00",
+        "ok": true,
+        "notes": []
+      },
+      {
+        "t_index": 2526,
+        "decision_time": "2026-08-12 06:27:00+00:00",
+        "ok": true,
+        "notes": []
+      }
+    ]
+  },
+  "4_matching_method": {
+    "primary": "Matched 3m pattern_key groups with differing HTF context",
+    "pattern_key": "Volatility-normalized past 3m return shape discretized to bins",
+    "min_group_size": 2,
+    "htf_split": "1H regime and 4H regime within same pattern_key"
+  },
+  "5_htf_state_distribution": {
+    "h1_regime_counts": {
+      "bullish": 763,
+      "neutral": 942,
+      "bearish": 773
+    },
+    "h4_regime_counts": {
+      "bullish": 824,
+      "neutral": 933,
+      "bearish": 721
+    },
+    "interaction_counts": {
+      "neutral__neutral": 514,
+      "bullish__bullish": 498,
+      "bearish__bearish": 494,
+      "neutral__bullish": 251,
+      "bullish__neutral": 215,
+      "bearish__neutral": 204,
+      "neutral__bearish": 177,
+      "bearish__bullish": 75,
+      "bullish__bearish": 50
+    },
+    "bias_note": "Report raw counts; sparse interaction cells limit statistical claims."
+  },
+  "6_same_3m_different_mtf": {
+    "num_pattern_groups": 2334,
+    "num_matched_groups_h1_variation": 91,
+    "eta_squared_terminal_long_h10_by_h1_within_pattern": {
+      "mean": 0.28066677805722795,
+      "median": 0.13657864798354272
+    },
+    "interpretation": "Higher eta\u00b2 within matched 3m groups suggests 1H regime separates future outcomes beyond 3m pattern alone \u2014 descriptive, not proof."
+  },
+  "7_conditional_direction": {
+    "LONG_favorable_terminal_rate": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.6,
+      "mean_bear": 0.2,
+      "median_diff": 1.0,
+      "cohen_d": 0.7999999999999999,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.39999999999999997,
+        "ci_low": -0.19999999999999996,
+        "ci_high": 1.0
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    },
+    "SHORT_favorable_terminal_rate": {
+      "horizon": 10,
+      "action": 1,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.4,
+      "mean_bear": 0.8,
+      "median_diff": -1.0,
+      "cohen_d": -0.8,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": -0.4,
+        "ci_low": -1.0,
+        "ci_high": 0.19999999999999996
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    },
+    "matched_group_mean_fav_rate_long_bull_vs_bear": {
+      "mean_bull_rate": 0.6,
+      "mean_bear_rate": 0.2
+    }
+  },
+  "8_conditional_magnitude": {
+    "MFE_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.0007986354659885644,
+      "mean_bear": 0.000383498713403377,
+      "median_diff": 0.00032613225465029675,
+      "cohen_d": 1.1112060534716512,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.0004151367525851874,
+        "ci_low": 4.204297614749503e-05,
+        "ci_high": 0.0008006437265184904
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    },
+    "terminal_return_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": -8.274108832332568e-05,
+      "mean_bear": -0.0004472499171822261,
+      "median_diff": 0.000539135781572327,
+      "cohen_d": 0.617620119585158,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.0003645088288589004,
+        "ci_low": -0.00023868621229793693,
+        "ci_high": 0.0010049261315591435
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    }
+  },
+  "9_conditional_risk": {
+    "MAE_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.0011788181115697655,
+      "mean_bear": 0.0005800263683798712,
+      "median_diff": 0.0005814619126449845,
+      "cohen_d": 0.9718370000483518,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.0005987917431898943,
+        "ci_low": -9.457757628243539e-05,
+        "ci_high": 0.0012614187429457367
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    }
+  },
+  "10_conditional_timing": {
+    "time_to_favorable_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 2.2,
+      "mean_bear": 2.6,
+      "median_diff": -1.0,
+      "cohen_d": -0.18856180831641264,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": -0.3999999999999999,
+        "ci_low": -2.6,
+        "ci_high": 2.0
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    },
+    "speed_ttf_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.8800000000000001,
+      "mean_bear": 0.8400000000000001,
+      "median_diff": 0.09999999999999998,
+      "cohen_d": 0.18856180831641284,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.040000000000000036,
+        "ci_low": -0.20000000000000007,
+        "ci_high": 0.2600000000000001
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    },
+    "early_favorable_occupancy_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.6,
+      "mean_bear": 0.52,
+      "median_diff": 0.20000000000000007,
+      "cohen_d": 0.20936956903608536,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.07999999999999996,
+        "ci_low": -0.3200000000000002,
+        "ci_high": 0.44000000000000006
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    }
+  },
+  "11_conditional_structure": {
+    "persistence_occ_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.5599999999999999,
+      "mean_bear": 0.4800000000000001,
+      "median_diff": 0.0,
+      "cohen_d": 0.21773242158072653,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.07999999999999985,
+        "ci_low": -0.31999999999999995,
+        "ci_high": 0.44
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    },
+    "favorable_occupancy_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.5599999999999999,
+      "mean_bear": 0.4800000000000001,
+      "median_diff": 0.0,
+      "cohen_d": 0.21773242158072653,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.07999999999999985,
+        "ci_low": -0.31999999999999995,
+        "ci_high": 0.44
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    },
+    "reversal_rate_LONG": {
+      "horizon": 10,
+      "action": 0,
+      "n_bull": 5,
+      "n_bear": 5,
+      "mean_bull": 0.0,
+      "mean_bear": 0.0,
+      "median_diff": 0.0,
+      "cohen_d": NaN,
+      "bootstrap_mean_diff_ci": {
+        "mean_diff": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "descriptive_only": true,
+      "pooling_note": "Samples from pattern_key groups containing both 1H bullish and bearish regimes."
+    }
+  },
+  "12_1h_x_4h_interaction": {
+    "by_interaction": {
+      "neutral__neutral": {
+        "count": 514,
+        "mean_terminal_long": 4.9562417680324684e-05,
+        "median_terminal_long": 0.0
+      },
+      "bullish__bullish": {
+        "count": 498,
+        "mean_terminal_long": -9.160500034223266e-05,
+        "median_terminal_long": -0.00019093932375474176
+      },
+      "bearish__bearish": {
+        "count": 494,
+        "mean_terminal_long": 0.00014017309682070776,
+        "median_terminal_long": 0.00012876067226187882
+      },
+      "neutral__bullish": {
+        "count": 251,
+        "mean_terminal_long": -0.0002616073430873099,
+        "median_terminal_long": -0.00019488580604796744
+      },
+      "bullish__neutral": {
+        "count": 215,
+        "mean_terminal_long": 0.0002994051017745723,
+        "median_terminal_long": 0.0001484923588241405
+      },
+      "bearish__neutral": {
+        "count": 204,
+        "mean_terminal_long": -0.0002859946356235664,
+        "median_terminal_long": -5.7962060303043034e-05
+      },
+      "neutral__bearish": {
+        "count": 177,
+        "mean_terminal_long": -0.00010850836548403834,
+        "median_terminal_long": -0.0002380952380952381
+      },
+      "bearish__bullish": {
+        "count": 75,
+        "mean_terminal_long": -0.0008722414391107826,
+        "median_terminal_long": -0.0007156968469352135
+      },
+      "bullish__bearish": {
+        "count": 50,
+        "mean_terminal_long": 0.0003456106023027802,
+        "median_terminal_long": 7.363923780557473e-05
+      }
+    },
+    "aligned_h1_h4": {
+      "count": 1506,
+      "mean_terminal_long": 3.2603786418781325e-05
+    },
+    "conflict_h1_h4": {
+      "count": 972,
+      "mean_terminal_long": -0.00013063560741711296
+    },
+    "eta_squared_by_interaction_within_pattern": {
+      "num_pattern_groups": 2334,
+      "num_matched_groups_h1_variation": 91,
+      "eta_squared_terminal_long_h10_by_h1_within_pattern": {
+        "mean": 0.28066677805722795,
+        "median": 0.13657864798354272
+      },
+      "interpretation": "Higher eta\u00b2 within matched 3m groups suggests 1H regime separates future outcomes beyond 3m pattern alone \u2014 descriptive, not proof."
+    }
+  },
+  "13_negative_control": {
+    "method": "Shuffle 1H regime labels within matched 3m pattern groups",
+    "real_mean_eta_squared": 0.3379956682639907,
+    "shuffled_mean_eta_squared": 0.28873652881193146,
+    "separation_reduced_under_shuffle": true,
+    "interpretation": "Descriptive negative control \u2014 not formal proof. Reduced separation under shuffle suggests grouping is not pure artifact."
+  },
+  "14_representative_pairs": {
+    "categories": {
+      "A_large_future_diff": [
+        {
+          "pattern_key": [
+            1,
+            3,
+            2,
+            1,
+            2,
+            2,
+            2,
+            0
+          ],
+          "t_a": 2518,
+          "t_b": 2849,
+          "h1_h4_a": "neutral__bullish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": -0.002848627678201471,
+          "terminal_b": 0.00020730214713907922,
+          "mfe_a": 0.0001653900280944029,
+          "mfe_b": 0.0008244756628226165,
+          "mae_a": 0.0028603852631370885,
+          "mae_b": 0.00024832083683172214,
+          "ttf_a": 1,
+          "ttf_b": 2,
+          "fav_occ_a": 0.1,
+          "fav_occ_b": 0.9
+        },
+        {
+          "pattern_key": [
+            3,
+            2,
+            1,
+            2,
+            2,
+            2,
+            0,
+            2
+          ],
+          "t_a": 2519,
+          "t_b": 2850,
+          "h1_h4_a": "neutral__bullish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": -0.002182662380973623,
+          "terminal_b": 0.0005663881004857915,
+          "mfe_a": 1.567554137760932e-07,
+          "mfe_b": 0.0008503709920942548,
+          "mae_a": 0.002939164007702961,
+          "mae_b": 0.00022245326509327332,
+          "ttf_a": null,
+          "ttf_b": 1,
+          "fav_occ_a": 0.0,
+          "fav_occ_b": 1.0
+        },
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            3,
+            1,
+            0,
+            2,
+            2
+          ],
+          "t_a": 2552,
+          "t_b": 4040,
+          "h1_h4_a": "bearish__bullish",
+          "h1_h4_b": "bearish__neutral",
+          "terminal_a": 0.0014254100055304596,
+          "terminal_b": 0.00037108366270046343,
+          "mfe_a": 0.0026095364010939853,
+          "mfe_b": 0.0006243982587954051,
+          "mae_a": 0.0008927650552260448,
+          "mae_b": 0.0,
+          "ttf_a": 3,
+          "ttf_b": 1,
+          "fav_occ_a": 0.8,
+          "fav_occ_b": 1.0
+        },
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            3,
+            1,
+            0,
+            2,
+            2
+          ],
+          "t_a": 2552,
+          "t_b": 4297,
+          "h1_h4_a": "bearish__bullish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": 0.0014254100055304596,
+          "terminal_b": -0.00037253197566119355,
+          "mfe_a": 0.0026095364010939853,
+          "mfe_b": 7.032491377282279e-05,
+          "mae_a": 0.0008927650552260448,
+          "mae_b": 0.00037253197566119355,
+          "ttf_a": 3,
+          "ttf_b": 2,
+          "fav_occ_a": 0.8,
+          "fav_occ_b": 0.2
+        },
+        {
+          "pattern_key": [
+            2,
+            2,
+            3,
+            1,
+            0,
+            2,
+            2,
+            2
+          ],
+          "t_a": 2553,
+          "t_b": 4298,
+          "h1_h4_a": "bearish__bullish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": 0.0019963928329574886,
+          "terminal_b": -0.0003883709202046138,
+          "mfe_a": 0.002784273229007917,
+          "mfe_b": 7.032491377282279e-05,
+          "mae_a": 1.5701084021740456e-07,
+          "mae_b": 0.0003883709202046138,
+          "ttf_a": 1,
+          "ttf_b": 1,
+          "fav_occ_a": 1.0,
+          "fav_occ_b": 0.2
+        }
+      ],
+      "B_direction_opposite": [
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            3,
+            1,
+            0,
+            2,
+            2
+          ],
+          "t_a": 4040,
+          "t_b": 4297,
+          "h1_h4_a": "bearish__neutral",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": 0.00037108366270046343,
+          "terminal_b": -0.00037253197566119355,
+          "mfe_a": 0.0006243982587954051,
+          "mfe_b": 7.032491377282279e-05,
+          "mae_a": 0.0,
+          "mae_b": 0.00037253197566119355,
+          "ttf_a": 1,
+          "ttf_b": 2,
+          "fav_occ_a": 1.0,
+          "fav_occ_b": 0.2
+        },
+        {
+          "pattern_key": [
+            0,
+            3,
+            2,
+            2,
+            2,
+            3,
+            1,
+            2
+          ],
+          "t_a": 2575,
+          "t_b": 3194,
+          "h1_h4_a": "neutral__neutral",
+          "h1_h4_b": "neutral__bearish",
+          "terminal_a": 0.002476564112958839,
+          "terminal_b": -0.0032287729453823228,
+          "mfe_a": 0.002821916103137844,
+          "mfe_b": 0.0,
+          "mae_a": 0.00034456816814042336,
+          "mae_b": 0.0047040477263010205,
+          "ttf_a": 1,
+          "ttf_b": null,
+          "fav_occ_a": 1.0,
+          "fav_occ_b": 0.0
+        },
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            3,
+            2,
+            0
+          ],
+          "t_a": 2744,
+          "t_b": 4432,
+          "h1_h4_a": "bullish__bearish",
+          "h1_h4_b": "bearish__neutral",
+          "terminal_a": 9.639211556599764e-05,
+          "terminal_b": -0.00014701854479548483,
+          "mfe_a": 0.00020995210792391618,
+          "mfe_b": 0.0003987104871802318,
+          "mae_a": 0.001169778173706417,
+          "mae_b": 0.00021045696757672995,
+          "ttf_a": 6,
+          "ttf_b": 3,
+          "fav_occ_a": 0.3,
+          "fav_occ_b": 0.7
+        },
+        {
+          "pattern_key": [
+            2,
+            4,
+            3,
+            0,
+            2,
+            3,
+            2,
+            2
+          ],
+          "t_a": 2823,
+          "t_b": 4610,
+          "h1_h4_a": "bullish__bullish",
+          "h1_h4_b": "bullish__neutral",
+          "terminal_a": -0.0005276817438945121,
+          "terminal_b": 0.0002572198668828265,
+          "mfe_a": 1.572821889723051e-07,
+          "mfe_b": 0.0002572198668828265,
+          "mae_a": 0.0024910353084358363,
+          "mae_b": 1.584842062526348e-07,
+          "ttf_a": null,
+          "ttf_b": 1,
+          "fav_occ_a": 0.0,
+          "fav_occ_b": 1.0
+        },
+        {
+          "pattern_key": [
+            4,
+            3,
+            0,
+            2,
+            3,
+            2,
+            2,
+            2
+          ],
+          "t_a": 2824,
+          "t_b": 4611,
+          "h1_h4_a": "bullish__bullish",
+          "h1_h4_b": "bullish__neutral",
+          "terminal_a": -0.0003822406886247359,
+          "terminal_b": 0.0003025313426590826,
+          "mfe_a": 8.3526668995729e-05,
+          "mfe_b": 0.0003026898190041433,
+          "mae_a": 0.0023736674861508764,
+          "mae_b": 1.584763450606452e-07,
+          "ttf_a": null,
+          "ttf_b": 6,
+          "fav_occ_a": 0.0,
+          "fav_occ_b": 0.5
+        }
+      ],
+      "C_timing_only_diff": [
+        {
+          "pattern_key": [
+            3,
+            0,
+            3,
+            2,
+            2,
+            3,
+            1,
+            1
+          ],
+          "t_a": 2675,
+          "t_b": 3728,
+          "h1_h4_a": "bearish__bullish",
+          "h1_h4_b": "neutral__bullish",
+          "terminal_a": -0.0020337286067394636,
+          "terminal_b": -0.0015648215295570409,
+          "mfe_a": 6.460999342945121e-05,
+          "mfe_b": 0.0003175989330199887,
+          "mae_a": 0.0050373893182315945,
+          "mae_b": 0.0020125709498715182,
+          "ttf_a": null,
+          "ttf_b": 2,
+          "fav_occ_a": 0.0,
+          "fav_occ_b": 0.2
+        },
+        {
+          "pattern_key": [
+            1,
+            4,
+            2,
+            4,
+            2,
+            2,
+            4,
+            2
+          ],
+          "t_a": 2810,
+          "t_b": 4441,
+          "h1_h4_a": "bullish__bullish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": -5.238704809684377e-05,
+          "terminal_b": -0.00031579743370204686,
+          "mfe_a": 0.0015088413762659018,
+          "mfe_b": 0.0,
+          "mae_a": 0.000578302669080803,
+          "mae_b": 0.0005580356258187922,
+          "ttf_a": 1,
+          "ttf_b": null,
+          "fav_occ_a": 0.4,
+          "fav_occ_b": 0.0
+        },
+        {
+          "pattern_key": [
+            3,
+            0,
+            2,
+            3,
+            2,
+            2,
+            2,
+            2
+          ],
+          "t_a": 2825,
+          "t_b": 4612,
+          "h1_h4_a": "bullish__bullish",
+          "h1_h4_b": "bullish__neutral",
+          "terminal_a": -9.894546783353428e-05,
+          "terminal_b": 0.0001483338824539651,
+          "mfe_a": 0.0,
+          "mfe_b": 0.0003028483433435025,
+          "mae_a": 0.0023400839101613224,
+          "mae_b": 0.0,
+          "ttf_a": null,
+          "ttf_b": 1,
+          "fav_occ_a": 0.0,
+          "fav_occ_b": 0.9
+        },
+        {
+          "pattern_key": [
+            2,
+            0,
+            2,
+            2,
+            1,
+            3,
+            2,
+            2
+          ],
+          "t_a": 2832,
+          "t_b": 4737,
+          "h1_h4_a": "bullish__bullish",
+          "h1_h4_b": "bearish__bearish",
+          "terminal_a": -0.0006051756764391982,
+          "terminal_b": -0.0005674846066431196,
+          "mfe_a": 0.0007040184137094751,
+          "mfe_b": 0.00027525936773748665,
+          "mae_a": 0.0017343122961466137,
+          "mae_b": 0.0005991965153686354,
+          "ttf_a": 1,
+          "ttf_b": 6,
+          "fav_occ_a": 0.4,
+          "fav_occ_b": 0.1
+        },
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            0
+          ],
+          "t_a": 3105,
+          "t_b": 4185,
+          "h1_h4_a": "bearish__bearish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": -0.00040078740157475733,
+          "terminal_b": 6.786518485887825e-05,
+          "mfe_a": 3.77952755905741e-05,
+          "mfe_b": 8.055026614096116e-05,
+          "mae_a": 0.002362204724409449,
+          "mae_b": 0.0,
+          "ttf_a": null,
+          "ttf_b": 1,
+          "fav_occ_a": 0.0,
+          "fav_occ_b": 1.0
+        }
+      ],
+      "D_future_similar": [
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            2,
+            3,
+            4,
+            3,
+            2
+          ],
+          "t_a": 4255,
+          "t_b": 4620,
+          "h1_h4_a": "neutral__neutral",
+          "h1_h4_b": "bullish__neutral",
+          "terminal_a": 0.0003123613312202714,
+          "terminal_b": 0.00041195297398358523,
+          "mfe_a": 0.000312519809825692,
+          "mfe_b": 0.00041195297398358523,
+          "mae_a": 1.5847860542055892e-07,
+          "mae_b": 5.941629432455557e-05,
+          "ttf_a": 2,
+          "ttf_b": 1,
+          "fav_occ_a": 0.9,
+          "fav_occ_b": 0.4
+        },
+        {
+          "pattern_key": [
+            0,
+            2,
+            2,
+            1,
+            3,
+            2,
+            2,
+            2
+          ],
+          "t_a": 2833,
+          "t_b": 4738,
+          "h1_h4_a": "bullish__bullish",
+          "h1_h4_b": "bearish__bearish",
+          "terminal_a": -0.0005265440518776366,
+          "terminal_b": -0.0004427436660063293,
+          "mfe_a": 0.0005281177041545942,
+          "mfe_b": 0.0003778861590591784,
+          "mae_a": 0.0019097844033434536,
+          "mae_b": 0.0005883162610614326,
+          "ttf_a": 1,
+          "ttf_b": 2,
+          "fav_occ_a": 0.2,
+          "fav_occ_b": 0.4
+        },
+        {
+          "pattern_key": [
+            3,
+            3,
+            2,
+            2,
+            2,
+            3,
+            1,
+            0
+          ],
+          "t_a": 2837,
+          "t_b": 4038,
+          "h1_h4_a": "bullish__neutral",
+          "h1_h4_b": "bearish__neutral",
+          "terminal_a": 0.0003233032135109988,
+          "terminal_b": 0.0004230016386749236,
+          "mfe_a": 0.001042542574952513,
+          "mfe_b": 0.0006647395357489141,
+          "mae_a": 0.0007050593959366206,
+          "mae_b": 0.0,
+          "ttf_a": 1,
+          "ttf_b": 1,
+          "fav_occ_a": 1.0,
+          "fav_occ_b": 1.0
+        },
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            0
+          ],
+          "t_a": 3105,
+          "t_b": 4199,
+          "h1_h4_a": "bearish__bearish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": -0.00040078740157475733,
+          "terminal_b": -0.000322021310802692,
+          "mfe_a": 3.77952755905741e-05,
+          "mfe_b": 0.000716977039611018,
+          "mae_a": 0.002362204724409449,
+          "mae_b": 0.000322021310802692,
+          "ttf_a": null,
+          "ttf_b": 1,
+          "fav_occ_a": 0.0,
+          "fav_occ_b": 0.4
+        },
+        {
+          "pattern_key": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            0
+          ],
+          "t_a": 3547,
+          "t_b": 4185,
+          "h1_h4_a": "bearish__bearish",
+          "h1_h4_b": "neutral__neutral",
+          "terminal_a": -3.5512392869672085e-05,
+          "terminal_b": 6.786518485887825e-05,
+          "mfe_a": 0.0007387533207272208,
+          "mfe_b": 8.055026614096116e-05,
+          "mae_a": 0.0008118483356472635,
+          "mae_b": 0.0,
+          "ttf_a": 7,
+          "ttf_b": 1,
+          "fav_occ_a": 0.2,
+          "fav_occ_b": 1.0
+        }
+      ]
+    },
+    "additional_high_term_diff_pairs": [],
+    "total_examples": 20
+  },
+  "15_confirmed": [
+    "Within matched 3m pattern groups, 1H regime explains non-trivial terminal-return variance (mean eta\u00b2\u22480.281) \u2014 conditional separation exists.",
+    "Shuffled HTF labels reduce within-pattern separation vs real labels (descriptive negative control; not formal proof).",
+    "Leakage audit: partial/completed HTF bars at sample t indices use only 3m data with end<=t."
+  ],
+  "16_hypotheses": [
+    "1H bullish vs bearish may shift LONG favorable terminal frequency under matched 3m patterns.",
+    "MTF may condition magnitude (terminal/MFE), not direction alone.",
+    "MTF may condition temporal structure (speed/persistence/onset).",
+    "MTF may condition entry adverse risk (MAE)."
+  ],
+  "17_unresolved": [
+    "10-day BTC sample: sparse cells in 1H\u00d74H interaction limit strong claims.",
+    "Resampled native 1H/4H from 3m \u2014 production HTF feed may differ.",
+    "Pattern discretization may collapse distinct 3m shapes \u2014 matching refinement needed."
+  ],
+  "18_next_experiments": [
+    "Finer 3m matching (correlation NN, DTW) on longer multi-asset sample",
+    "Explicit 3m-only vs +1H vs +1H+4H eta\u00b2 decomposition per future observable",
+    "Human chart review of representative_pairs categories A\u2013D",
+    "Real native 1H/4H feeds vs resampled comparison"
+  ],
+  "final_questions": {
+    "Q1_direction_distribution": "HYPOTHESIS",
+    "Q2_magnitude": "HYPOTHESIS",
+    "Q3_temporal_structure": "HYPOTHESIS",
+    "Q4_entry_risk": "HYPOTHESIS",
+    "Q5_conditional_information_not_redundant": "HYPOTHESIS",
+    "Q6_p1_mtf_input_logical": "HYPOTHESIS"
+  },
+  "MTF_AUDIT_VERDICT": {
+    "Direction information": "HYPOTHESIS",
+    "Magnitude information": "HYPOTHESIS",
+    "Risk information": "HYPOTHESIS",
+    "Temporal structure information": "HYPOTHESIS",
+    "1H additional information": "HYPOTHESIS",
+    "4H additional information": "UNRESOLVED",
+    "1H\u00d74H interaction": "UNRESOLVED",
+    "Leakage status": "CONFIRMED",
+    "P1 MTF input recommendation": "support"
+  }
+}

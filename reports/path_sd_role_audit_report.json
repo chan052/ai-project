@@ -1,0 +1,565 @@
+{
+  "1_experiment_purpose": "Verify whether raw Path (P) embeds return magnitude beyond speed/persistence, and whether S+D separates timing/structure from U (magnitude) and MAE (entry risk). Not predictive performance selection; semantic role separation only.",
+  "structures_A_through_F": {
+    "A_raw_P": {
+      "mean_P_h10": -1.0791803145727542e-05,
+      "note": "Raw path only \u2014 no U/MAE"
+    },
+    "B_speed_only": {
+      "mean_S_ttf_h10": 0.7135613682092555
+    },
+    "C_persistence_only": {
+      "mean_D_occ_h10": 0.4846680080482898
+    },
+    "D_S_plus_D": {
+      "mean_S_plus_D_h10": 1.1982293762575453
+    },
+    "E_P_plus_U_minus_MAE": {
+      "mean_composite_h10": -0.022167707233875563
+    },
+    "F_S_plus_D_plus_U_minus_MAE": {
+      "mean_composite_h10": -0.02468915201424445
+    }
+  },
+  "2_speed_candidate_comparison": {
+    "time_to_favorable": {
+      "definition": "time_to_favorable",
+      "reward_candidate": "time_to_favorable",
+      "mean": 0.7135613682092555,
+      "std": 0.3890311868508678,
+      "semantic_note": "Inverse time-to-first favorable step; pure timing, no |R|.",
+      "corr_with_favorable_occupancy": 0.7012890658820914
+    },
+    "early_sign_mass": {
+      "definition": "early_sign_mass",
+      "reward_candidate": "early_sign",
+      "mean": 0.0039281986173532145,
+      "std": 0.8679213135999594,
+      "semantic_note": "Early decay-weighted sign(aligned R_k); no magnitude.",
+      "corr_with_favorable_occupancy": 0.5879312042613316
+    },
+    "early_favorable_occupancy": {
+      "definition": "early_favorable_occupancy",
+      "reward_candidate": "early_favorable_mass",
+      "mean": 0.476953214890516,
+      "std": 0.445233654699904,
+      "semantic_note": "Early-window fraction favorable; no |R|.",
+      "corr_with_favorable_occupancy": 0.5823007084624242
+    },
+    "recommended_for_speed_meaning": "time_to_favorable"
+  },
+  "3_persistence_candidate_comparison": {
+    "favorable_occupancy": {
+      "definition": "favorable_occupancy",
+      "mean": 0.4846680080482898,
+      "std": 0.3703529509703013,
+      "semantic_note": "Fraction of steps with aligned R_k > 0 over full window."
+    },
+    "max_favorable_run": {
+      "definition": "max_favorable_run",
+      "mean": 0.43814889336016105,
+      "std": 0.3630207963121581,
+      "semantic_note": "Longest consecutive favorable run divided by n."
+    },
+    "late_favorable_occupancy": {
+      "definition": "late_favorable_occupancy",
+      "mean": 0.4806438631790745,
+      "std": 0.4397909553801333,
+      "semantic_note": "Late half favorable fraction; persistence after onset."
+    },
+    "recommended_for_persistence_meaning": "favorable_occupancy"
+  },
+  "4_raw_p_vs_sd_overlap": {
+    "Q1_raw_path_contains_magnitude": {
+      "P_U_correlation": 0.5826596049769277,
+      "P_vs_S_plus_D": 0.7217919447150957,
+      "interpretation": "High P_U or high S_plus_D_vs_P suggests Path aggregates magnitude similar to Utility, not pure timing/structure."
+    },
+    "raw_correlations_h10": {
+      "P_S": 0.5810786928933367,
+      "P_D": 0.7546852324424334,
+      "P_U": 0.5826596049769277,
+      "S_U": 0.2695626601036514,
+      "D_U": 0.5572055528130156,
+      "S_plus_D_vs_P": 0.7217919447150957,
+      "absP_absU": 0.3427621458197863
+    },
+    "normalized_correlations": {
+      "P_U_after_norm": 0.5826596049769276,
+      "S_U_after_norm": 0.26956266010365165,
+      "D_U_after_norm": 0.5572055528130156
+    },
+    "normalization_masks_overlap": {
+      "raw_P_U": 0.5826596049769277,
+      "norm_P_U": 0.5826596049769276,
+      "overlap_reduced_after_norm": false,
+      "interpretation": "If norm_P_U << raw_P_U, normalization compresses but does not remove shared magnitude axis."
+    }
+  },
+  "5_s_d_redundancy": {
+    "Q3_S_D_redundancy": {
+      "primary_S_D_corr": 0.7012890658820914,
+      "interpretation": "High S_D may be allowed if 'fast and persistent' is intentional amplification; low S_D with divergent archetype behavior is required for independent axes."
+    },
+    "all_speed_persistence_pairs": {
+      "time_to_favorable__favorable_occupancy": 0.7012890658820914,
+      "time_to_favorable__max_favorable_run": 0.6408773327649854,
+      "time_to_favorable__late_favorable_occupancy": 0.48569965190948655,
+      "early_sign_mass__favorable_occupancy": 0.5879312042613316,
+      "early_sign_mass__max_favorable_run": 0.5412643118221737,
+      "early_sign_mass__late_favorable_occupancy": 0.3147349815773574,
+      "early_favorable_occupancy__favorable_occupancy": 0.5823007084624242,
+      "early_favorable_occupancy__max_favorable_run": 0.5371007984885005,
+      "early_favorable_occupancy__late_favorable_occupancy": 0.30330908978615456
+    }
+  },
+  "6_u_role_separation": {
+    "Q4_role_separation_PU_vs_SDU": {
+      "structure_A_P_plus_U": {
+        "corr_P_U_on_eval": 0.5826596049769277,
+        "controlled_magnitude": {
+          "P_ratio_large_over_small": 12.147989661097386,
+          "U_ratio_large_over_small": 15.233321382413056,
+          "P_and_U_both_scale_with_magnitude": true
+        }
+      },
+      "structure_B_S_plus_D_plus_U": {
+        "controlled_magnitude": {
+          "S_stable": true,
+          "D_stable": true,
+          "U_scales": true,
+          "P_scales": true
+        }
+      },
+      "interpretation": "U should react to magnitude on controlled paths; S/D should not. Raw P should co-scale with U on controlled paths (magnitude overlap)."
+    },
+    "eval_P_U": {
+      "P_U": 0.5826596049769277
+    }
+  },
+  "7_mae_relationship": {
+    "correlations_h10": {
+      "P_MAE": -0.6625086026651689,
+      "S_MAE": -0.29964061361703337,
+      "D_MAE": -0.5098750669746068
+    },
+    "note": "MAE held identical between P+U and S+D+U comparisons; entry-risk axis not decomposed in this audit."
+  },
+  "8_archetype_results": {
+    "by_archetype": {
+      "monotonic_fall": {
+        "count": 684,
+        "mean_P": -0.0006466719308750937,
+        "mean_S_ttf": 0.3814327485380117,
+        "mean_D_occ": 0.06228070175438596,
+        "mean_U": -3.999193988257063e-06,
+        "mean_MAE": 0.0019414780161175888,
+        "narrative": "Adverse for LONG \u2014 components negative or zero."
+      },
+      "monotonic_rise": {
+        "count": 598,
+        "mean_P": 0.0006594320765595806,
+        "mean_S_ttf": 0.9630434782608697,
+        "mean_D_occ": 0.9364548494983278,
+        "mean_U": 0.0014237181486938056,
+        "mean_MAE": 0.00027404709509927923,
+        "narrative": "All favorable steps \u2014 S and D both high; P also encodes magnitude."
+      },
+      "mixed": {
+        "count": 387,
+        "mean_P": -4.6896552859294215e-07,
+        "mean_S_ttf": 0.7284237726098192,
+        "mean_D_occ": 0.49922480620155035,
+        "mean_U": 0.0004237768900741521,
+        "mean_MAE": 0.0005951989681153911,
+        "narrative": "See path_archetypes.classify_archetype rules."
+      },
+      "slow_flat": {
+        "count": 226,
+        "mean_P": 2.5897259902401958e-05,
+        "mean_S_ttf": 0.7597345132743364,
+        "mean_D_occ": 0.538495575221239,
+        "mean_U": 5.5167890168540925e-05,
+        "mean_MAE": 0.00041512946368533446,
+        "narrative": "See path_archetypes.classify_archetype rules."
+      },
+      "spike_reversal": {
+        "count": 165,
+        "mean_P": 2.4777289628891322e-05,
+        "mean_S_ttf": 0.9503030303030304,
+        "mean_D_occ": 0.4569696969696969,
+        "mean_U": -1.5662934816443804e-06,
+        "mean_MAE": 0.0012162945936597862,
+        "narrative": "Early spike then reversal \u2014 high early S, falling D."
+      },
+      "rise_then_fall": {
+        "count": 114,
+        "mean_P": 0.0004907672588802391,
+        "mean_S_ttf": 0.9859649122807018,
+        "mean_D_occ": 0.6657894736842106,
+        "mean_U": -3.6853691252225673e-06,
+        "mean_MAE": 0.001363769657054502,
+        "narrative": "Case B: early favorable, later adverse \u2014 scalp appeal vs hold terminal."
+      },
+      "flat_no_opportunity": {
+        "count": 109,
+        "mean_P": 5.260490887431815e-06,
+        "mean_S_ttf": 0.6550458715596331,
+        "mean_D_occ": 0.44036697247706424,
+        "mean_U": 3.6719303017978865e-05,
+        "mean_MAE": 5.3255777453327144e-05,
+        "narrative": "See path_archetypes.classify_archetype rules."
+      },
+      "choppy": {
+        "count": 101,
+        "mean_P": -1.1746164873140984e-05,
+        "mean_S_ttf": 0.9257425742574259,
+        "mean_D_occ": 0.5069306930693069,
+        "mean_U": 0.00019318992698311375,
+        "mean_MAE": 0.0006607699824060145,
+        "narrative": "See path_archetypes.classify_archetype rules."
+      },
+      "dip_then_rise": {
+        "count": 101,
+        "mean_P": -0.00043493518925972845,
+        "mean_S_ttf": 0.4821782178217822,
+        "mean_D_occ": 0.36039603960396044,
+        "mean_U": 0.0008317591005472985,
+        "mean_MAE": 0.0013541315079557555,
+        "narrative": "Case A: early adverse, later favorable \u2014 P may downrank t despite positive terminal."
+      }
+    },
+    "case_a_dip_then_rise": {
+      "count": 101,
+      "mean_P": -0.00043493518925972845,
+      "mean_S_ttf": 0.4821782178217822,
+      "mean_D_occ": 0.36039603960396044,
+      "mean_U": 0.0008317591005472985,
+      "mean_MAE": 0.0013541315079557555
+    },
+    "case_b_rise_then_fall": {
+      "count": 114,
+      "mean_P": 0.0004907672588802391,
+      "mean_S_ttf": 0.9859649122807018,
+      "mean_D_occ": 0.6657894736842106,
+      "mean_U": -3.6853691252225673e-06,
+      "mean_MAE": 0.001363769657054502
+    },
+    "case_check": {
+      "S_should_be_low_in_A": true,
+      "S_should_be_high_in_B": true
+    },
+    "short_mirror": {
+      "down_then_up_LONG": {
+        "P": -0.048424429051579496,
+        "S": 0.0,
+        "D": 0.0,
+        "U": -5.990407676160989e-06,
+        "MAE": 0.09788704479360007
+      },
+      "up_then_down_SHORT": {
+        "P": -0.05021633414543207,
+        "S": 0.1,
+        "D": 0.1,
+        "U": 0.00199840063987196,
+        "MAE": 0.10628896480640009
+      },
+      "note": "Mirror structure: favorable leg timing differs by action sign."
+    }
+  },
+  "9_same_terminal_analysis": {
+    "terminal_tolerance": 0.0002,
+    "total_pairs": 250,
+    "pairs_with_different_P_same_terminal": 97,
+    "pairs_with_different_S_same_terminal": 124,
+    "pairs_with_different_D_same_terminal": 197,
+    "examples": [
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 0.00021870804355928923,
+        "P_a": 0.00048594532207654983,
+        "P_b": 0.00022043302984778404,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 0.6
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 3.4697346580183406e-05,
+        "P_a": 0.00048594532207654983,
+        "P_b": 6.244922762994737e-05,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 0.8
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 0.0003193779030256203,
+        "P_a": 0.00048594532207654983,
+        "P_b": 0.0003026026300554912,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 1.0
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 0.00031955063192386164,
+        "P_a": 0.00048594532207654983,
+        "P_b": 0.00018035308091203902,
+        "S_a": 1.0,
+        "S_b": 0.8,
+        "D_a": 1.0,
+        "D_b": 0.7
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": -5.817247655829001e-05,
+        "P_a": 0.00048594532207654983,
+        "P_b": -3.894063777332618e-05,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 0.4
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 0.00017601200274624133,
+        "P_a": 0.00048594532207654983,
+        "P_b": 0.00020388614657733867,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 0.9
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 0.0011347811065162581,
+        "P_a": 0.00048594532207654983,
+        "P_b": 0.0011626457271814617,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 0.7
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 0.0013329679177525137,
+        "P_a": 0.00048594532207654983,
+        "P_b": 0.0011756613291677952,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 1.0
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": -0.0003857748363811244,
+        "P_a": 0.00048594532207654983,
+        "P_b": -0.00028587842632817853,
+        "S_a": 1.0,
+        "S_b": 0.8,
+        "D_a": 1.0,
+        "D_b": 0.7
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": -0.00045226950475228965,
+        "P_a": 0.00048594532207654983,
+        "P_b": -0.0003622470233385373,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 0.2
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": -0.0006903754256965721,
+        "P_a": 0.00048594532207654983,
+        "P_b": -0.0005338352621060203,
+        "S_a": 1.0,
+        "S_b": 1.0,
+        "D_a": 1.0,
+        "D_b": 0.4
+      },
+      {
+        "terminal": 0.00023145112017177333,
+        "early_a": 0.0005687398074145396,
+        "early_b": 0.0003680009210274591,
+        "P_a": 0.00048594532207654983,
+        "P_b": 0.00028643818118132377,
+        "S_a": 1.0,
+        "S_b": 0.9,
+        "D_a": 1.0,
+        "D_b": 0.9
+      }
+    ],
+    "note": "Same-terminal pairs isolate whether P encodes magnitude beyond terminal; S/D should differ when early path differs."
+  },
+  "10_controlled_magnitude_experiment": {
+    "Q2_magnitude_free_S_D": {
+      "S_equal": true,
+      "D_equal": true,
+      "P_scales_with_magnitude": 12.147989661097386,
+      "U_scales_with_magnitude": 15.233321382413056
+    },
+    "paths": [
+      {
+        "label": "small_magnitude",
+        "magnitude_per_bar": 0.01,
+        "P": 0.0347364440546251,
+        "S_primary": 1.0,
+        "D_primary": 1.0,
+        "U": 0.10462212541120451,
+        "MAE": -0.008990000000000008,
+        "aligned_returns": [
+          0.01,
+          0.020100000000000052,
+          0.030301000000000185,
+          0.04060400999999999,
+          0.051010050100000086,
+          0.06152015060100013,
+          0.07213535210701011,
+          0.08285670562808022,
+          0.09368527268436083,
+          0.10462212541120451
+        ]
+      },
+      {
+        "label": "large_magnitude",
+        "magnitude_per_bar": 0.1,
+        "P": 0.4219779632388735,
+        "S_primary": 1.0,
+        "D_primary": 1.0,
+        "U": 1.593742460100002,
+        "MAE": -0.09890000000000015,
+        "aligned_returns": [
+          0.10000000000000014,
+          0.21000000000000013,
+          0.3310000000000005,
+          0.4641000000000005,
+          0.6105100000000004,
+          0.7715610000000009,
+          0.9487171000000012,
+          1.1435888100000016,
+          1.357947691000002,
+          1.593742460100002
+        ]
+      }
+    ],
+    "expected": {
+      "P_scales": true,
+      "U_scales": true,
+      "S_invariant": true,
+      "D_invariant": true
+    }
+  },
+  "11_raw_p_u_vs_s_d_u": {
+    "structure_E_P_plus_U_minus_MAE_mean": -0.022167707233875563,
+    "structure_F_S_plus_D_plus_U_minus_MAE_mean": -0.02468915201424445,
+    "corr_PU_vector_with_U": 0.9143378266778132,
+    "corr_SDU_vector_with_U": 0.7485791765398486,
+    "mean_abs_P_on_eval": 0.000436526488092251,
+    "mean_abs_S_plus_D_on_eval": 1.1982293762575453,
+    "note": "MAE term identical normalization pipeline; compare composite role clarity only."
+  },
+  "12_logical_pros_cons": {
+    "keep_raw_P_plus_U_minus_MAE": {
+      "pros": [
+        "Implemented baseline; continuity with Phase 0\u20132 experiments",
+        "Single Path scalar; simple composer"
+      ],
+      "cons": [
+        "P embeds t-anchored cumulative returns (magnitude + decay timing)",
+        "Empirical P_U overlap (~0.58) \u2014 double-count risk with U",
+        "Scalar F cannot express wait-for-better-entry (Case A) vs direction skip"
+      ]
+    },
+    "candidate_S_plus_D_plus_U_minus_MAE": {
+      "pros": [
+        "Aligns Path intent with speed + persistence axes",
+        "Magnitude-free S/D; U carries outcome size",
+        "Archetype diagnostics separate timing from terminal return"
+      ],
+      "cons": [
+        "S_D redundancy partial (\u03c1 often 0.6\u20130.8)",
+        "Does not alone fix scalar collapse / deferred conflict",
+        "Extra normalization streams; not canonical until logic sign-off"
+      ]
+    },
+    "role_division_intent": {
+      "S_D": "timing & structure (fast start + sustained favorable sign)",
+      "U": "magnitude & tail at horizon n",
+      "MAE": "entry-time adverse risk (single scalar here)"
+    }
+  },
+  "13_CONFIRMED": [
+    "Controlled equal-sign paths: Raw P and U scale with per-bar return magnitude.",
+    "Controlled equal-sign paths: primary S (time_to_favorable) and D (favorable_occupancy) are invariant to magnitude when timing/sign structure is fixed.",
+    "On eval LONG samples at h=10, P and U remain correlated (\u03c1\u22480.58) \u2014 magnitude overlap in raw Path is present in market data, not only in synthetic control."
+  ],
+  "14_HYPOTHESIS": [
+    "Replacing raw P with S+D reduces P\u2013U magnitude double-counting while leaving MAE timing-blind.",
+    "High S\u2013D correlation may be intentional amplification ('fast and persistent' paths) rather than pure redundancy failure."
+  ],
+  "15_UNRESOLVED": [
+    "Whether mean(f_n) time-mixing should be decomposed before any structure is canonical.",
+    "MAE decomposition (early vs full) not in scope of this audit \u2014 single MAE may hide Case A entry pain.",
+    "Scalar F vs multi-aspect P1 output remains undecided until reward logic sign-off."
+  ],
+  "16_next_experiments": [
+    "P vs S+D component overlap by archetype (magnitude-free path vs U) on full BTC eval",
+    "f_1..f_H profile for Case A/B (mean vs early-only vs late-only)",
+    "early_MAE vs full MAE on Case A / Q3 dual-axis quadrants (diagnostic)",
+    "Multi-asset quadrant stability for S/D invariance",
+    "Normalization on/off ablation \u2014 does z-score hide or reveal overlap"
+  ],
+  "meta": {
+    "market_data": {
+      "symbol": "BTCUSDT",
+      "source": "csv:C:\\Users\\\uc774\uc720\ucc2c\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+      "timeframe": "3m",
+      "num_bars": 5000,
+      "start_time": "2026-08-07 00:06:00+00:00",
+      "end_time": "2026-08-17 10:06:00+00:00",
+      "close_min": 62586.29,
+      "close_max": 65408.05,
+      "return_std": 0.00047408251416413826
+    },
+    "num_valid_samples": 4970,
+    "eval_samples": 2485,
+    "norm_prefix_fraction": 0.5,
+    "primary_speed": "time_to_favorable",
+    "primary_persistence": "favorable_occupancy",
+    "structures": [
+      "A_raw_P",
+      "B_speed_only",
+      "C_persistence_only",
+      "D_S_plus_D",
+      "E_P_plus_U_minus_MAE",
+      "F_S_plus_D_plus_U_minus_MAE"
+    ]
+  },
+  "should_replace_raw_p_with_sd": {
+    "answer": "not_yet",
+    "rationale": "Current results support S+D as a cleaner timing/structure carrier and raw P as magnitude-coupled, but replacing canonical P requires reward logic sign-off \u2014 not correlation winner selection. Controlled magnitude validates S/D invariance; market eval still shows P\u2013U overlap.",
+    "requires": [
+      "User review of archetype + same-terminal narratives",
+      "f_n profile experiment (not run here)",
+      "MAE early vs full diagnostic (deferred)"
+    ]
+  }
+}

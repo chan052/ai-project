@@ -1,0 +1,1016 @@
+{
+  "audit": "P1 Target Structure — Risk vs Path Semantic Validation",
+  "structures_compared": {
+    "A": {
+      "Expected_Return": "U + MFE",
+      "Acceptable_Risk": "MAE + Giveback + Chop",
+      "Path": null,
+      "Recovery": "diagnostic_only"
+    },
+    "B": {
+      "Expected_Return": "U + MFE",
+      "Acceptable_Risk": "MAE + Giveback",
+      "Path": "Chop",
+      "Recovery": "diagnostic_only"
+    }
+  },
+  "normalization": "X_scaled = X / sigma_prefix (scale-only, prefix-fit)",
+  "1_executive_summary": {
+    "eval_n": 2485,
+    "final_verdict": "C",
+    "headline": "B supported for B/G separation and C trap capture; A vs B risk ordering fails on BTC-scaled archetypes (B MAE > A MAE). Recommend Path facet + keep giveback/MAE as Risk; additional chart validation for A vs B boundary.",
+    "key_answer": "NO as automatic Risk driver: 1192+ eval samples with low MAE + high chop show Risk_A inflated vs Risk_B while Path_B captures whip. Chop alone does not always mean higher adverse burden (MAE/giveback). G archetype also has elevated MAE - chop there is correlated with adversity, not independent.",
+    "no_canonical_adoption": true
+  },
+  "2_semantic_definitions": {
+    "Expected_Return": "how much favorable opportunity/value exists after t",
+    "Risk": "adverse burden actually borne if action chosen at t",
+    "Path": "quality/mechanism of how outcome unfolds after t",
+    "Chop": "directionless round-trip / oscillation intensity",
+    "MAE": "maximum adverse excursion from entry",
+    "Giveback": "fraction of favorable excursion surrendered after peak",
+    "Risk_meaning_1": "how adversely price can move (MAE, giveback erosion)",
+    "Risk_meaning_2": "how uncomfortable/dirty the holding path is (chop-like)"
+  },
+  "3_synthetic_archetype_analysis": {
+    "paths": [
+      {
+        "id": "B",
+        "description": "0->2->2->2 grind hold",
+        "raw": {
+          "U": 0.02,
+          "MFE": 0.022039999999999935,
+          "MAE": -0.017960000000000066,
+          "giveback": 0.092558983666059,
+          "chop": 0.0,
+          "recovery": 0.0,
+          "terminal": 0.02
+        },
+        "scaled": {
+          "MAE": 15.286099254332695,
+          "giveback": 0.23093843286135177,
+          "chop": 0.0
+        },
+        "Risk_A": 15.517037687194048,
+        "Risk_B": 15.517037687194048,
+        "Path_B": 0.0
+      },
+      {
+        "id": "A",
+        "description": "0->1->3->1 spike giveback",
+        "raw": {
+          "U": 0.011696799999999953,
+          "MFE": 0.032260399999999974,
+          "MAE": -0.007576807999999886,
+          "giveback": 0.7025455357032165,
+          "chop": 0.1111111111111111,
+          "recovery": 0.0,
+          "terminal": 0.009595999999999947
+        },
+        "scaled": {
+          "MAE": 6.448766097940971,
+          "giveback": 1.752879716294186,
+          "chop": 0.661599464746526
+        },
+        "Risk_A": 8.863245278981683,
+        "Risk_B": 8.201645814235157,
+        "Path_B": 0.661599464746526
+      },
+      {
+        "id": "G",
+        "description": "0->2->0->2 round-trip",
+        "raw": {
+          "U": 0.017673575999999965,
+          "MFE": 0.022039999999999935,
+          "MAE": 0.030388000000000092,
+          "giveback": 0.11107078039927337,
+          "chop": 0.2222222222222222,
+          "recovery": 0.6447281821771719,
+          "terminal": 0.019591999999999957
+        },
+        "scaled": {
+          "MAE": 25.863807580215013,
+          "giveback": 0.2771261194336285,
+          "chop": 1.323198929493052
+        },
+        "Risk_A": 27.464132629141695,
+        "Risk_B": 26.14093369964864,
+        "Path_B": 1.323198929493052
+      },
+      {
+        "id": "C",
+        "description": "0->3->-1->-3 rise crash",
+        "raw": {
+          "U": 0.0018297689087999995,
+          "MFE": 0.03206000000000003,
+          "MAE": 0.06004671999999999,
+          "giveback": 1.0,
+          "chop": 0.1111111111111111,
+          "recovery": -0.515864979802394,
+          "terminal": -0.030976
+        },
+        "scaled": {
+          "MAE": 51.10691101431629,
+          "giveback": 2.495040715815854,
+          "chop": 0.661599464746526
+        },
+        "Risk_A": 54.263551194878666,
+        "Risk_B": 53.60195173013214,
+        "Path_B": 0.661599464746526
+      },
+      {
+        "id": "REC",
+        "description": "0->-2->-1->1 adverse recovery",
+        "raw": {
+          "U": 0.007601194000000071,
+          "MFE": 0.011615192000000149,
+          "MAE": 0.04939999999999998,
+          "giveback": 0.17384060461506226,
+          "chop": 0.1111111111111111,
+          "recovery": 0.19425101214575086,
+          "terminal": 0.009596000000000089
+        },
+        "scaled": {
+          "MAE": 42.0452841405363,
+          "giveback": 0.43373938657662575,
+          "chop": 0.661599464746526
+        },
+        "Risk_A": 43.14062299185945,
+        "Risk_B": 42.47902352711293,
+        "Path_B": 0.661599464746526
+      }
+    ],
+    "Risk_A_order": [
+      "A",
+      "B",
+      "G",
+      "REC",
+      "C"
+    ],
+    "Risk_B_order": [
+      "A",
+      "B",
+      "G",
+      "REC",
+      "C"
+    ],
+    "Path_B_order": [
+      "G",
+      "A",
+      "C",
+      "REC",
+      "B"
+    ],
+    "B_vs_G": {
+      "B": {
+        "id": "B",
+        "description": "0->2->2->2 grind hold",
+        "raw": {
+          "U": 0.02,
+          "MFE": 0.022039999999999935,
+          "MAE": -0.017960000000000066,
+          "giveback": 0.092558983666059,
+          "chop": 0.0,
+          "recovery": 0.0,
+          "terminal": 0.02
+        },
+        "scaled": {
+          "MAE": 15.286099254332695,
+          "giveback": 0.23093843286135177,
+          "chop": 0.0
+        },
+        "Risk_A": 15.517037687194048,
+        "Risk_B": 15.517037687194048,
+        "Path_B": 0.0
+      },
+      "G": {
+        "id": "G",
+        "description": "0->2->0->2 round-trip",
+        "raw": {
+          "U": 0.017673575999999965,
+          "MFE": 0.022039999999999935,
+          "MAE": 0.030388000000000092,
+          "giveback": 0.11107078039927337,
+          "chop": 0.2222222222222222,
+          "recovery": 0.6447281821771719,
+          "terminal": 0.019591999999999957
+        },
+        "scaled": {
+          "MAE": 25.863807580215013,
+          "giveback": 0.2771261194336285,
+          "chop": 1.323198929493052
+        },
+        "Risk_A": 27.464132629141695,
+        "Risk_B": 26.14093369964864,
+        "Path_B": 1.323198929493052
+      },
+      "terminal_diff": 0.00040800000000004374,
+      "Risk_A_diff": 11.947094941947647,
+      "Risk_B_diff": 10.623896012454594,
+      "Path_B_diff": 1.323198929493052
+    }
+  },
+  "4_B_vs_G_boundary_test": {
+    "synthetic": {
+      "B": {
+        "id": "B",
+        "description": "0->2->2->2 grind hold",
+        "raw": {
+          "U": 0.02,
+          "MFE": 0.022039999999999935,
+          "MAE": -0.017960000000000066,
+          "giveback": 0.092558983666059,
+          "chop": 0.0,
+          "recovery": 0.0,
+          "terminal": 0.02
+        },
+        "scaled": {
+          "MAE": 15.286099254332695,
+          "giveback": 0.23093843286135177,
+          "chop": 0.0
+        },
+        "Risk_A": 15.517037687194048,
+        "Risk_B": 15.517037687194048,
+        "Path_B": 0.0
+      },
+      "G": {
+        "id": "G",
+        "description": "0->2->0->2 round-trip",
+        "raw": {
+          "U": 0.017673575999999965,
+          "MFE": 0.022039999999999935,
+          "MAE": 0.030388000000000092,
+          "giveback": 0.11107078039927337,
+          "chop": 0.2222222222222222,
+          "recovery": 0.6447281821771719,
+          "terminal": 0.019591999999999957
+        },
+        "scaled": {
+          "MAE": 25.863807580215013,
+          "giveback": 0.2771261194336285,
+          "chop": 1.323198929493052
+        },
+        "Risk_A": 27.464132629141695,
+        "Risk_B": 26.14093369964864,
+        "Path_B": 1.323198929493052
+      },
+      "terminal_diff": 0.00040800000000004374,
+      "Risk_A_diff": 11.947094941947647,
+      "Risk_B_diff": 10.623896012454594,
+      "Path_B_diff": 1.323198929493052
+    },
+    "synthetic_semantic_check": {
+      "B_label": "low Risk + clean Path",
+      "G_label": "similar Risk + dirty Path",
+      "holds_under_B": true,
+      "Path_B_G_gt_B": true,
+      "Risk_B_similar": false
+    },
+    "real_B_G_like_pairs": [
+      {
+        "t_indices": [
+          2505,
+          2537
+        ],
+        "records": [
+          {
+            "t_index": 2505,
+            "timestamp": "2026-08-12 05:21:00+00:00",
+            "path_ascii": "t>--^^^-^^--",
+            "U": 0.0004625888332748571,
+            "MFE": 0.0008585786644690701,
+            "MAE": 1.5670353422509101e-07,
+            "giveback": 0.730425260083887,
+            "chop": 0.6666666666666666,
+            "terminal": 0.00023145112017177333,
+            "recovery": 1477.000000774162,
+            "Risk_A": 5.79217092562176,
+            "Risk_B": 1.822574137142604,
+            "Path_B": 3.969596788479156,
+            "semantic_note": "B-like vs G-like pair"
+          },
+          {
+            "t_index": 2537,
+            "timestamp": "2026-08-12 06:57:00+00:00",
+            "path_ascii": "t>-^^^^^----",
+            "U": 0.0006106073944974414,
+            "MFE": 0.0013683456970487694,
+            "MAE": 3.09204063224095e-05,
+            "giveback": 0.7242486808901032,
+            "chop": 0.3333333333333333,
+            "terminal": 0.00037732313095954924,
+            "recovery": 12.20304568527242,
+            "Risk_A": 3.81814529021296,
+            "Risk_B": 1.8333468959733816,
+            "Path_B": 1.984798394239578,
+            "semantic_note": ""
+          }
+        ],
+        "Risk_A_diff": 1.9740256354088004,
+        "Risk_B_diff": 0.010772758830777551,
+        "Path_B_diff": 1.984798394239578,
+        "structure_B_separates": true
+      },
+      {
+        "t_indices": [
+          2505,
+          2568
+        ],
+        "records": [
+          {
+            "t_index": 2505,
+            "timestamp": "2026-08-12 05:21:00+00:00",
+            "path_ascii": "t>--^^^-^^--",
+            "U": 0.0004625888332748571,
+            "MFE": 0.0008585786644690701,
+            "MAE": 1.5670353422509101e-07,
+            "giveback": 0.730425260083887,
+            "chop": 0.6666666666666666,
+            "terminal": 0.00023145112017177333,
+            "recovery": 1477.000000774162,
+            "Risk_A": 5.79217092562176,
+            "Risk_B": 1.822574137142604,
+            "Path_B": 3.969596788479156,
+            "semantic_note": "B-like vs G-like pair"
+          },
+          {
+            "t_index": 2568,
+            "timestamp": "2026-08-12 08:30:00+00:00",
+            "path_ascii": "t>----^-----",
+            "U": 0.0003014709133724532,
+            "MFE": 0.000786370867867964,
+            "MAE": 9.361184608520848e-05,
+            "giveback": 0.6757726819542044,
+            "chop": 0.5555555555555556,
+            "terminal": 0.00025496291747817467,
+            "recovery": 2.7236180904508527,
+            "Risk_A": 5.073752511171831,
+            "Risk_B": 1.7657551874392008,
+            "Path_B": 3.3079973237326303,
+            "semantic_note": ""
+          }
+        ],
+        "Risk_A_diff": 0.7184184144499293,
+        "Risk_B_diff": 0.05681894970340329,
+        "Path_B_diff": 0.6615994647465255,
+        "structure_B_separates": true
+      },
+      {
+        "t_indices": [
+          2506,
+          2511
+        ],
+        "records": [
+          {
+            "t_index": 2506,
+            "timestamp": "2026-08-12 05:24:00+00:00",
+            "path_ascii": "t>-^--------",
+            "U": 0.0001702669353072292,
+            "MFE": 0.0005181989984409302,
+            "MAE": 0.0002356019630155183,
+            "giveback": 0.9495163240629222,
+            "chop": 0.6666666666666666,
+            "terminal": 2.616059030821019e-05,
+            "recovery": 0.11103723404243064,
+            "Risk_A": 6.539204010932069,
+            "Risk_B": 2.5696072224529134,
+            "Path_B": 3.969596788479156,
+            "semantic_note": "B-like vs G-like pair"
+          },
+          {
+            "t_index": 2511,
+            "timestamp": "2026-08-12 05:39:00+00:00",
+            "path_ascii": "t>------vvvv",
+            "U": 0.00012009239227216728,
+            "MFE": 0.0006271391940376004,
+            "MAE": 0.0014839526469958523,
+            "giveback": 1.0,
+            "chop": 0.5555555555555556,
+            "terminal": -0.0014839526469958523,
+            "recovery": -1.0,
+            "Risk_A": 7.06605849894204,
+            "Risk_B": 3.758061175209409,
+            "Path_B": 3.3079973237326303,
+            "semantic_note": ""
+          }
+        ],
+        "Risk_A_diff": 0.5268544880099704,
+        "Risk_B_diff": 1.1884539527564955,
+        "Path_B_diff": 0.6615994647465255,
+        "structure_B_separates": false
+      },
+      {
+        "t_indices": [
+          2506,
+          2513
+        ],
+        "records": [
+          {
+            "t_index": 2506,
+            "timestamp": "2026-08-12 05:24:00+00:00",
+            "path_ascii": "t>-^--------",
+            "U": 0.0001702669353072292,
+            "MFE": 0.0005181989984409302,
+            "MAE": 0.0002356019630155183,
+            "giveback": 0.9495163240629222,
+            "chop": 0.6666666666666666,
+            "terminal": 2.616059030821019e-05,
+            "recovery": 0.11103723404243064,
+            "Risk_A": 6.539204010932069,
+            "Risk_B": 2.5696072224529134,
+            "Path_B": 3.969596788479156,
+            "semantic_note": "B-like vs G-like pair"
+          },
+          {
+            "t_index": 2513,
+            "timestamp": "2026-08-12 05:45:00+00:00",
+            "path_ascii": "t>v---vvvvvv",
+            "U": -2.368056790383678e-06,
+            "MFE": 0.00016537610143075302,
+            "MAE": 0.0026702915771726916,
+            "giveback": 1.0,
+            "chop": 0.5555555555555556,
+            "terminal": -0.0015754579359778143,
+            "recovery": -0.5899947217172109,
+            "Risk_A": 8.075774235910968,
+            "Risk_B": 4.767776912178338,
+            "Path_B": 3.3079973237326303,
+            "semantic_note": ""
+          }
+        ],
+        "Risk_A_diff": 1.5365702249788988,
+        "Risk_B_diff": 2.1981696897254244,
+        "Path_B_diff": 0.6615994647465255,
+        "structure_B_separates": false
+      },
+      {
+        "t_indices": [
+          2506,
+          2539
+        ],
+        "records": [
+          {
+            "t_index": 2506,
+            "timestamp": "2026-08-12 05:24:00+00:00",
+            "path_ascii": "t>-^--------",
+            "U": 0.0001702669353072292,
+            "MFE": 0.0005181989984409302,
+            "MAE": 0.0002356019630155183,
+            "giveback": 0.9495163240629222,
+            "chop": 0.6666666666666666,
+            "terminal": 2.616059030821019e-05,
+            "recovery": 0.11103723404243064,
+            "Risk_A": 6.539204010932069,
+            "Risk_B": 2.5696072224529134,
+            "Path_B": 3.969596788479156,
+            "semantic_note": "B-like vs G-like pair"
+          },
+          {
+            "t_index": 2539,
+            "timestamp": "2026-08-12 07:03:00+00:00",
+            "path_ascii": "t>----vv----",
+            "U": 6.329799759087974e-05,
+            "MFE": 0.0004909998519630734,
+            "MAE": 0.0006051639823459053,
+            "giveback": 1.0,
+            "chop": 0.5555555555555556,
+            "terminal": -0.0001541529397889982,
+            "recovery": -0.254729204456993,
+            "Risk_A": 6.318104670911887,
+            "Risk_B": 3.0101073471792565,
+            "Path_B": 3.3079973237326303,
+            "semantic_note": ""
+          }
+        ],
+        "Risk_A_diff": 0.2210993400201824,
+        "Risk_B_diff": 0.44050012472634315,
+        "Path_B_diff": 0.6615994647465255,
+        "structure_B_separates": false
+      }
+    ],
+    "interpretation": "Structure B: B and G can share similar Risk_B while Path_B separates whip; Structure A: chop inflates Risk_A for G vs B"
+  },
+  "5_A_vs_B_risk_test": {
+    "A": {
+      "id": "A",
+      "description": "0->1->3->1 spike giveback",
+      "raw": {
+        "U": 0.011696799999999953,
+        "MFE": 0.032260399999999974,
+        "MAE": -0.007576807999999886,
+        "giveback": 0.7025455357032165,
+        "chop": 0.1111111111111111,
+        "recovery": 0.0,
+        "terminal": 0.009595999999999947
+      },
+      "scaled": {
+        "MAE": 6.448766097940971,
+        "giveback": 1.752879716294186,
+        "chop": 0.661599464746526
+      },
+      "Risk_A": 8.863245278981683,
+      "Risk_B": 8.201645814235157,
+      "Path_B": 0.661599464746526
+    },
+    "B": {
+      "id": "B",
+      "description": "0->2->2->2 grind hold",
+      "raw": {
+        "U": 0.02,
+        "MFE": 0.022039999999999935,
+        "MAE": -0.017960000000000066,
+        "giveback": 0.092558983666059,
+        "chop": 0.0,
+        "recovery": 0.0,
+        "terminal": 0.02
+      },
+      "scaled": {
+        "MAE": 15.286099254332695,
+        "giveback": 0.23093843286135177,
+        "chop": 0.0
+      },
+      "Risk_A": 15.517037687194048,
+      "Risk_B": 15.517037687194048,
+      "Path_B": 0.0
+    },
+    "A_higher_MFE": true,
+    "A_higher_giveback": true,
+    "A_higher_Risk_B": false,
+    "A_higher_Risk_A": false,
+    "ordering_A_gt_B_Risk_B": false,
+    "ordering_A_gt_B_Risk_A": false,
+    "chop_removal_breaks_order": true,
+    "verdict": "A>B risk ordering breaks without chop"
+  },
+  "6_C_crash_trap_test": {
+    "C": {
+      "id": "C",
+      "description": "0->3->-1->-3 rise crash",
+      "raw": {
+        "U": 0.0018297689087999995,
+        "MFE": 0.03206000000000003,
+        "MAE": 0.06004671999999999,
+        "giveback": 1.0,
+        "chop": 0.1111111111111111,
+        "recovery": -0.515864979802394,
+        "terminal": -0.030976
+      },
+      "scaled": {
+        "MAE": 51.10691101431629,
+        "giveback": 2.495040715815854,
+        "chop": 0.661599464746526
+      },
+      "Risk_A": 54.263551194878666,
+      "Risk_B": 53.60195173013214,
+      "Path_B": 0.661599464746526
+    },
+    "C_highest_Risk_B": true,
+    "C_highest_Risk_A": true,
+    "trap_captured_without_chop": true,
+    "raw_signals": {
+      "MFE_high": 0.03206000000000003,
+      "U_low": 0.0018297689087999995,
+      "MAE_high": 0.06004671999999999,
+      "giveback_high": 1.0,
+      "terminal_negative": true
+    },
+    "verdict": "C catastrophic risk captured by MAE+Giveback without chop"
+  },
+  "7_REC_recovery_test": {
+    "REC": {
+      "id": "REC",
+      "description": "0->-2->-1->1 adverse recovery",
+      "raw": {
+        "U": 0.007601194000000071,
+        "MFE": 0.011615192000000149,
+        "MAE": 0.04939999999999998,
+        "giveback": 0.17384060461506226,
+        "chop": 0.1111111111111111,
+        "recovery": 0.19425101214575086,
+        "terminal": 0.009596000000000089
+      },
+      "scaled": {
+        "MAE": 42.0452841405363,
+        "giveback": 0.43373938657662575,
+        "chop": 0.661599464746526
+      },
+      "Risk_A": 43.14062299185945,
+      "Risk_B": 42.47902352711293,
+      "Path_B": 0.661599464746526
+    },
+    "B_reference": {
+      "id": "B",
+      "description": "0->2->2->2 grind hold",
+      "raw": {
+        "U": 0.02,
+        "MFE": 0.022039999999999935,
+        "MAE": -0.017960000000000066,
+        "giveback": 0.092558983666059,
+        "chop": 0.0,
+        "recovery": 0.0,
+        "terminal": 0.02
+      },
+      "scaled": {
+        "MAE": 15.286099254332695,
+        "giveback": 0.23093843286135177,
+        "chop": 0.0
+      },
+      "Risk_A": 15.517037687194048,
+      "Risk_B": 15.517037687194048,
+      "Path_B": 0.0
+    },
+    "REC_high_MAE": true,
+    "REC_positive_terminal": true,
+    "recovery_raw": 0.19425101214575086,
+    "Risk_B_REC_vs_B": 26.96198583991888,
+    "recovery_not_in_Risk_B": true,
+    "verdict": "Recovery remains diagnostic: REC has elevated MAE/Risk_B but positive terminal; P2 timing for wait-through-adverse, not P1 Risk canonical facet"
+  },
+  "8_real_btc_boundary_cases": {
+    "high_MAE_low_Chop": [],
+    "low_MAE_high_Chop": [
+      {
+        "t_index": 2505,
+        "timestamp": "2026-08-12 05:21:00+00:00",
+        "path_ascii": "t>--^^^-^^--",
+        "U": 0.0004625888332748571,
+        "MFE": 0.0008585786644690701,
+        "MAE": 1.5670353422509101e-07,
+        "giveback": 0.730425260083887,
+        "chop": 0.6666666666666666,
+        "terminal": 0.00023145112017177333,
+        "recovery": 1477.000000774162,
+        "Risk_A": 5.79217092562176,
+        "Risk_B": 1.822574137142604,
+        "Path_B": 3.969596788479156,
+        "semantic_note": "Structure A: Risk_A=5.79 elevated by chop; Structure B: Risk_B=1.82 low, Path_B=3.97 high - whip without deep adverse"
+      },
+      {
+        "t_index": 2506,
+        "timestamp": "2026-08-12 05:24:00+00:00",
+        "path_ascii": "t>-^--------",
+        "U": 0.0001702669353072292,
+        "MFE": 0.0005181989984409302,
+        "MAE": 0.0002356019630155183,
+        "giveback": 0.9495163240629222,
+        "chop": 0.6666666666666666,
+        "terminal": 2.616059030821019e-05,
+        "recovery": 0.11103723404243064,
+        "Risk_A": 6.539204010932069,
+        "Risk_B": 2.5696072224529134,
+        "Path_B": 3.969596788479156,
+        "semantic_note": "Structure A: Risk_A=6.54 elevated by chop; Structure B: Risk_B=2.57 low, Path_B=3.97 high - whip without deep adverse"
+      },
+      {
+        "t_index": 2507,
+        "timestamp": "2026-08-12 05:27:00+00:00",
+        "path_ascii": "t>----------",
+        "U": 0.00016624651553715978,
+        "MFE": 0.00048607008964646957,
+        "MAE": 0.00026770666555129803,
+        "giveback": 0.6322913309699026,
+        "chop": 0.6666666666666666,
+        "terminal": 0.00017873218571924342,
+        "recovery": 0.6676418958458645,
+        "Risk_A": 5.7750396630088865,
+        "Risk_B": 1.805442874529731,
+        "Path_B": 3.969596788479156,
+        "semantic_note": "Structure A: Risk_A=5.78 elevated by chop; Structure B: Risk_B=1.81 low, Path_B=3.97 high - whip without deep adverse"
+      },
+      {
+        "t_index": 2525,
+        "timestamp": "2026-08-12 06:21:00+00:00",
+        "path_ascii": "t>--v----^--",
+        "U": 0.0001520181640609184,
+        "MFE": 0.000581061450626604,
+        "MAE": 0.0005656628507993523,
+        "giveback": 1.0,
+        "chop": 0.6666666666666666,
+        "terminal": -0.0001275883985692284,
+        "recovery": -0.2255555555556283,
+        "Risk_A": 6.946083967647329,
+        "Risk_B": 2.9764871791681733,
+        "Path_B": 3.969596788479156,
+        "semantic_note": "Structure A: Risk_A=6.95 elevated by chop; Structure B: Risk_B=2.98 low, Path_B=3.97 high - whip without deep adverse"
+      },
+      {
+        "t_index": 2526,
+        "timestamp": "2026-08-12 06:24:00+00:00",
+        "path_ascii": "t>------^^--",
+        "U": 0.00023676847413729444,
+        "MFE": 0.000677918266062953,
+        "MAE": 0.00046891703892713084,
+        "giveback": 0.6293463143253255,
+        "chop": 0.6666666666666666,
+        "terminal": 0.0002512729039024181,
+        "recovery": 0.5358579088474232,
+        "Risk_A": 5.93894572091625,
+        "Risk_B": 1.9693489324370936,
+        "Path_B": 3.969596788479156,
+        "semantic_note": "Structure A: Risk_A=5.94 elevated by chop; Structure B: Risk_B=1.97 low, Path_B=3.97 high - whip without deep adverse"
+      }
+    ],
+    "high_Giveback_low_Chop": [],
+    "low_Giveback_high_Chop": [
+      {
+        "t_index": 2517,
+        "timestamp": "2026-08-12 05:57:00+00:00",
+        "path_ascii": "t>vvvvvvvvvv",
+        "U": -7.945802884652055e-06,
+        "MFE": 0.0,
+        "MAE": 0.003565860829313235,
+        "giveback": 0.0,
+        "chop": 0.5555555555555556,
+        "terminal": -0.0033357901354332553,
+        "recovery": -0.9354796205200498,
+        "Risk_A": 6.342969626851728,
+        "Risk_B": 3.034972303119098,
+        "Path_B": 3.3079973237326303,
+        "semantic_note": "Boundary case low_Giveback_high_Chop; terminal=-0.003336"
+      },
+      {
+        "t_index": 2523,
+        "timestamp": "2026-08-12 06:15:00+00:00",
+        "path_ascii": "t>vvvvvvvvvv",
+        "U": -4.202849441656735e-06,
+        "MFE": 0.0,
+        "MAE": 0.002316722833209243,
+        "giveback": 0.0,
+        "chop": 0.5555555555555556,
+        "terminal": -0.001172164504574954,
+        "recovery": -0.5059580230196167,
+        "Risk_A": 5.279804404646617,
+        "Risk_B": 1.9718070809139872,
+        "Path_B": 3.3079973237326303,
+        "semantic_note": "Boundary case low_Giveback_high_Chop; terminal=-0.001172"
+      },
+      {
+        "t_index": 2527,
+        "timestamp": "2026-08-12 06:27:00+00:00",
+        "path_ascii": "t>-----^^--^",
+        "U": 0.00034258165131995604,
+        "MFE": 0.0011788748517960726,
+        "MAE": 0.0004839955403267384,
+        "giveback": 0.0,
+        "chop": 0.5555555555555556,
+        "terminal": 0.0011788748517960726,
+        "recovery": 2.4357142857147633,
+        "Risk_A": 3.7199351783032806,
+        "Risk_B": 0.41193785457065024,
+        "Path_B": 3.3079973237326303,
+        "semantic_note": "Boundary case low_Giveback_high_Chop; terminal=0.001179"
+      },
+      {
+        "t_index": 2528,
+        "timestamp": "2026-08-12 06:30:00+00:00",
+        "path_ascii": "t>^^^^^^-^^^",
+        "U": 0.000948875043430816,
+        "MFE": 0.0018549874306089114,
+        "MAE": 0.0,
+        "giveback": 0.0,
+        "chop": 0.4444444444444444,
+        "terminal": 0.0018549874306089114,
+        "recovery": 0.0,
+        "Risk_A": 2.646397858986104,
+        "Risk_B": 0.0,
+        "Path_B": 2.646397858986104,
+        "semantic_note": "Boundary case low_Giveback_high_Chop; terminal=0.001855"
+      },
+      {
+        "t_index": 2529,
+        "timestamp": "2026-08-12 06:33:00+00:00",
+        "path_ascii": "t>-------^^^",
+        "U": 0.00044208433647538274,
+        "MFE": 0.0017819660884452941,
+        "MAE": 0.00036965231474152553,
+        "giveback": 0.0,
+        "chop": 0.3333333333333333,
+        "terminal": 0.0017819660884452941,
+        "recovery": 4.8206544836363605,
+        "Risk_A": 2.299416544169019,
+        "Risk_B": 0.31461814992944137,
+        "Path_B": 1.984798394239578,
+        "semantic_note": "Boundary case low_Giveback_high_Chop; terminal=0.001782"
+      }
+    ],
+    "high_MAE_high_Chop": [
+      {
+        "t_index": 2508,
+        "timestamp": "2026-08-12 05:30:00+00:00",
+        "path_ascii": "t>--v--vv--v",
+        "U": -5.285152718441096e-07,
+        "MFE": 1.0959849530614534e-06,
+        "MAE": 0.0013881432276975473,
+        "giveback": 1.0,
+        "chop": 0.6666666666666666,
+        "terminal": -0.001266332328628229,
+        "recovery": -0.9122490412813088,
+        "Risk_A": 7.646112735799152,
+        "Risk_B": 3.6765159473199955,
+        "Path_B": 3.969596788479156,
+        "semantic_note": "Boundary case high_MAE_high_Chop; terminal=-0.001266"
+      },
+      {
+        "t_index": 2510,
+        "timestamp": "2026-08-12 05:36:00+00:00",
+        "path_ascii": "t>---v---vvv",
+        "U": -8.875735629634895e-07,
+        "MFE": 0.00013701674000063575,
+        "MAE": 0.0015785894353672883,
+        "giveback": 1.0,
+        "chop": 0.6666666666666666,
+        "terminal": -0.0015785894353672883,
+        "recovery": -1.0,
+        "Risk_A": 7.8082051429846135,
+        "Risk_B": 3.8386083545054577,
+        "Path_B": 3.969596788479156,
+        "semantic_note": "Boundary case high_MAE_high_Chop; terminal=-0.001579"
+      },
+      {
+        "t_index": 2511,
+        "timestamp": "2026-08-12 05:39:00+00:00",
+        "path_ascii": "t>------vvvv",
+        "U": 0.00012009239227216728,
+        "MFE": 0.0006271391940376004,
+        "MAE": 0.0014839526469958523,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "terminal": -0.0014839526469958523,
+        "recovery": -1.0,
+        "Risk_A": 7.06605849894204,
+        "Risk_B": 3.758061175209409,
+        "Path_B": 3.3079973237326303,
+        "semantic_note": "Boundary case high_MAE_high_Chop; terminal=-0.001484"
+      },
+      {
+        "t_index": 2512,
+        "timestamp": "2026-08-12 05:42:00+00:00",
+        "path_ascii": "t>-----vvvvv",
+        "U": 9.449934362468749e-07,
+        "MFE": 0.00019404058909406406,
+        "MAE": 0.002240158665376626,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "terminal": -0.002240158665376626,
+        "recovery": -1.0,
+        "Risk_A": 7.709679893913766,
+        "Risk_B": 4.401682570181135,
+        "Path_B": 3.3079973237326303,
+        "semantic_note": "Boundary case high_MAE_high_Chop; terminal=-0.002240"
+      },
+      {
+        "t_index": 2513,
+        "timestamp": "2026-08-12 05:45:00+00:00",
+        "path_ascii": "t>v---vvvvvv",
+        "U": -2.368056790383678e-06,
+        "MFE": 0.00016537610143075302,
+        "MAE": 0.0026702915771726916,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "terminal": -0.0015754579359778143,
+        "recovery": -0.5899947217172109,
+        "Risk_A": 8.075774235910968,
+        "Risk_B": 4.767776912178338,
+        "Path_B": 3.3079973237326303,
+        "semantic_note": "Boundary case high_MAE_high_Chop; terminal=-0.001575"
+      }
+    ],
+    "low_MAE_low_Chop": [
+      {
+        "t_index": 4025,
+        "timestamp": "2026-08-15 09:21:00+00:00",
+        "path_ascii": "t>----^^^^^^",
+        "U": 0.0006211257063714824,
+        "MFE": 0.0009722409486861194,
+        "MAE": 0.0,
+        "giveback": 0.00490035935973372,
+        "chop": 0.0,
+        "terminal": 0.000967476618653309,
+        "recovery": 0.0,
+        "Risk_A": 0.01222659612466494,
+        "Risk_B": 0.01222659612466494,
+        "Path_B": 0.0,
+        "semantic_note": "Boundary case low_MAE_low_Chop; terminal=0.000967"
+      },
+      {
+        "t_index": 4026,
+        "timestamp": "2026-08-15 09:24:00+00:00",
+        "path_ascii": "t>----^^^^^^",
+        "U": 0.0006081558850622603,
+        "MFE": 0.0011147169150988146,
+        "MAE": 1.5879158326421364e-07,
+        "giveback": 0.018803418803413394,
+        "chop": 0.0,
+        "terminal": 0.0010937564260969626,
+        "recovery": 6888.000003608875,
+        "Risk_A": 0.04705044606241962,
+        "Risk_B": 0.04705044606241962,
+        "Path_B": 0.0,
+        "semantic_note": "Boundary case low_MAE_low_Chop; terminal=0.001094"
+      },
+      {
+        "t_index": 4186,
+        "timestamp": "2026-08-15 17:24:00+00:00",
+        "path_ascii": "t>----------",
+        "U": -2.395294029253896e-10,
+        "MFE": 0.0,
+        "MAE": 1.28426103223459e-05,
+        "giveback": 0.0,
+        "chop": 0.0,
+        "terminal": -1.2684059577708184e-05,
+        "recovery": -0.9876543209940863,
+        "Risk_A": 0.010930591095328302,
+        "Risk_B": 0.010930591095328302,
+        "Path_B": 0.0,
+        "semantic_note": "Boundary case low_MAE_low_Chop; terminal=-0.000013"
+      },
+      {
+        "t_index": 4248,
+        "timestamp": "2026-08-15 20:30:00+00:00",
+        "path_ascii": "t>----------",
+        "U": 0.00020991264552075117,
+        "MFE": 0.0003912577668947147,
+        "MAE": 0.0,
+        "giveback": 0.0,
+        "chop": 0.0,
+        "terminal": 0.0003912577668947147,
+        "recovery": 0.0,
+        "Risk_A": 0.0,
+        "Risk_B": 0.0,
+        "Path_B": 0.0,
+        "semantic_note": "Boundary case low_MAE_low_Chop; terminal=0.000391"
+      }
+    ]
+  },
+  "9_risk_vs_path_separation": {
+    "correlations": {
+      "Risk_A_vs_chop": 0.5813785445578625,
+      "Risk_B_vs_chop": 0.07567841095133442,
+      "Path_B_vs_chop": 1.0,
+      "Risk_B_vs_MAE": 0.7987160209279099,
+      "Risk_B_vs_giveback": 0.8166323219722096
+    },
+    "low_MAE_high_Chop_count": 1192,
+    "high_MAE_low_Chop_count": 0,
+    "mean_Risk_A_lowMAE_highChop": 4.283514068395745,
+    "mean_Risk_B_lowMAE_highChop": 1.3751405824294733,
+    "mean_Path_B_lowMAE_highChop": 2.908373485966272,
+    "risk_meaning_split": {
+      "Risk_1_MAE_giveback": "adverse magnitude and capture erosion",
+      "Risk_2_chop_like": "holding discomfort / path dirtiness -> Path facet in Structure B"
+    }
+  },
+  "10_normalization_vs_structure": {
+    "normalization_note": "X/sigma used; structure comparison holds regardless of z-score mean removal",
+    "structure_question": "Chop semantic role (Risk burden vs Path quality)",
+    "prior_composite_finding": "Chop dominated Risk_A scalar (~60% share); separation may clarify semantics"
+  },
+  "11_failure_cases": [],
+  "12_final_verdict": {
+    "choice": "C",
+    "choice_labels": {
+      "A": "Keep Chop in Risk",
+      "B": "Move Chop to Path",
+      "C": "Conditional / dual representation"
+    },
+    "summary": "B supported for B/G separation and C trap capture; A vs B risk ordering fails on BTC-scaled archetypes (B MAE > A MAE). Recommend Path facet + keep giveback/MAE as Risk; additional chart validation for A vs B boundary.",
+    "chop_as_risk_answer": "NO as automatic Risk driver: 1192+ eval samples with low MAE + high chop show Risk_A inflated vs Risk_B while Path_B captures whip. Chop alone does not always mean higher adverse burden (MAE/giveback). G archetype also has elevated MAE - chop there is correlated with adversity, not independent.",
+    "risk_meaning_split_verdict": "Risk meaning 1 (adverse move) -> MAE+Giveback; Risk meaning 2 (holding discomfort) -> Chop as Path/Holding Difficulty",
+    "unresolved": [
+      "Inference UX: expose Path_B alongside Risk_B at production",
+      "Whether chop should ever gate Risk threshold conditionally",
+      "Multi-asset validation beyond BTC 10-day window"
+    ]
+  },
+  "13_unresolved_questions": [
+    "Inference UX: expose Path_B alongside Risk_B at production",
+    "Whether chop should ever gate Risk threshold conditionally",
+    "Multi-asset validation beyond BTC 10-day window"
+  ],
+  "quantitative_answers": {
+    "A_discrimination_change": "Structure A merges chop into Risk; Structure B separates adverse burden (Risk_B) from path quality (Path_B). B/G: Risk_A inflates with chop; Risk_B stays closer.",
+    "B_same_outcome_different_path": "PARTIAL - check real pairs",
+    "C_MAE_giveback_ordering": "PARTIAL/FAILED",
+    "D_chop_improves_risk_scalar": "Chop in Risk_A helps separate G from B numerically but conflates 'dirty path' with 'adverse burden'. Improvement is path-quality signal not pure risk.",
+    "E_low_MAE_high_Chop_exists": "YES - 5+ exemplars in report; Structure A raises Risk_A; Structure B keeps Risk_B lower and Path_B high - better matches whip-without-deep-MAE",
+    "F_high_MAE_low_Chop_exists": "PARTIAL"
+  },
+  "data_protocol": {
+    "market": {
+      "symbol": "BTCUSDT",
+      "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+      "timeframe": "3m",
+      "num_bars": 5000,
+      "start_time": "2026-08-07 00:06:00+00:00",
+      "end_time": "2026-08-17 10:06:00+00:00",
+      "close_min": 62586.29,
+      "close_max": 65408.05,
+      "return_std": 0.00047408251416413826
+    },
+    "prefix_n": 2485,
+    "eval_n": 2485
+  },
+  "11_test_result": {
+    "pytest_pass_count": null
+  }
+}

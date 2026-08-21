@@ -1,0 +1,628 @@
+{
+  "audit": "Reward Logic Audit 5 \u2014 U persistence / MAE early-path",
+  "purpose": "Audit whether U and MAE already encode persistence and early-path information, and whether that encoding is sufficient for P1 semantics.",
+  "dataset": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\\uc774\uc720\ucc2c\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "methodology": {
+    "not_goal": "Predictive winner or new canonical reward selection",
+    "q1_q2_framework": "Mathematical inclusion vs P1-sufficient granularity",
+    "horizon": 10,
+    "utility": "U_n = U(aligned cumulative return at t+n); F uses mean(U_n)",
+    "mae": "MAE_n = max adverse through t+n; monotonic non-decreasing in n"
+  },
+  "u_persistence_audit": {
+    "real_data_correlations": {
+      "u_mean_vs_favorable_occupancy": 0.6624261291397882,
+      "u_mean_vs_max_favorable_run": 0.6937516124123579,
+      "u_mean_vs_time_to_favorable": 0.3741547952837193,
+      "u_terminal_vs_terminal_return": 0.8103595326061532,
+      "u_mean_vs_mfe": 0.9124270026756769
+    },
+    "synthetic_archetypes": {
+      "spike_regression": {
+        "u_mean": 0.08994846285830527,
+        "u_terminal": 0.07850554653121279,
+        "u_profile": [
+          0.08,
+          0.12320000000000007,
+          0.13443200000000005,
+          0.11174335999999997,
+          0.0895084928,
+          0.07861340787199993,
+          0.06782727379327995,
+          0.06782727379327995,
+          0.06782727379327995,
+          0.07850554653121279
+        ],
+        "terminal_return": 0.07850554653121279,
+        "mfe": 0.13556643199999996,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "moderate_rise_hold": {
+        "u_mean": 0.11687154197326141,
+        "u_terminal": 0.21899441999475727,
+        "u_profile": [
+          0.02,
+          0.04040000000000006,
+          0.061208000000000026,
+          0.08243216000000003,
+          0.1040808032000001,
+          0.12616241926400007,
+          0.14868566764928004,
+          0.1716593810022657,
+          0.19509256862231097,
+          0.21899441999475727
+        ],
+        "terminal_return": 0.21899441999475727,
+        "mfe": 0.22021341441475187,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "fast_rise_hold": {
+        "u_mean": 0.15425257808598186,
+        "u_terminal": 0.21783451268178056,
+        "u_profile": [
+          0.05,
+          0.09200000000000003,
+          0.12476,
+          0.14725520000000003,
+          0.15872775200000006,
+          0.1703150295200001,
+          0.18201817981520008,
+          0.1938383616133521,
+          0.2057767452294857,
+          0.21783451268178056
+        ],
+        "terminal_return": 0.21783451268178056,
+        "mfe": 0.21905234719446212,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "slow_grind_hold": {
+        "u_mean": 0.027916654019891168,
+        "u_terminal": 0.05114013204078929,
+        "u_profile": [
+          0.004999999999999858,
+          0.010024999999999694,
+          0.015075124999999617,
+          0.020150500624999523,
+          0.025251253128124346,
+          0.030377509393764796,
+          0.03552939694073345,
+          0.04070704392543703,
+          0.04591057914506408,
+          0.05114013204078929
+        ],
+        "terminal_return": 0.05114013204078929,
+        "mfe": 0.052191272172830025,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "rise_then_fall": {
+        "u_mean": 0.05030502566679172,
+        "u_terminal": 0.008298044067637136,
+        "u_profile": [
+          0.03,
+          0.06090000000000004,
+          0.08211800000000011,
+          0.09293918000000005,
+          0.08200978820000003,
+          0.06036959243599995,
+          0.03916220058727987,
+          0.02877057858140702,
+          0.01848287279559301,
+          0.008298044067637136
+        ],
+        "terminal_return": 0.008298044067637136,
+        "mfe": 0.09403211917999997,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "rise_continuation": {
+        "u_mean": 0.1421208380277673,
+        "u_terminal": 0.2675057243725459,
+        "u_profile": [
+          0.02,
+          0.04040000000000006,
+          0.07161200000000008,
+          0.10376036000000013,
+          0.1258355672000002,
+          0.14835227854400018,
+          0.1828028469003202,
+          0.21828693230732982,
+          0.2426526709534764,
+          0.2675057243725459
+        ],
+        "terminal_return": 0.2675057243725459,
+        "mfe": 0.26877323009691834,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "favorable_oscillation": {
+        "u_mean": 0.034987939079983724,
+        "u_terminal": 0.04996985812880013,
+        "u_profile": [
+          0.02,
+          0.00980000000000004,
+          0.02999600000000001,
+          0.01969604000000004,
+          0.040089960800000025,
+          0.029689061192,
+          0.05028284241584004,
+          0.03978001399168164,
+          0.06057561427151526,
+          0.04996985812880013
+        ],
+        "terminal_return": 0.04996985812880013,
+        "mfe": 0.06163618988578662,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "single_spike": {
+        "u_mean": 0.04928166640000009,
+        "u_terminal": 0.035416844000000086,
+        "u_profile": [
+          0.10000000000000014,
+          0.07800000000000011,
+          0.05644000000000005,
+          0.04587560000000011,
+          0.035416844000000086,
+          0.035416844000000086,
+          0.035416844000000086,
+          0.035416844000000086,
+          0.035416844000000086,
+          0.035416844000000086
+        ],
+        "terminal_return": 0.035416844000000086,
+        "mfe": 0.1011,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "spike_vs_moderate_comparison": {
+        "u_mean_diff": -0.026923079114956144,
+        "occupancy_diff": 0.0,
+        "max_run_diff": 0,
+        "terminal_diff": -0.1404888734635445
+      }
+    },
+    "controlled_same_terminal": {
+      "path_a_spike_regression": {
+        "u_mean": 0.07986929267595322,
+        "u_terminal": 0.09163569028238527,
+        "u_profile": [
+          0.06,
+          0.09180000000000006,
+          0.09180000000000006,
+          0.08088200000000001,
+          0.07007317999999998,
+          0.07007317999999998,
+          0.07542354589999987,
+          0.08080066362949978,
+          0.08620466694764715,
+          0.09163569028238527
+        ],
+        "terminal_return": 0.09163569028238527,
+        "mfe": 0.09289180000000002,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "path_b_grind_hold": {
+        "u_mean": 0.0684339935983696,
+        "u_terminal": 0.12669177789703995,
+        "u_profile": [
+          0.012000000000000028,
+          0.024144000000000006,
+          0.03643372800000009,
+          0.048870932736000156,
+          0.061457383928832175,
+          0.07419487253597822,
+          0.08708521100640994,
+          0.10013023353848681,
+          0.11333179634094862,
+          0.12669177789703995
+        ],
+        "terminal_return": 0.12669177789703995,
+        "mfe": 0.12781846967493693,
+        "favorable_occupancy": 1.0,
+        "max_favorable_run": 10,
+        "time_to_favorable": 1,
+        "speed_ttf": 1.0,
+        "persistence_occ": 1.0
+      },
+      "terminal_match": false,
+      "u_mean_preserves_shape_diff": true,
+      "occupancy_diff": 0.0,
+      "max_run_diff": 0,
+      "interpretation": "If terminal similar but occupancy/run differ, U_mean may still collapse shape."
+    },
+    "real_by_archetype": {
+      "monotonic_fall": {
+        "count": 684,
+        "mean_u": 1.0719239164621574e-05,
+        "mean_occupancy": 0.06228070175438596,
+        "mean_max_run": 0.5701754385964912
+      },
+      "monotonic_rise": {
+        "count": 598,
+        "mean_u": 0.0009525869620172626,
+        "mean_occupancy": 0.9364548494983278,
+        "mean_max_run": 8.926421404682275
+      },
+      "mixed": {
+        "count": 387,
+        "mean_u": 0.0002134129845531243,
+        "mean_occupancy": 0.49922480620155035,
+        "mean_max_run": 4.4366925064599485
+      },
+      "slow_flat": {
+        "count": 226,
+        "mean_u": 0.0001448773135230796,
+        "mean_occupancy": 0.538495575221239,
+        "mean_max_run": 4.676991150442478
+      },
+      "spike_reversal": {
+        "count": 165,
+        "mean_u": 0.00015344299066891225,
+        "mean_occupancy": 0.4569696969696969,
+        "mean_max_run": 3.9212121212121214
+      },
+      "rise_then_fall": {
+        "count": 114,
+        "mean_u": 0.0004671550122079826,
+        "mean_occupancy": 0.6657894736842106,
+        "mean_max_run": 6.368421052631579
+      },
+      "flat_no_opportunity": {
+        "count": 109,
+        "mean_u": 2.5217614126273797e-05,
+        "mean_occupancy": 0.44036697247706424,
+        "mean_max_run": 3.697247706422018
+      },
+      "choppy": {
+        "count": 101,
+        "mean_u": 0.00012296154375696273,
+        "mean_occupancy": 0.5069306930693069,
+        "mean_max_run": 2.792079207920792
+      },
+      "dip_then_rise": {
+        "count": 101,
+        "mean_u": 0.0002489523140628784,
+        "mean_occupancy": 0.36039603960396044,
+        "mean_max_run": 3.2475247524752477
+      }
+    }
+  },
+  "mae_early_path_audit": {
+    "real_data": {
+      "full_vs_early_corr": 0.6870187529498478,
+      "full_vs_recovery_corr": -0.1371927126205759,
+      "early_vs_time_to_mae_corr": -0.0838444664271798,
+      "by_archetype": {
+        "choppy": {
+          "count": 101,
+          "mean_full_mae": 0.0006607699824060145,
+          "mean_recovery": 0.16835170795369836
+        },
+        "dip_then_rise": {
+          "count": 101,
+          "mean_full_mae": 0.0013541315079557555,
+          "mean_recovery": 0.7263202180061626
+        },
+        "flat_no_opportunity": {
+          "count": 109,
+          "mean_full_mae": 5.3255777453327144e-05,
+          "mean_recovery": 63.77662915374436
+        },
+        "mixed": {
+          "count": 387,
+          "mean_full_mae": 0.0005951989681153911,
+          "mean_recovery": 85.16418555483764
+        },
+        "monotonic_fall": {
+          "count": 684,
+          "mean_full_mae": 0.0019414780161175888,
+          "mean_recovery": -0.7187268557977775
+        },
+        "monotonic_rise": {
+          "count": 598,
+          "mean_full_mae": 0.00027404709509927923,
+          "mean_recovery": 1264.6522164802252
+        },
+        "rise_then_fall": {
+          "count": 114,
+          "mean_full_mae": 0.001363769657054502,
+          "mean_recovery": -0.650441988119755
+        },
+        "slow_flat": {
+          "count": 226,
+          "mean_full_mae": 0.00041512946368533446,
+          "mean_recovery": 61.64563767480482
+        },
+        "spike_reversal": {
+          "count": 165,
+          "mean_full_mae": 0.0012162945936597862,
+          "mean_recovery": -0.6127472841848091
+        }
+      }
+    },
+    "synthetic_cases": {
+      "early_adverse_recovery": {
+        "full_mae": 0.06879999999999996,
+        "early_mae": 0.06879999999999996,
+        "time_to_mae": 1,
+        "adverse_duration": 4,
+        "recovery_after_mae": 1.1712452217833895,
+        "terminal_return": 0.08058167125869715,
+        "mae_profile": [
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996,
+          0.06879999999999996
+        ]
+      },
+      "early_adverse_sustained": {
+        "full_mae": 0.14521089550234179,
+        "early_mae": 0.09673599999999993,
+        "time_to_mae": 8,
+        "adverse_duration": 10,
+        "recovery_after_mae": -0.970419419143398,
+        "terminal_return": -0.1409154728666752,
+        "mae_profile": [
+          0.06879999999999996,
+          0.09673599999999993,
+          0.09673599999999993,
+          0.11014714240000004,
+          0.11904567097600008,
+          0.12785521426624002,
+          0.13657666212357766,
+          0.14521089550234179,
+          0.14521089550234179,
+          0.14521089550234179
+        ]
+      },
+      "late_adverse": {
+        "full_mae": 0.045563711218840126,
+        "early_mae": 0.005,
+        "time_to_mae": 10,
+        "adverse_duration": 3,
+        "recovery_after_mae": -0.894737234371757,
+        "terminal_return": -0.04076754896365841,
+        "mae_profile": [
+          0.005,
+          0.005,
+          0.005,
+          0.005,
+          0.005,
+          0.005,
+          0.03,
+          0.031179219590533762,
+          0.031179219590533762,
+          0.045563711218840126
+        ]
+      },
+      "small_then_large_adverse": {
+        "full_mae": 0.09184836109291013,
+        "early_mae": 0.019850499375000084,
+        "time_to_mae": 6,
+        "adverse_duration": 10,
+        "recovery_after_mae": -0.49035499650881154,
+        "terminal_return": -0.045038302783054006,
+        "mae_profile": [
+          0.009975000000000022,
+          0.014925125000000037,
+          0.019850499375000084,
+          0.0247512468781251,
+          0.029627490643734548,
+          0.09184836109291013,
+          0.09184836109291013,
+          0.09184836109291013,
+          0.09184836109291013,
+          0.09184836109291013
+        ]
+      },
+      "large_then_recovery": {
+        "full_mae": 0.08820000000000007,
+        "early_mae": 0.08820000000000007,
+        "time_to_mae": 1,
+        "adverse_duration": 4,
+        "recovery_after_mae": 0.6561012601814292,
+        "terminal_return": 0.05786813114800211,
+        "mae_profile": [
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007,
+          0.08820000000000007
+        ]
+      },
+      "recovery_vs_sustained": {
+        "full_mae_diff": -0.07641089550234183,
+        "same_full_mae_approx": false,
+        "recovery_diff": 2.1416646409267877,
+        "mae_scores_similar": false
+      }
+    },
+    "controlled_same_mae": {
+      "recovery_path": {
+        "full_mae": 0.07850000000000008,
+        "recovery": 0.8859326597712887,
+        "terminal": 0.06954571379204623
+      },
+      "sustained_path": {
+        "full_mae": 0.1368519884430536,
+        "recovery": -0.9683057057255817,
+        "terminal": -0.13251456124930017
+      },
+      "full_mae_similar": false,
+      "recovery_discriminates": true,
+      "mae_penalty_similar": false
+    },
+    "recovery_blind_spot": {
+      "similar_full_mae_different_recovery_pairs": 107942,
+      "full_vs_recovery_corr": -0.1371927126205759,
+      "blind_spot_level": "recovery_blind_spot_confirmed"
+    }
+  },
+  "semantic_role_table": {
+    "U": {
+      "actually_encodes": {
+        "magnitude": "strong",
+        "persistence": "strong",
+        "favorable_timing": "moderate",
+        "path_shape": "weak"
+      },
+      "intended_role": "return opportunity / magnitude (+ coarse horizon mix)",
+      "gaps": [
+        "mean(U_n) collapses spike-vs-hold when terminal similar",
+        "U_n uses cumulative return at n \u2014 conflates magnitude and path-to-n"
+      ],
+      "overlaps_with": [
+        "P (magnitude+decay)",
+        "persistence observables via occupancy corr"
+      ]
+    },
+    "MAE": {
+      "actually_encodes": {
+        "adverse_magnitude": "strong",
+        "adverse_timing": "absent",
+        "adverse_persistence": "moderate",
+        "recovery": "absent"
+      },
+      "intended_role": "entry adverse risk (worst excursion through horizon)",
+      "gaps": [
+        "partial recovery discrimination",
+        "full MAE monotonic \u2014 early timing only via profile inspection"
+      ],
+      "overlaps_with": [
+        "early path pain visible in MAE_n profile",
+        "U late horizons"
+      ]
+    },
+    "P": {
+      "actually_encodes": {
+        "direction": "strong",
+        "temporal_structure": "moderate (decay weights)",
+        "magnitude": "strong"
+      },
+      "intended_role": "direction / temporal structure",
+      "gaps": [
+        "magnitude overlap with U (Audit 3)"
+      ],
+      "overlaps_with": [
+        "U magnitude",
+        "S/D timing candidates"
+      ]
+    }
+  },
+  "correction_candidates": {
+    "U_candidates": {
+      "A_keep_current": "Coarse persistence via mean(U_n) \u2014 case B if P1 output separates magnitude",
+      "B_add_persistence_observable": "Diagnostic / separate P1 head \u2014 not auto reward",
+      "C_U_mag_plus_U_persist": "Logical split \u2014 requires composer sign-off",
+      "D_U_n_aggregation_change": "early/late split aligns Audit 4 \u2014 diagnostic first"
+    },
+    "MAE_candidates": {
+      "A_keep_full_mae": "Early magnitude present in MAE profile; recovery is blind spot",
+      "B_early_mae": "NOT auto-adopt \u2014 only if entry-timing risk needs explicit term",
+      "C_time_to_mae": "Diagnostic for timing",
+      "D_adverse_duration": "Diagnostic; overlaps S/D",
+      "E_recovery_after_mae": "Diagnostic or P1 risk head \u2014 NOT silent reward",
+      "F_mae_plus_recovery_split": "If P1 risk = f(adverse, recovery) \u2014 output not reward yet"
+    },
+    "adoption_triage": {
+      "S_plus_D": "candidate_replace_P (Audit 3) \u2014 not this audit",
+      "early_MAE": "diagnostic_first",
+      "recovery_in_reward": "reject_without_p1_output_design"
+    }
+  },
+  "p1_p2_boundary": {
+    "direction": "P1",
+    "expected_return_magnitude": "P1 (U / terminal-aligned)",
+    "risk_magnitude": "P1 (MAE scalar); recovery detail may be P1 head or P2",
+    "entry_timing_wait": "P1 state + multi-aspect output; not single scalar F",
+    "recovery_after_adverse": "P1 diagnostic or risk head; P2 handles wait/scale",
+    "stop_placement_TP_timing": "P2 execution policy",
+    "exit_timing": "P2"
+  },
+  "mtf_connection": "MTF Audit 5: 1H context may shift conditional future behavior when 3m pattern matches. U/MAE/P evaluate 3m future path only \u2014 they do not ingest HTF state. P1 State(t) includes MTF; reward labels remain 3m-path observables. Semantic target alignment requires P1 model to map MTF state \u2192 direction/return/risk, not HTF bonus in reward.",
+  "CONFIRMED": [
+    "U_mean correlates with favorable occupancy on eval data \u2014 persistence signal mathematically present (diagnostic, not GT).",
+    "Real data: 107942 pairs with similar full MAE but different recovery \u2014 MAE recovery blind spot."
+  ],
+  "HYPOTHESIS": [
+    "U persistence encoding is coarse (level 2): included but insufficient for spike-vs-hold without separate persistence head or S/D.",
+    "MAE encodes early adverse magnitude via profile; recovery belongs to P1 risk head or P2, not automatic MAE replacement with early_MAE.",
+    "P1 output triple (direction, return mag, risk mag) can align with P/U/MAE if scalar F is not sole training target."
+  ],
+  "UNRESOLVED": [
+    "Whether U_n aggregation change (early/late) is P1-relevant vs P2 \u2014 needs chart qual.",
+    "Recovery in P1 risk estimate vs P2 wait policy \u2014 product decision."
+  ],
+  "RECOMMENDATION": [
+    "Do NOT auto-add early_MAE or recovery to canonical reward from this audit.",
+    "Treat persistence (occupancy/run) and recovery as P1 output candidates or diagnostics.",
+    "If reward changes: prefer U_n aggregation / composer split over bolting observables.",
+    "Keep S+D as P replacement candidate (Audit 3); orthogonal to U/MAE audit.",
+    "P1 state MTF (Audit 5 MTF) feeds model; do not add HTF to reward formula."
+  ],
+  "final_questions_Q1_Q10": {
+    "Q1_U_includes_persistence": "yes_coarse",
+    "Q2_U_persistence_sufficient_for_P1": "no \u2014 coarse; spike-vs-hold not reliably separated at similar terminal",
+    "Q3_MAE_includes_early_adverse": "early_info_weak",
+    "Q4_MAE_core_blind_spot": "recovery_after_adverse (not early magnitude)",
+    "Q5_need_reward_component_add": "case_B \u2014 coarse but may suffice if P1 multi-head; not auto-add",
+    "Q6_if_add_what": "persistence/recovery as P1 output heads or diagnostics, not silent reward terms",
+    "Q7_P1_vs_P2": "recovery/wait \u2192 P2; direction/return/risk magnitude \u2192 P1",
+    "Q8_keep_P_plus_U_minus_MAE": "Keep as baseline; modify if composer splits U aggregation / adds explicit heads",
+    "Q9_triage": "S+D: candidate_replace_P; early_MAE: diagnostic; recovery: diagnostic/P1_head",
+    "Q10_P1_output_alignment": "Partial \u2014 U\u2192return mag, MAE\u2192risk mag, P\u2192direction/timing; scalar F insufficient"
+  }
+}

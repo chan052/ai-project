@@ -1,0 +1,1144 @@
+{
+  "audit": "Path Instability vs MAE for P1 Acceptable Risk",
+  "market": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "config": {
+    "reward_horizon": 10,
+    "eval_samples": 2485
+  },
+  "instability_definitions": {
+    "giveback_ratio": "A giveback",
+    "reversal_depth": "B reversal_depth",
+    "drawdown_from_mfe": "C drawdown_from_mfe",
+    "excursion_volatility": "D excursion_volatility",
+    "oscillation_chop": "E oscillation_chop",
+    "peak_after_decay": "F peak_after_decay"
+  },
+  "instability_clusters": [
+    {
+      "name": "peak_erosion_family",
+      "members": [
+        "giveback_ratio",
+        "reversal_depth",
+        "peak_after_decay",
+        "drawdown_from_mfe"
+      ],
+      "note": "Monotone giveback paths: giveback~reversal. Round-trip: reversal >> giveback."
+    },
+    {
+      "name": "path_whip_family",
+      "members": [
+        "oscillation_chop"
+      ],
+      "note": "Sign-change / round-trip without terminal giveback."
+    },
+    {
+      "name": "favorable_vol_family",
+      "members": [
+        "excursion_volatility"
+      ],
+      "note": "Vol within favorable segment; partial overlap with chop."
+    }
+  ],
+  "mae_relationship": {
+    "per_metric": {
+      "giveback_ratio": {
+        "label": "A giveback",
+        "corr_mae": 0.3049768698107436,
+        "corr_u": -0.3452158764411523,
+        "corr_terminal": -0.5381652998944049,
+        "r2_mae_only": 0.09301089111955929,
+        "r2_u_mae": 0.1662042364586136,
+        "unexplained_after_u_mae": 0.8337957635413864
+      },
+      "reversal_depth": {
+        "label": "B reversal_depth",
+        "corr_mae": 0.2727585936914056,
+        "corr_u": -0.3251866382919217,
+        "corr_terminal": -0.5022164139097687,
+        "r2_mae_only": 0.0743972504325131,
+        "r2_u_mae": 0.14152456028006444,
+        "unexplained_after_u_mae": 0.8584754397199356
+      },
+      "drawdown_from_mfe": {
+        "label": "C drawdown_from_mfe",
+        "corr_mae": 0.017830522289534245,
+        "corr_u": -0.1692166601425783,
+        "corr_terminal": -0.20036784270159652,
+        "r2_mae_only": 0.0003179275251176117,
+        "r2_u_mae": 0.029586906180416928,
+        "unexplained_after_u_mae": 0.9704130938195831
+      },
+      "excursion_volatility": {
+        "label": "D excursion_volatility",
+        "corr_mae": 0.23505690643550026,
+        "corr_u": 0.49280717450743466,
+        "corr_terminal": 0.17991311337445556,
+        "r2_mae_only": 0.05525174926302756,
+        "r2_u_mae": 0.3940785341379064,
+        "unexplained_after_u_mae": 0.6059214658620936
+      },
+      "oscillation_chop": {
+        "label": "E oscillation_chop",
+        "corr_mae": 0.05551224273095331,
+        "corr_u": 0.11411889871302552,
+        "corr_terminal": 0.06958889977607524,
+        "r2_mae_only": 0.0030816090930203544,
+        "r2_u_mae": 0.021336129387292346,
+        "unexplained_after_u_mae": 0.9786638706127077
+      },
+      "peak_after_decay": {
+        "label": "F peak_after_decay",
+        "corr_mae": 0.3272054998069368,
+        "corr_u": -0.3565493312439364,
+        "corr_terminal": -0.5481616170236687,
+        "r2_mae_only": 0.10706343910390737,
+        "r2_u_mae": 0.1831596169791373,
+        "unexplained_after_u_mae": 0.8168403830208627
+      }
+    },
+    "similar_mae_pairs": 300,
+    "discriminates_within_similar_mae": {
+      "giveback_ratio": 210,
+      "reversal_depth": 178,
+      "drawdown_from_mfe": 223,
+      "excursion_volatility": 18,
+      "oscillation_chop": 205,
+      "peak_after_decay": 256
+    },
+    "similar_mae_and_terminal_pairs": 200,
+    "discriminates_within_similar_mae_terminal": {
+      "giveback_ratio": 149,
+      "reversal_depth": 129,
+      "drawdown_from_mfe": 155,
+      "excursion_volatility": 9,
+      "oscillation_chop": 145,
+      "peak_after_decay": 172
+    }
+  },
+  "primary_ABC": [
+    {
+      "id": "A",
+      "levels": [
+        0,
+        1,
+        3,
+        1
+      ],
+      "target_return": "high",
+      "target_risk": "mid",
+      "metrics": {
+        "u_mean": 0.011696799999999953,
+        "mfe": 0.032260399999999974,
+        "mae": -0.007576807999999886,
+        "terminal": 0.009595999999999947,
+        "recovery_after_mae": 0.0,
+        "instability": {
+          "giveback_ratio": 0.7025455357032165,
+          "reversal_depth": 0.7025455357032165,
+          "drawdown_from_mfe": 0.6386777597301964,
+          "excursion_volatility": 0.009609144053452414,
+          "oscillation_chop": 0.1111111111111111,
+          "peak_after_decay": 0.7025455357032165
+        },
+        "obs_full": {
+          "giveback_ratio": 0.7025455357032165,
+          "reversal_depth": 0.7025455357032165,
+          "excursion_stability": 0.618470905115623,
+          "peak_timing": 0.2,
+          "peak_after_decay": 0.7025455357032165,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 3.3618591079616666,
+          "path_efficiency": 0.18888276513660246,
+          "terminal_proximity_mfe": 0.2974544642967835,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.6386777597301964,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.8,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.66887417218543,
+          "excursion_volatility": 0.009609144053452414
+        }
+      }
+    },
+    {
+      "id": "B",
+      "levels": [
+        0,
+        2,
+        2,
+        2
+      ],
+      "target_return": "mid",
+      "target_risk": "low",
+      "metrics": {
+        "u_mean": 0.02,
+        "mfe": 0.022039999999999935,
+        "mae": -0.017960000000000066,
+        "terminal": 0.02,
+        "recovery_after_mae": 0.0,
+        "instability": {
+          "giveback_ratio": 0.092558983666059,
+          "reversal_depth": 0.092558983666059,
+          "drawdown_from_mfe": 0.0,
+          "excursion_volatility": 0.006000000000000001,
+          "oscillation_chop": 0.0,
+          "peak_after_decay": 0.092558983666059
+        },
+        "obs_full": {
+          "giveback_ratio": 0.092558983666059,
+          "reversal_depth": 0.092558983666059,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.092558983666059,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.1019999999999968,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.907441016333941,
+          "transition_count": 0.0,
+          "time_near_mfe": 1.0,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.2959032742893828,
+          "excursion_concentration": 1.0,
+          "excursion_volatility": 0.006000000000000001
+        }
+      }
+    },
+    {
+      "id": "C",
+      "levels": [
+        0,
+        3,
+        -1,
+        -3
+      ],
+      "target_return": "high",
+      "target_risk": "high",
+      "metrics": {
+        "u_mean": 0.0018297689087999995,
+        "mfe": 0.03206000000000003,
+        "mae": 0.06004671999999999,
+        "terminal": -0.030976,
+        "recovery_after_mae": -0.515864979802394,
+        "instability": {
+          "giveback_ratio": 1.0,
+          "reversal_depth": 1.0,
+          "drawdown_from_mfe": 1.0,
+          "excursion_volatility": 0.017007583362723823,
+          "oscillation_chop": 0.1111111111111111,
+          "peak_after_decay": 1.0
+        },
+        "obs_full": {
+          "giveback_ratio": 1.0,
+          "reversal_depth": 1.0,
+          "excursion_stability": 0.34973339323774016,
+          "peak_timing": 0.1,
+          "peak_after_decay": 1.0,
+          "recovery_shape_score": -0.515864979802394,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 1.034994834710745,
+          "path_efficiency": -0.34048540274358075,
+          "terminal_proximity_mfe": 0.0,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 1.0,
+          "post_mae_recovery_high": -0.515864979802394,
+          "time_under_water": 0.9,
+          "time_under_favorable": 0.1,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.9,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 1.0,
+          "excursion_volatility": 0.017007583362723823
+        }
+      }
+    }
+  ],
+  "controlled_paths_D_H": [
+    {
+      "id": "D",
+      "levels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "note": "gradual rise",
+      "metrics": {
+        "u_mean": 0.02725080000000004,
+        "mfe": 0.032361602,
+        "mae": -0.007980000000000018,
+        "terminal": 0.030301000000000043,
+        "recovery_after_mae": 0.0,
+        "instability": {
+          "giveback_ratio": 0.06367428905404497,
+          "reversal_depth": 0.06367428905404497,
+          "drawdown_from_mfe": 0.0,
+          "excursion_volatility": 0.0046287724171749966,
+          "oscillation_chop": 0.0,
+          "peak_after_decay": 0.06367428905404497
+        },
+        "obs_full": {
+          "giveback_ratio": 0.06367428905404497,
+          "reversal_depth": 0.06367428905404497,
+          "excursion_stability": 0.605876004860659,
+          "peak_timing": 0.3,
+          "peak_after_decay": 0.06367428905404497,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.0680044222962923,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.9363257109459551,
+          "transition_count": 0.0,
+          "time_near_mfe": 0.8,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.5560326498763872,
+          "excursion_concentration": 0.336655555922246,
+          "excursion_volatility": 0.0046287724171749966
+        }
+      }
+    },
+    {
+      "id": "E",
+      "levels": [
+        0,
+        3,
+        2,
+        3
+      ],
+      "note": "early spike late hold",
+      "metrics": {
+        "u_mean": 0.028887599999999992,
+        "mfe": 0.03206000000000003,
+        "mae": -0.01766059999999996,
+        "terminal": 0.029896999999999993,
+        "recovery_after_mae": 0.0,
+        "instability": {
+          "giveback_ratio": 0.06746724890829812,
+          "reversal_depth": 0.3855271366188407,
+          "drawdown_from_mfe": 0.32127261384903305,
+          "excursion_volatility": 0.01010289932692591,
+          "oscillation_chop": 0.2222222222222222,
+          "peak_after_decay": 0.10280723643169175
+        },
+        "obs_full": {
+          "giveback_ratio": 0.06746724890829812,
+          "reversal_depth": 0.3855271366188407,
+          "excursion_stability": 0.7655392629046869,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.10280723643169175,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.2222222222222222,
+          "mfe_terminal_ratio": 1.0723483961601512,
+          "path_efficiency": 0.5920549735627856,
+          "terminal_proximity_mfe": 0.9325327510917019,
+          "transition_count": 2.0,
+          "time_near_mfe": 0.9,
+          "drawdown_from_mfe": 0.32127261384903305,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.9,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.7463243525636241,
+          "excursion_volatility": 0.01010289932692591
+        }
+      }
+    },
+    {
+      "id": "F",
+      "levels": [
+        0,
+        2,
+        1,
+        2
+      ],
+      "note": "favorable dip",
+      "metrics": {
+        "u_mean": 0.018898400000000024,
+        "mfe": 0.022039999999999935,
+        "mae": 0.007999999999999972,
+        "terminal": 0.019898000000000023,
+        "recovery_after_mae": 2.4872500000000115,
+        "instability": {
+          "giveback_ratio": 0.09718693284936106,
+          "reversal_depth": 0.5553539019963671,
+          "drawdown_from_mfe": 0.4627949183303081,
+          "excursion_volatility": 0.007526065131262145,
+          "oscillation_chop": 0.2222222222222222,
+          "peak_after_decay": 0.14809437386569507
+        },
+        "obs_full": {
+          "giveback_ratio": 0.09718693284936106,
+          "reversal_depth": 0.5553539019963671,
+          "excursion_stability": 0.7672858493688215,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.14809437386569507,
+          "recovery_shape_score": 2.4872500000000115,
+          "oscillation_chop": 0.2222222222222222,
+          "mfe_terminal_ratio": 1.1076490099507443,
+          "path_efficiency": 0.4937714030472989,
+          "terminal_proximity_mfe": 0.9028130671506389,
+          "transition_count": 2.0,
+          "time_near_mfe": 0.9,
+          "drawdown_from_mfe": 0.4627949183303081,
+          "post_mae_recovery_high": 2.4872500000000115,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.8888888888888888,
+          "drawdown_duration": 0.9,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.6644959797993225,
+          "excursion_volatility": 0.007526065131262145
+        }
+      }
+    },
+    {
+      "id": "G",
+      "levels": [
+        0,
+        2,
+        0,
+        2
+      ],
+      "note": "round-trip same terminal",
+      "metrics": {
+        "u_mean": 0.017673575999999965,
+        "mfe": 0.022039999999999935,
+        "mae": 0.030388000000000092,
+        "terminal": 0.019591999999999957,
+        "recovery_after_mae": 0.6447281821771719,
+        "instability": {
+          "giveback_ratio": 0.11107078039927337,
+          "reversal_depth": 1.0,
+          "drawdown_from_mfe": 0.9255898366606227,
+          "excursion_volatility": 0.010851061780305205,
+          "oscillation_chop": 0.2222222222222222,
+          "peak_after_decay": 0.20984069368824299
+        },
+        "obs_full": {
+          "giveback_ratio": 0.11107078039927337,
+          "reversal_depth": 1.0,
+          "excursion_stability": 0.6245148049531032,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.20984069368824299,
+          "recovery_shape_score": 0.6447281821771719,
+          "oscillation_chop": 0.2222222222222222,
+          "mfe_terminal_ratio": 1.124948958758676,
+          "path_efficiency": 0.3244138296463096,
+          "terminal_proximity_mfe": 0.8889292196007266,
+          "transition_count": 2.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.9255898366606227,
+          "post_mae_recovery_high": 0.6447281821771719,
+          "time_under_water": 0.1,
+          "time_under_favorable": 0.9,
+          "recovery_speed": 0.875,
+          "drawdown_duration": 0.9,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.5001000200040006,
+          "excursion_volatility": 0.010851061780305205
+        }
+      }
+    },
+    {
+      "id": "H",
+      "levels": [
+        0,
+        1,
+        3,
+        0
+      ],
+      "note": "spike to zero terminal",
+      "metrics": {
+        "u_mean": 0.004019401876799996,
+        "mfe": 0.032260399999999974,
+        "mae": 0.03068482000000017,
+        "terminal": -0.000706000000000131,
+        "recovery_after_mae": -0.023008119324152043,
+        "instability": {
+          "giveback_ratio": 1.0,
+          "reversal_depth": 1.0,
+          "drawdown_from_mfe": 0.9580166395952968,
+          "excursion_volatility": 0.012096160516461427,
+          "oscillation_chop": 0.1111111111111111,
+          "peak_after_decay": 1.0
+        },
+        "obs_full": {
+          "giveback_ratio": 1.0,
+          "reversal_depth": 1.0,
+          "excursion_stability": 0.5136337474854317,
+          "peak_timing": 0.2,
+          "peak_after_decay": 1.0,
+          "recovery_shape_score": -0.023008119324152043,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 10.0,
+          "path_efficiency": -0.011553693581647146,
+          "terminal_proximity_mfe": 0.0,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.9580166395952968,
+          "post_mae_recovery_high": -0.023008119324152043,
+          "time_under_water": 0.8,
+          "time_under_favorable": 0.2,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.8,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.66887417218543,
+          "excursion_volatility": 0.012096160516461427
+        }
+      }
+    }
+  ],
+  "recovery_comparison": {
+    "paths": [
+      {
+        "id": "REC_recover",
+        "levels": [
+          0,
+          -2,
+          -1,
+          1
+        ],
+        "note": "adverse then recovery",
+        "metrics": {
+          "u_mean": 0.007601194000000071,
+          "mfe": 0.011615192000000149,
+          "mae": 0.04939999999999998,
+          "terminal": 0.009596000000000089,
+          "recovery_after_mae": 0.19425101214575086,
+          "instability": {
+            "giveback_ratio": 0.17384060461506226,
+            "reversal_depth": 0.17384060461506226,
+            "drawdown_from_mfe": 0.0,
+            "excursion_volatility": 0.0065469116192293465,
+            "oscillation_chop": 0.1111111111111111,
+            "peak_after_decay": 0.17384060461506226
+          },
+          "obs_full": {
+            "giveback_ratio": 0.17384060461506226,
+            "reversal_depth": 0.17384060461506226,
+            "excursion_stability": 1.0,
+            "peak_timing": 0.3,
+            "peak_after_decay": 0.17384060461506226,
+            "recovery_shape_score": 0.19425101214575086,
+            "oscillation_chop": 0.1111111111111111,
+            "mfe_terminal_ratio": 1.2104201750729513,
+            "path_efficiency": 0.19348334543108459,
+            "terminal_proximity_mfe": 0.8261593953849378,
+            "transition_count": 1.0,
+            "time_near_mfe": 0.0,
+            "drawdown_from_mfe": 0.0,
+            "post_mae_recovery_high": 0.19425101214575086,
+            "time_under_water": 0.2,
+            "time_under_favorable": 0.8,
+            "recovery_speed": 0.7777777777777778,
+            "drawdown_duration": 0.0,
+            "path_sign_entropy": 0.7298466991620948,
+            "excursion_concentration": 0.6688741721854302,
+            "excursion_volatility": 0.0065469116192293465
+          }
+        }
+      },
+      {
+        "id": "REC_sustain",
+        "levels": [
+          0,
+          -2,
+          -2,
+          -2
+        ],
+        "note": "adverse sustained",
+        "metrics": {
+          "u_mean": -0.0006000000000000001,
+          "mfe": -0.01804000000000002,
+          "mae": 0.04939999999999998,
+          "terminal": -0.02,
+          "recovery_after_mae": -0.40485829959514186,
+          "instability": {
+            "giveback_ratio": 0.0,
+            "reversal_depth": 0.0,
+            "drawdown_from_mfe": 0.0,
+            "excursion_volatility": 0.0,
+            "oscillation_chop": 0.0,
+            "peak_after_decay": 0.0
+          },
+          "obs_full": {
+            "giveback_ratio": 0.0,
+            "reversal_depth": 0.0,
+            "excursion_stability": 0.0,
+            "peak_timing": 0.1,
+            "peak_after_decay": 0.0,
+            "recovery_shape_score": -0.40485829959514186,
+            "oscillation_chop": 0.0,
+            "mfe_terminal_ratio": 0.0,
+            "path_efficiency": -1.0,
+            "terminal_proximity_mfe": 0.0,
+            "transition_count": 0.0,
+            "time_near_mfe": 0.0,
+            "drawdown_from_mfe": 0.0,
+            "post_mae_recovery_high": -0.40485829959514186,
+            "time_under_water": 1.0,
+            "time_under_favorable": 0.0,
+            "recovery_speed": 0.0,
+            "drawdown_duration": 0.0,
+            "path_sign_entropy": 0.2959032742893828,
+            "excursion_concentration": 0.0,
+            "excursion_volatility": 0.0
+          }
+        }
+      }
+    ],
+    "same_mae_approx": true,
+    "mae_values": {
+      "recover": 0.04939999999999998,
+      "sustain": 0.04939999999999998
+    },
+    "recovery_after_mae": {
+      "recover": 0.19425101214575086,
+      "sustain": -0.40485829959514186
+    },
+    "terminal": {
+      "recover": 0.009596000000000089,
+      "sustain": -0.02
+    },
+    "instability_diff": {
+      "giveback_ratio": 0.17384060461506226,
+      "reversal_depth": 0.17384060461506226,
+      "drawdown_from_mfe": 0.0,
+      "excursion_volatility": 0.0065469116192293465,
+      "oscillation_chop": 0.1111111111111111,
+      "peak_after_decay": 0.17384060461506226
+    },
+    "p1_risk_vs_p2_boundary": "Same MAE, different recovery: MAE scalar blind (Audit 5). Recovery affects Acceptable Risk (path outcome after adverse) AND P2 wait/entry timing. Not auto-added to reward; P1 risk head diagnostic or P2 policy input."
+  },
+  "giveback_vs_chop_quadrants": {
+    "quadrants": {
+      "Q_hg_lc": {
+        "id": "Q_hg_lc",
+        "levels": [
+          0,
+          1,
+          3,
+          1
+        ],
+        "label": "high giveback low chop",
+        "metrics": {
+          "u_mean": 0.011696799999999953,
+          "mfe": 0.032260399999999974,
+          "mae": 0.03,
+          "terminal": 0.009595999999999947,
+          "recovery_after_mae": 0.3198666666666649,
+          "instability": {
+            "giveback_ratio": 0.7025455357032165,
+            "reversal_depth": 0.7025455357032165,
+            "drawdown_from_mfe": 0.6386777597301964,
+            "excursion_volatility": 0.009609144053452414,
+            "oscillation_chop": 0.1111111111111111,
+            "peak_after_decay": 0.7025455357032165
+          },
+          "obs_full": {
+            "giveback_ratio": 0.7025455357032165,
+            "reversal_depth": 0.7025455357032165,
+            "excursion_stability": 0.618470905115623,
+            "peak_timing": 0.2,
+            "peak_after_decay": 0.7025455357032165,
+            "recovery_shape_score": 0.3198666666666649,
+            "oscillation_chop": 0.1111111111111111,
+            "mfe_terminal_ratio": 3.3618591079616666,
+            "path_efficiency": 0.18888276513660246,
+            "terminal_proximity_mfe": 0.2974544642967835,
+            "transition_count": 1.0,
+            "time_near_mfe": 0.1,
+            "drawdown_from_mfe": 0.6386777597301964,
+            "post_mae_recovery_high": 0.3198666666666649,
+            "time_under_water": 0.0,
+            "time_under_favorable": 1.0,
+            "recovery_speed": 0.8571428571428572,
+            "drawdown_duration": 0.8,
+            "path_sign_entropy": 0.7298466991620948,
+            "excursion_concentration": 0.66887417218543,
+            "excursion_volatility": 0.009609144053452414
+          }
+        }
+      },
+      "Q_lg_lc": {
+        "id": "Q_lg_lc",
+        "levels": [
+          0,
+          2,
+          2,
+          2
+        ],
+        "label": "low giveback low chop",
+        "metrics": {
+          "u_mean": 0.02,
+          "mfe": 0.022039999999999935,
+          "mae": 0.007999999999999972,
+          "terminal": 0.02,
+          "recovery_after_mae": 2.500000000000009,
+          "instability": {
+            "giveback_ratio": 0.092558983666059,
+            "reversal_depth": 0.092558983666059,
+            "drawdown_from_mfe": 0.0,
+            "excursion_volatility": 0.006000000000000001,
+            "oscillation_chop": 0.0,
+            "peak_after_decay": 0.092558983666059
+          },
+          "obs_full": {
+            "giveback_ratio": 0.092558983666059,
+            "reversal_depth": 0.092558983666059,
+            "excursion_stability": 1.0,
+            "peak_timing": 0.1,
+            "peak_after_decay": 0.092558983666059,
+            "recovery_shape_score": 2.500000000000009,
+            "oscillation_chop": 0.0,
+            "mfe_terminal_ratio": 1.1019999999999968,
+            "path_efficiency": 1.0,
+            "terminal_proximity_mfe": 0.907441016333941,
+            "transition_count": 0.0,
+            "time_near_mfe": 1.0,
+            "drawdown_from_mfe": 0.0,
+            "post_mae_recovery_high": 2.500000000000009,
+            "time_under_water": 0.0,
+            "time_under_favorable": 1.0,
+            "recovery_speed": 0.8888888888888888,
+            "drawdown_duration": 0.0,
+            "path_sign_entropy": 0.2959032742893828,
+            "excursion_concentration": 1.0,
+            "excursion_volatility": 0.006000000000000001
+          }
+        }
+      },
+      "Q_lg_hc": {
+        "id": "Q_lg_hc",
+        "levels": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "label": "low giveback high chop",
+        "metrics": {
+          "u_mean": 0.017673575999999965,
+          "mfe": 0.022039999999999935,
+          "mae": 0.030388000000000092,
+          "terminal": 0.019591999999999957,
+          "recovery_after_mae": 0.6447281821771719,
+          "instability": {
+            "giveback_ratio": 0.11107078039927337,
+            "reversal_depth": 1.0,
+            "drawdown_from_mfe": 0.9255898366606227,
+            "excursion_volatility": 0.010851061780305205,
+            "oscillation_chop": 0.2222222222222222,
+            "peak_after_decay": 0.20984069368824299
+          },
+          "obs_full": {
+            "giveback_ratio": 0.11107078039927337,
+            "reversal_depth": 1.0,
+            "excursion_stability": 0.6245148049531032,
+            "peak_timing": 0.1,
+            "peak_after_decay": 0.20984069368824299,
+            "recovery_shape_score": 0.6447281821771719,
+            "oscillation_chop": 0.2222222222222222,
+            "mfe_terminal_ratio": 1.124948958758676,
+            "path_efficiency": 0.3244138296463096,
+            "terminal_proximity_mfe": 0.8889292196007266,
+            "transition_count": 2.0,
+            "time_near_mfe": 0.1,
+            "drawdown_from_mfe": 0.9255898366606227,
+            "post_mae_recovery_high": 0.6447281821771719,
+            "time_under_water": 0.1,
+            "time_under_favorable": 0.9,
+            "recovery_speed": 0.875,
+            "drawdown_duration": 0.9,
+            "path_sign_entropy": 0.7298466991620948,
+            "excursion_concentration": 0.5001000200040006,
+            "excursion_volatility": 0.010851061780305205
+          }
+        }
+      },
+      "Q_hg_hc": {
+        "id": "Q_hg_hc",
+        "levels": [
+          0,
+          1,
+          3,
+          0
+        ],
+        "label": "high giveback high chop",
+        "metrics": {
+          "u_mean": 0.004019401876799996,
+          "mfe": 0.032260399999999974,
+          "mae": 0.03068482000000017,
+          "terminal": -0.000706000000000131,
+          "recovery_after_mae": -0.023008119324152043,
+          "instability": {
+            "giveback_ratio": 1.0,
+            "reversal_depth": 1.0,
+            "drawdown_from_mfe": 0.9580166395952968,
+            "excursion_volatility": 0.012096160516461427,
+            "oscillation_chop": 0.1111111111111111,
+            "peak_after_decay": 1.0
+          },
+          "obs_full": {
+            "giveback_ratio": 1.0,
+            "reversal_depth": 1.0,
+            "excursion_stability": 0.5136337474854317,
+            "peak_timing": 0.2,
+            "peak_after_decay": 1.0,
+            "recovery_shape_score": -0.023008119324152043,
+            "oscillation_chop": 0.1111111111111111,
+            "mfe_terminal_ratio": 10.0,
+            "path_efficiency": -0.011553693581647146,
+            "terminal_proximity_mfe": 0.0,
+            "transition_count": 1.0,
+            "time_near_mfe": 0.1,
+            "drawdown_from_mfe": 0.9580166395952968,
+            "post_mae_recovery_high": -0.023008119324152043,
+            "time_under_water": 0.8,
+            "time_under_favorable": 0.2,
+            "recovery_speed": 0.0,
+            "drawdown_duration": 0.8,
+            "path_sign_entropy": 0.7298466991620948,
+            "excursion_concentration": 0.66887417218543,
+            "excursion_volatility": 0.012096160516461427
+          }
+        }
+      }
+    },
+    "classification": {
+      "Q_hg_lc": {
+        "giveback": 0.7025455357032165,
+        "chop": 0.1111111111111111
+      },
+      "Q_lg_lc": {
+        "giveback": 0.092558983666059,
+        "chop": 0.0
+      },
+      "Q_lg_hc": {
+        "giveback": 0.11107078039927337,
+        "chop": 0.2222222222222222
+      },
+      "Q_hg_hc": {
+        "giveback": 1.0,
+        "chop": 0.1111111111111111
+      }
+    },
+    "distinct_risk_semantics": {
+      "hg_lc_vs_lg_lc": "A vs B: giveback separates capture erosion; chop similar low - giveback is return-capture instability, not whip.",
+      "lg_lc_vs_lg_hc": "B vs G (0->2->0->2): similar terminal/giveback, chop higher on G - intra-horizon whip without terminal giveback; independent chop signal.",
+      "hg_lc_vs_hg_hc": "A vs H (0->1->3->0): both high giveback; H adds terminal collapse + chop - combined risk higher."
+    },
+    "redundancy_verdict": "giveback and chop are NOT redundant: G shows low giveback + high chop. Different P1 Risk facets (capture erosion vs path whip)."
+  },
+  "risk_ordering_B_lt_A_lt_C": {
+    "target_qualitative": "B < A < C risk",
+    "mae_only": {
+      "values": {
+        "A": -0.007576807999999886,
+        "B": -0.017960000000000066,
+        "C": 0.06004671999999999
+      },
+      "rank_low_to_high": [
+        [
+          "B",
+          -0.017960000000000066
+        ],
+        [
+          "A",
+          -0.007576807999999886
+        ],
+        [
+          "C",
+          0.06004671999999999
+        ]
+      ],
+      "B_lt_A": true,
+      "A_lt_C": true,
+      "matches_target": true
+    },
+    "instability_metrics": {
+      "giveback_ratio": {
+        "values": {
+          "A": 0.7025455357032165,
+          "B": 0.092558983666059,
+          "C": 1.0
+        },
+        "rank_low_to_high": [
+          [
+            "B",
+            0.092558983666059
+          ],
+          [
+            "A",
+            0.7025455357032165
+          ],
+          [
+            "C",
+            1.0
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": true,
+        "matches_target_B_lt_A_lt_C": true
+      },
+      "reversal_depth": {
+        "values": {
+          "A": 0.7025455357032165,
+          "B": 0.092558983666059,
+          "C": 1.0
+        },
+        "rank_low_to_high": [
+          [
+            "B",
+            0.092558983666059
+          ],
+          [
+            "A",
+            0.7025455357032165
+          ],
+          [
+            "C",
+            1.0
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": true,
+        "matches_target_B_lt_A_lt_C": true
+      },
+      "drawdown_from_mfe": {
+        "values": {
+          "A": 0.6386777597301964,
+          "B": 0.0,
+          "C": 1.0
+        },
+        "rank_low_to_high": [
+          [
+            "B",
+            0.0
+          ],
+          [
+            "A",
+            0.6386777597301964
+          ],
+          [
+            "C",
+            1.0
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": true,
+        "matches_target_B_lt_A_lt_C": true
+      },
+      "excursion_volatility": {
+        "values": {
+          "A": 0.009609144053452414,
+          "B": 0.006000000000000001,
+          "C": 0.017007583362723823
+        },
+        "rank_low_to_high": [
+          [
+            "B",
+            0.006000000000000001
+          ],
+          [
+            "A",
+            0.009609144053452414
+          ],
+          [
+            "C",
+            0.017007583362723823
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": true,
+        "matches_target_B_lt_A_lt_C": true
+      },
+      "oscillation_chop": {
+        "values": {
+          "A": 0.1111111111111111,
+          "B": 0.0,
+          "C": 0.1111111111111111
+        },
+        "rank_low_to_high": [
+          [
+            "B",
+            0.0
+          ],
+          [
+            "A",
+            0.1111111111111111
+          ],
+          [
+            "C",
+            0.1111111111111111
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": false,
+        "matches_target_B_lt_A_lt_C": false
+      },
+      "peak_after_decay": {
+        "values": {
+          "A": 0.7025455357032165,
+          "B": 0.092558983666059,
+          "C": 1.0
+        },
+        "rank_low_to_high": [
+          [
+            "B",
+            0.092558983666059
+          ],
+          [
+            "A",
+            0.7025455357032165
+          ],
+          [
+            "C",
+            1.0
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": true,
+        "matches_target_B_lt_A_lt_C": true
+      }
+    },
+    "metrics_matching_target_order": [
+      "giveback_ratio",
+      "reversal_depth",
+      "drawdown_from_mfe",
+      "excursion_volatility",
+      "peak_after_decay"
+    ],
+    "note": "Linear ordering on raw values is sufficient not required; qualitative separation for P1 Risk head signal is the bar."
+  },
+  "expected_return_sanity_U_MFE": {
+    "U": {
+      "A": {
+        "value": 0.011696799999999953,
+        "tier": "mid"
+      },
+      "B": {
+        "value": 0.02,
+        "tier": "high"
+      },
+      "C": {
+        "value": 0.0018297689087999995,
+        "tier": "low"
+      }
+    },
+    "MFE": {
+      "A": {
+        "value": 0.032260399999999974,
+        "tier": "mid"
+      },
+      "B": {
+        "value": 0.022039999999999935,
+        "tier": "low"
+      },
+      "C": {
+        "value": 0.03206000000000003,
+        "tier": "mid"
+      }
+    },
+    "terminal": {
+      "A": 0.009595999999999947,
+      "B": 0.02,
+      "C": -0.030976
+    },
+    "target": {
+      "A": "high",
+      "B": "mid",
+      "C": "high (potential)"
+    },
+    "U_matches_A_high_B_mid": false,
+    "MFE_matches_A_C_high_B_mid": true,
+    "C_spike_note": "C terminal negative but MFE high early - Expected Return 'high' requires MFE/potential axis separate from terminal/realized. Risk carries terminal failure.",
+    "separation_note": "Large potential (MFE) vs realization stability splits across Return vs Risk heads."
+  },
+  "instability_semantics": {
+    "is_single_concept": false,
+    "sub_facets": {
+      "capture_erosion": [
+        "giveback_ratio",
+        "peak_after_decay"
+      ],
+      "intra_path_whip": [
+        "reversal_depth",
+        "drawdown_from_mfe",
+        "oscillation_chop"
+      ],
+      "favorable_vol": [
+        "excursion_volatility"
+      ]
+    },
+    "risk_definition_hypothesis": "Acceptable Risk = adverse magnitude (MAE) + path instability facet(s). 'Instability' is an umbrella, not one scalar - giveback vs chop vs reversal encode different risk types.",
+    "mae_alone_insufficient_evidence": "ABC: MAE ordering partially matches but C dominates via adverse magnitude; A vs B: similar MAE sign/magnitude possible but instability separates. G quadrant: same terminal/MAE-ish, chop separates."
+  },
+  "CONFIRMED": [
+    "giveback vs chop: Q_lg_hc (0->2->0->2) shows low giveback + high chop - not redundant; different risk facets.",
+    "ABC qualitative B<A<C risk: instability metrics matching target order include ['giveback_ratio', 'reversal_depth', 'drawdown_from_mfe', 'excursion_volatility', 'peak_after_decay'] (MAE alone: matches_target=True).",
+    "Recovery vs sustained adverse: similar MAE, different recovery/terminal - MAE alone insufficient for post-adverse path outcome."
+  ],
+  "HYPOTHESIS": [
+    "Path instability is multi-facet (capture erosion vs whip vs adverse recovery), not a single observable.",
+    "Composite 'instability score' would re-collapse MAE+instability separation."
+  ],
+  "UNRESOLVED": [
+    "Optimal instability facet subset for P1 Risk head (giveback vs chop vs reversal).",
+    "Recovery: P1 Acceptable Risk vs P2 wait - product boundary.",
+    "Real-data chart qual for ABC risk ordering.",
+    "Whether MAE+single giveback suffices vs MAE+chop dual facet."
+  ],
+  "REDUNDANT_CANDIDATES": [
+    "peak_after_decay if giveback present"
+  ],
+  "INDEPENDENT_CANDIDATES": [
+    "oscillation_chop",
+    "reversal_depth",
+    "excursion_volatility",
+    "giveback_ratio",
+    "drawdown_from_mfe",
+    "peak_after_decay"
+  ],
+  "SEMANTIC_VERDICT": {
+    "mae_alone": "insufficient_for_P1_Acceptable_Risk",
+    "recommended_semantic": "Acceptable Risk = MAE (adverse magnitude) + path instability facet(s). Instability is NOT one number - at minimum distinguish capture erosion (giveback) from intra-horizon whip (chop/reversal when terminal recovers).",
+    "not_a_winner_selection": "No single metric adopted; facet separation required."
+  },
+  "REWARD_IMPLICATION": {
+    "canonical_now": "unchanged - F = P + U - MAE",
+    "future_review": [
+      "P1 Risk head: MAE + instability diagnostics (not scalar composite)",
+      "Do NOT add instability terms to F without U/MAE conditioning",
+      "Recovery as risk diagnostic or P2, not silent MAE replacement"
+    ]
+  }
+}

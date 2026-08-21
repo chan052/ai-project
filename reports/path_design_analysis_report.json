@@ -1,0 +1,2383 @@
+{
+  "audit": "P1 Path Design Analysis — Expected Return / Acceptable Risk",
+  "market": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "config": {
+    "reward_horizon": 10,
+    "eval_samples": 2485,
+    "decay_rate": 0.75
+  },
+  "1_observable_catalog": [
+    {
+      "key": "giveback_ratio",
+      "name_ko": "Giveback (MFE 반납)",
+      "definition": "(MFE - terminal) / MFE. Peak 대비 horizon 종료 시 favorable excursion 반납 비율.",
+      "redundancy_class": "C_mostly_independent",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "reversal_depth",
+      "name_ko": "Reversal Depth (peak 이후 역방향 깊이)",
+      "definition": "(MFE - min_after_peak) / MFE. Peak 이후 최악 되돌림 깊이.",
+      "redundancy_class": "C_mostly_independent",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "excursion_stability",
+      "name_ko": "Excursion Stability (favorable zone 안정성)",
+      "definition": "favorable 진입 후 cumulative path variance의 역수 스케일.",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "peak_timing",
+      "name_ko": "Peak Timing (MFE 발생 시점)",
+      "definition": "time_to_mfe / horizon. MFE가 horizon 내 언제 발생했는가.",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "peak_after_decay",
+      "name_ko": "Peak-after Decay (peak 이후 평균 악화)",
+      "definition": "Peak 이후 bar들의 평균 (MFE-v)/MFE.",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "recovery_shape_score",
+      "name_ko": "Recovery Shape (adverse 이후 회복)",
+      "definition": "terminal / MAE when MAE>0. 회복 크기 proxy.",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "oscillation_chop",
+      "name_ko": "Oscillation / Chop",
+      "definition": "bar return sign change 비율.",
+      "redundancy_class": "C_mostly_independent",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "time_near_mfe",
+      "name_ko": "Time near MFE",
+      "definition": "cumulative return >= 0.9*MFE 인 bar 비율.",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "drawdown_from_mfe",
+      "name_ko": "Drawdown from running peak",
+      "definition": "running peak 대비 max drawdown / MFE.",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "path_efficiency",
+      "name_ko": "Path efficiency",
+      "definition": "terminal / sum(|bar returns|).",
+      "redundancy_class": "A_U_MAE_redundant",
+      "reward_candidate": false,
+      "output_diagnostic": false,
+      "discard": true
+    },
+    {
+      "key": "recovery_speed",
+      "name_ko": "Recovery speed",
+      "definition": "MAE bar 이후 favorable 복귀까지 bar 수 기반 (빠를수록 1에 가까움).",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "time_under_water",
+      "name_ko": "Time under water",
+      "definition": "cumulative return < 0 인 bar 비율.",
+      "redundancy_class": "B_partial_path_detail",
+      "reward_candidate": false,
+      "output_diagnostic": true,
+      "discard": false
+    },
+    {
+      "key": "path_sign_entropy",
+      "name_ko": "Path sign entropy",
+      "definition": "bar return 부호 분포 entropy.",
+      "redundancy_class": "A_U_MAE_redundant",
+      "reward_candidate": false,
+      "output_diagnostic": false,
+      "discard": true
+    },
+    {
+      "key": "directional_consistency",
+      "name_ko": "Directional consistency",
+      "definition": "1 - chop. chop과 완전 중복.",
+      "redundancy_class": "A_U_MAE_redundant",
+      "reward_candidate": false,
+      "output_diagnostic": false,
+      "discard": true
+    }
+  ],
+  "2_definitions": {
+    "giveback_ratio": "(MFE - terminal) / MFE. Peak 대비 horizon 종료 시 favorable excursion 반납 비율.",
+    "reversal_depth": "(MFE - min_after_peak) / MFE. Peak 이후 최악 되돌림 깊이.",
+    "excursion_stability": "favorable 진입 후 cumulative path variance의 역수 스케일.",
+    "peak_timing": "time_to_mfe / horizon. MFE가 horizon 내 언제 발생했는가.",
+    "peak_after_decay": "Peak 이후 bar들의 평균 (MFE-v)/MFE.",
+    "recovery_shape_score": "terminal / MAE when MAE>0. 회복 크기 proxy.",
+    "oscillation_chop": "bar return sign change 비율.",
+    "time_near_mfe": "cumulative return >= 0.9*MFE 인 bar 비율.",
+    "drawdown_from_mfe": "running peak 대비 max drawdown / MFE.",
+    "path_efficiency": "terminal / sum(|bar returns|).",
+    "recovery_speed": "MAE bar 이후 favorable 복귀까지 bar 수 기반 (빠를수록 1에 가까움).",
+    "time_under_water": "cumulative return < 0 인 bar 비율.",
+    "path_sign_entropy": "bar return 부호 분포 entropy.",
+    "directional_consistency": "1 - chop. chop과 완전 중복."
+  },
+  "3_u_mae_already_contains": {
+    "giveback_ratio": "U는 favorable 크기와 decay-weight mix를 담음. terminal/MFE 비율은 U_mean에 암묵 포함될 수 있으나 giveback 자체는 분리되지 않음.",
+    "reversal_depth": "MAE는 worst adverse excursion이지만 peak 이후 favorable zone 이탈 깊이와는 다름.",
+    "excursion_stability": "U persistence (occupancy, max_run)과 부분 중복 (Audit 5).",
+    "peak_timing": "U decay weights, P timing, MAE profile timing과 부분 중복.",
+    "peak_after_decay": "giveback(terminal), reversal(max min)와 삼각 관계.",
+    "recovery_shape_score": "MAE scalar는 adverse magnitude; recovery는 Audit 5 blind spot.",
+    "oscillation_chop": "U/MAE/terminal과 거의 독립.",
+    "time_near_mfe": "U occupancy, persistence와 중복.",
+    "drawdown_from_mfe": "reversal_depth와 Case 4에서 유사; MAE와 다른 관점.",
+    "path_efficiency": "terminal return proxy — U/terminal과 강한 중복.",
+    "recovery_speed": "MAE profile timing 일부 포함; recovery magnitude는 MAE blind spot.",
+    "time_under_water": "MAE magnitude + adverse duration과 부분 중복.",
+    "path_sign_entropy": "oscillation_chop과 높은 collinearity.",
+    "directional_consistency": "chop과 동일."
+  },
+  "4_u_mae_blind_spots": {
+    "U_blind_spot": "동일/유사 U에서 path shape 차이 (spike-giveback vs grind-hold, capture efficiency vs MFE potential)",
+    "MAE_blind_spot": "동일 MAE에서 recovery shape, adverse 이후 회복 vs sustained pain, round-trip intra-horizon risk invisible to terminal",
+    "P_blind_spot": "magnitude overlap with U; timing overlap with peak_timing/occupancy",
+    "shared_blind_spot": "U+MAE가 '얼마나 유리/불리'는 담지만 '어떤 경로로' 발생했는지 세밀 구분 부족"
+  },
+  "5_blind_spot_coverage": {
+    "giveback_ratio": "U가 비슷한 spike-vs-grind path에서 '얼마나 반납했는가' 구분.",
+    "reversal_depth": "terminal이 회복해도 peak 이후 깊은 되돌림 (round-trip) 포착.",
+    "excursion_stability": "fine-grained hold vs spike within favorable zone.",
+    "peak_timing": "동일 MFE/terminal에서 early vs late peak 구분.",
+    "peak_after_decay": "peak 이후 평균 erosion — giveback과 reversal 사이.",
+    "recovery_shape_score": "동일 MAE에서 recovery vs sustained adverse 구분.",
+    "oscillation_chop": "동일 terminal/U/MAE에서 중간 경로 흔들림.",
+    "time_near_mfe": "MFE 수준 유지 시간 — grind vs spike.",
+    "drawdown_from_mfe": "peak 대비 intra-path drawdown.",
+    "path_efficiency": "minimal beyond terminal.",
+    "recovery_speed": "Case 3 fast vs slow recovery — peak_timing만 약하게 구분, speed는 보완.",
+    "time_under_water": "adverse regime 체류 시간.",
+    "path_sign_entropy": "chop과 동일 family.",
+    "directional_consistency": "없음 (chop과 동일)."
+  },
+  "6_redundancy_vs_u_mae": [
+    {
+      "candidate": "giveback_ratio",
+      "label": "A Giveback",
+      "U_overlap": "weak",
+      "MAE_overlap": "weak",
+      "P_overlap": "weak",
+      "corr_u": -0.3452158764411523,
+      "corr_mae": 0.3049768698107436,
+      "corr_p": -0.25414124909555824,
+      "r2_explained_by_u_mae": 0.1662042364586136,
+      "unexplained_frac": 0.8337957635413864,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "reversal_depth",
+      "label": "B Reversal Depth",
+      "U_overlap": "weak",
+      "MAE_overlap": "weak",
+      "P_overlap": "weak",
+      "corr_u": -0.3251866382919217,
+      "corr_mae": 0.2727585936914056,
+      "corr_p": -0.21683060581422609,
+      "r2_explained_by_u_mae": 0.14152456028006444,
+      "unexplained_frac": 0.8584754397199356,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "excursion_stability",
+      "label": "C Excursion Stability",
+      "U_overlap": "weak",
+      "MAE_overlap": "moderate",
+      "P_overlap": "moderate",
+      "corr_u": 0.2923766181202123,
+      "corr_mae": -0.3514264279213992,
+      "corr_p": 0.5146660776260327,
+      "r2_explained_by_u_mae": 0.1642734086940314,
+      "unexplained_frac": 0.8357265913059686,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "peak_timing",
+      "label": "D Peak Timing",
+      "U_overlap": "moderate",
+      "MAE_overlap": "moderate",
+      "P_overlap": "moderate",
+      "corr_u": 0.38159269980361826,
+      "corr_mae": -0.3601997711514768,
+      "corr_p": 0.38694342408563814,
+      "r2_explained_by_u_mae": 0.21518649579705096,
+      "unexplained_frac": 0.784813504202949,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "peak_after_decay",
+      "label": "E Peak-after Decay",
+      "U_overlap": "moderate",
+      "MAE_overlap": "weak",
+      "P_overlap": "weak",
+      "corr_u": -0.3565493312439364,
+      "corr_mae": 0.3272054998069368,
+      "corr_p": -0.2790016267909103,
+      "r2_explained_by_u_mae": 0.1831596169791373,
+      "unexplained_frac": 0.8168403830208627,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "recovery_shape_score",
+      "label": "F Recovery Shape",
+      "U_overlap": "moderate",
+      "MAE_overlap": "weak",
+      "P_overlap": "moderate",
+      "corr_u": 0.5923646786601817,
+      "corr_mae": -0.3242301574422869,
+      "corr_p": 0.47167047434132087,
+      "r2_explained_by_u_mae": 0.37802608812385896,
+      "unexplained_frac": 0.621973911876141,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "oscillation_chop",
+      "label": "G Oscillation/Chop",
+      "U_overlap": "absent",
+      "MAE_overlap": "absent",
+      "P_overlap": "absent",
+      "corr_u": 0.11411889871302552,
+      "corr_mae": 0.05551224273095331,
+      "corr_p": 0.04979080382934647,
+      "r2_explained_by_u_mae": 0.021336129387292346,
+      "unexplained_frac": 0.9786638706127077,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "mfe_terminal_ratio",
+      "label": "MFE/terminal ratio",
+      "U_overlap": "absent",
+      "MAE_overlap": "weak",
+      "P_overlap": "weak",
+      "corr_u": 0.11609380139673062,
+      "corr_mae": -0.22069705449913093,
+      "corr_p": 0.273647016408889,
+      "r2_explained_by_u_mae": 0.05189555960246872,
+      "unexplained_frac": 0.9481044403975313,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "path_efficiency",
+      "label": "Path efficiency",
+      "U_overlap": "moderate",
+      "MAE_overlap": "moderate",
+      "P_overlap": "moderate",
+      "corr_u": 0.5437731611850006,
+      "corr_mae": -0.46433725763522177,
+      "corr_p": 0.5256301837233837,
+      "r2_explained_by_u_mae": 0.4012326101516057,
+      "unexplained_frac": 0.5987673898483943,
+      "new_information": "likely_residual",
+      "classification": "mostly_terminal_proxy"
+    },
+    {
+      "candidate": "terminal_proximity_mfe",
+      "label": "Terminal proximity to MFE",
+      "U_overlap": "moderate",
+      "MAE_overlap": "moderate",
+      "P_overlap": "moderate",
+      "corr_u": 0.4835967102491715,
+      "corr_mae": -0.39972378788044194,
+      "corr_p": 0.4321975949312415,
+      "r2_explained_by_u_mae": 0.3095686097480561,
+      "unexplained_frac": 0.6904313902519439,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "transition_count",
+      "label": "Favorable/adverse transitions",
+      "U_overlap": "absent",
+      "MAE_overlap": "absent",
+      "P_overlap": "absent",
+      "corr_u": 0.11411889871302562,
+      "corr_mae": 0.055512242730953267,
+      "corr_p": 0.04979080382934646,
+      "r2_explained_by_u_mae": 0.021336129387292235,
+      "unexplained_frac": 0.9786638706127078,
+      "new_information": "likely_residual",
+      "classification": "duplicate_of_chop"
+    },
+    {
+      "candidate": "time_near_mfe",
+      "label": "Time spent near MFE",
+      "U_overlap": "absent",
+      "MAE_overlap": "weak",
+      "P_overlap": "weak",
+      "corr_u": 0.06985536621617384,
+      "corr_mae": -0.2742214998366074,
+      "corr_p": 0.19765577637279313,
+      "r2_explained_by_u_mae": 0.07525137110925018,
+      "unexplained_frac": 0.9247486288907498,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "drawdown_from_mfe",
+      "label": "Max drawdown from MFE",
+      "U_overlap": "weak",
+      "MAE_overlap": "absent",
+      "P_overlap": "absent",
+      "corr_u": -0.1692166601425783,
+      "corr_mae": 0.017830522289534245,
+      "corr_p": 0.11172815171613708,
+      "r2_explained_by_u_mae": 0.029586906180416928,
+      "unexplained_frac": 0.9704130938195831,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "post_mae_recovery_high",
+      "label": "Post-MAE new favorable high",
+      "U_overlap": "weak",
+      "MAE_overlap": "absent",
+      "P_overlap": "weak",
+      "corr_u": 0.3349159256158871,
+      "corr_mae": -0.14473957136241455,
+      "corr_p": 0.2637290570072101,
+      "r2_explained_by_u_mae": 0.1149710357793492,
+      "unexplained_frac": 0.8850289642206508,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "time_under_water",
+      "label": "Time under water",
+      "U_overlap": "moderate",
+      "MAE_overlap": "moderate",
+      "P_overlap": "strong",
+      "corr_u": -0.6341743418161367,
+      "corr_mae": 0.5373878720045769,
+      "corr_p": -0.7508864509163866,
+      "r2_explained_by_u_mae": 0.5424770028961158,
+      "unexplained_frac": 0.4575229971038842,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "time_under_favorable",
+      "label": "Time under favorable",
+      "U_overlap": "strong",
+      "MAE_overlap": "moderate",
+      "P_overlap": "strong",
+      "corr_u": 0.6624261291397882,
+      "corr_mae": -0.5098750669746068,
+      "corr_p": 0.7546852324424334,
+      "r2_explained_by_u_mae": 0.5528150748003797,
+      "unexplained_frac": 0.4471849251996203,
+      "new_information": "partial_residual",
+      "classification": "redundant"
+    },
+    {
+      "candidate": "recovery_speed",
+      "label": "Recovery speed",
+      "U_overlap": "moderate",
+      "MAE_overlap": "weak",
+      "P_overlap": "moderate",
+      "corr_u": 0.43148205166271725,
+      "corr_mae": -0.26966000490758035,
+      "corr_p": 0.3682413900240983,
+      "r2_explained_by_u_mae": 0.21016036959814777,
+      "unexplained_frac": 0.7898396304018522,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "drawdown_duration",
+      "label": "Drawdown duration",
+      "U_overlap": "moderate",
+      "MAE_overlap": "moderate",
+      "P_overlap": "moderate",
+      "corr_u": -0.39526099430382206,
+      "corr_mae": 0.4086226605298415,
+      "corr_p": -0.38988778414700015,
+      "r2_explained_by_u_mae": 0.2524688050373546,
+      "unexplained_frac": 0.7475311949626454,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "path_sign_entropy",
+      "label": "Path sign entropy",
+      "U_overlap": "weak",
+      "MAE_overlap": "weak",
+      "P_overlap": "absent",
+      "corr_u": -0.25811658694371875,
+      "corr_mae": -0.25569279856233895,
+      "corr_p": -0.026509076251852934,
+      "r2_explained_by_u_mae": 0.1834499729972563,
+      "unexplained_frac": 0.8165500270027437,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    },
+    {
+      "candidate": "excursion_concentration",
+      "label": "Excursion concentration",
+      "U_overlap": "absent",
+      "MAE_overlap": "absent",
+      "P_overlap": "absent",
+      "corr_u": -0.050529914629870144,
+      "corr_mae": -0.09878837053182596,
+      "corr_p": 0.09972711144466842,
+      "r2_explained_by_u_mae": 0.016402350334160376,
+      "unexplained_frac": 0.9835976496658396,
+      "new_information": "likely_residual",
+      "classification": "residual_candidate"
+    }
+  ],
+  "7_inter_observable_collinearity": {
+    "high_corr_pairs": [
+      {
+        "a": "oscillation_chop",
+        "b": "transition_count",
+        "corr": 1.0
+      },
+      {
+        "a": "time_under_water",
+        "b": "time_under_favorable",
+        "corr": -0.9821723568725812
+      },
+      {
+        "a": "giveback_ratio",
+        "b": "reversal_depth",
+        "corr": 0.9657350012053282
+      },
+      {
+        "a": "reversal_depth",
+        "b": "peak_after_decay",
+        "corr": 0.9436656794041676
+      },
+      {
+        "a": "giveback_ratio",
+        "b": "peak_after_decay",
+        "corr": 0.9364769990996213
+      }
+    ],
+    "full_matrix_keys": [
+      "giveback_ratio",
+      "reversal_depth",
+      "excursion_stability",
+      "peak_timing",
+      "peak_after_decay",
+      "recovery_shape_score",
+      "oscillation_chop",
+      "mfe_terminal_ratio",
+      "path_efficiency",
+      "terminal_proximity_mfe",
+      "transition_count",
+      "time_near_mfe",
+      "drawdown_from_mfe",
+      "post_mae_recovery_high",
+      "time_under_water",
+      "time_under_favorable",
+      "recovery_speed",
+      "drawdown_duration",
+      "path_sign_entropy",
+      "excursion_concentration"
+    ]
+  },
+  "8_p1_output_mapping": {
+    "giveback_ratio": {
+      "direction": "low",
+      "expected_return": "high — realized capture vs potential (MFE 대비 terminal 유지)",
+      "acceptable_risk": "moderate — 큰 giveback은 intra-horizon risk 신호일 수 있으나 terminal이 회복하면 risk와 분리",
+      "redundancy_class": "C_mostly_independent"
+    },
+    "reversal_depth": {
+      "direction": "low",
+      "expected_return": "moderate — terminal giveback과 다를 때 return capture와 분리",
+      "acceptable_risk": "high — intra-horizon path risk, stop/whip 가능성",
+      "redundancy_class": "C_mostly_independent"
+    },
+    "excursion_stability": {
+      "direction": "low",
+      "expected_return": "moderate — hold 품질, capture 안정성",
+      "acceptable_risk": "moderate — unstable excursion은 risk proxy",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "peak_timing": {
+      "direction": "low",
+      "expected_return": "moderate — conditional on MFE>0; deferred opportunity 잔여 가능성",
+      "acceptable_risk": "low-moderate — late peak는 아직 움직임 남음 vs early peak는 giveback 위험",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "peak_after_decay": {
+      "direction": "low",
+      "expected_return": "moderate",
+      "acceptable_risk": "moderate",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "recovery_shape_score": {
+      "direction": "low",
+      "expected_return": "moderate — deferred opportunity 성격",
+      "acceptable_risk": "high — path risk / 회복 가능성",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "oscillation_chop": {
+      "direction": "low",
+      "expected_return": "low — return magnitude 자체보다 path quality",
+      "acceptable_risk": "high — execution/holding variance, acceptable risk",
+      "redundancy_class": "C_mostly_independent"
+    },
+    "time_near_mfe": {
+      "direction": "low",
+      "expected_return": "moderate",
+      "acceptable_risk": "low",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "drawdown_from_mfe": {
+      "direction": "low",
+      "expected_return": "moderate",
+      "acceptable_risk": "high",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "path_efficiency": {
+      "direction": "low",
+      "expected_return": "redundant with terminal",
+      "acceptable_risk": "low",
+      "redundancy_class": "A_U_MAE_redundant"
+    },
+    "recovery_speed": {
+      "direction": "low",
+      "expected_return": "low-moderate",
+      "acceptable_risk": "moderate",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "time_under_water": {
+      "direction": "low",
+      "expected_return": "low",
+      "acceptable_risk": "moderate-high",
+      "redundancy_class": "B_partial_path_detail"
+    },
+    "path_sign_entropy": {
+      "direction": "low",
+      "expected_return": "low",
+      "acceptable_risk": "moderate",
+      "redundancy_class": "A_U_MAE_redundant"
+    },
+    "directional_consistency": {
+      "direction": "low",
+      "expected_return": "low",
+      "acceptable_risk": "moderate",
+      "redundancy_class": "A_U_MAE_redundant"
+    }
+  },
+  "9_archetype_cases": [
+    {
+      "case_id": 1,
+      "label": "spike_giveback_vs_grind_hold",
+      "question": "Similar U but different giveback / stability?",
+      "path_a": {
+        "name": "case1_a",
+        "u_mean": 0.011696799999999953,
+        "u_terminal": 0.009595999999999947,
+        "mae": -0.007576807999999886,
+        "terminal": 0.009595999999999947,
+        "mfe": 0.032260399999999974,
+        "p": 0.013796812517495696,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.7025455357032165,
+          "reversal_depth": 0.7025455357032165,
+          "excursion_stability": 0.618470905115623,
+          "peak_timing": 0.2,
+          "peak_after_decay": 0.7025455357032165,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 3.3618591079616666,
+          "path_efficiency": 0.18888276513660246,
+          "terminal_proximity_mfe": 0.2974544642967835,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.6386777597301964,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.8,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.66887417218543
+        }
+      },
+      "path_b": {
+        "name": "case1_b",
+        "u_mean": 0.02,
+        "u_terminal": 0.02,
+        "mae": -0.017960000000000066,
+        "terminal": 0.02,
+        "mfe": 0.022039999999999935,
+        "p": 0.02,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.092558983666059,
+          "reversal_depth": 0.092558983666059,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.092558983666059,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.1019999999999968,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.907441016333941,
+          "transition_count": 0.0,
+          "time_near_mfe": 1.0,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.2959032742893828,
+          "excursion_concentration": 1.0
+        }
+      },
+      "u_diff": 0.008303200000000047,
+      "mae_diff": 0.01038319200000018,
+      "terminal_diff": 0.010404000000000054,
+      "p_diff": 0.0062031874825043045,
+      "candidate_diffs": {
+        "giveback_ratio": {
+          "a": 0.7025455357032165,
+          "b": 0.092558983666059,
+          "abs_diff": 0.6099865520371576
+        },
+        "reversal_depth": {
+          "a": 0.7025455357032165,
+          "b": 0.092558983666059,
+          "abs_diff": 0.6099865520371576
+        },
+        "excursion_stability": {
+          "a": 0.618470905115623,
+          "b": 1.0,
+          "abs_diff": 0.38152909488437703
+        },
+        "peak_timing": {
+          "a": 0.2,
+          "b": 0.1,
+          "abs_diff": 0.1
+        },
+        "peak_after_decay": {
+          "a": 0.7025455357032165,
+          "b": 0.092558983666059,
+          "abs_diff": 0.6099865520371576
+        },
+        "recovery_shape_score": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "oscillation_chop": {
+          "a": 0.1111111111111111,
+          "b": 0.0,
+          "abs_diff": 0.1111111111111111
+        },
+        "mfe_terminal_ratio": {
+          "a": 3.3618591079616666,
+          "b": 1.1019999999999968,
+          "abs_diff": 2.25985910796167
+        },
+        "path_efficiency": {
+          "a": 0.18888276513660246,
+          "b": 1.0,
+          "abs_diff": 0.8111172348633975
+        },
+        "terminal_proximity_mfe": {
+          "a": 0.2974544642967835,
+          "b": 0.907441016333941,
+          "abs_diff": 0.6099865520371575
+        },
+        "transition_count": {
+          "a": 1.0,
+          "b": 0.0,
+          "abs_diff": 1.0
+        },
+        "time_near_mfe": {
+          "a": 0.1,
+          "b": 1.0,
+          "abs_diff": 0.9
+        },
+        "drawdown_from_mfe": {
+          "a": 0.6386777597301964,
+          "b": 0.0,
+          "abs_diff": 0.6386777597301964
+        },
+        "post_mae_recovery_high": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "time_under_water": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "time_under_favorable": {
+          "a": 1.0,
+          "b": 1.0,
+          "abs_diff": 0.0
+        },
+        "recovery_speed": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "drawdown_duration": {
+          "a": 0.8,
+          "b": 0.0,
+          "abs_diff": 0.8
+        },
+        "path_sign_entropy": {
+          "a": 0.7298466991620948,
+          "b": 0.2959032742893828,
+          "abs_diff": 0.433943424872712
+        },
+        "excursion_concentration": {
+          "a": 0.66887417218543,
+          "b": 1.0,
+          "abs_diff": 0.33112582781457
+        }
+      },
+      "top_discriminating_candidates": [
+        {
+          "key": "mfe_terminal_ratio",
+          "a": 3.3618591079616666,
+          "b": 1.1019999999999968,
+          "abs_diff": 2.25985910796167
+        },
+        {
+          "key": "transition_count",
+          "a": 1.0,
+          "b": 0.0,
+          "abs_diff": 1.0
+        },
+        {
+          "key": "time_near_mfe",
+          "a": 0.1,
+          "b": 1.0,
+          "abs_diff": 0.9
+        },
+        {
+          "key": "path_efficiency",
+          "a": 0.18888276513660246,
+          "b": 1.0,
+          "abs_diff": 0.8111172348633975
+        },
+        {
+          "key": "drawdown_duration",
+          "a": 0.8,
+          "b": 0.0,
+          "abs_diff": 0.8
+        }
+      ],
+      "interpretation_notes": [
+        "Case 1: spike-then-giveback vs grind - giveback/reversal/chop expected to differ; expected return vs risk split is design-dependent (not pre-judged)."
+      ]
+    },
+    {
+      "case_id": 2,
+      "label": "late_peak_hold_vs_early_peak",
+      "question": "Near terminal but different peak timing / decay?",
+      "path_a": {
+        "name": "case2_a",
+        "u_mean": 0.027531679999999954,
+        "u_terminal": 0.028139599999999945,
+        "mae": -0.017960000000000066,
+        "terminal": 0.028139599999999945,
+        "mfe": 0.032260399999999974,
+        "p": 0.026392647992424627,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.1277355519460401,
+          "reversal_depth": 0.1277355519460401,
+          "excursion_stability": 0.7946206577672049,
+          "peak_timing": 0.2,
+          "peak_after_decay": 0.1277355519460401,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 1.146441314020101,
+          "path_efficiency": 0.8722644480539599,
+          "terminal_proximity_mfe": 0.8722644480539599,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.06386777597302006,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.8,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.33774834437086004
+        }
+      },
+      "path_b": {
+        "name": "case2_b",
+        "u_mean": 0.02,
+        "u_terminal": 0.02,
+        "mae": -0.017960000000000066,
+        "terminal": 0.02,
+        "mfe": 0.022039999999999935,
+        "p": 0.02,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.092558983666059,
+          "reversal_depth": 0.092558983666059,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.092558983666059,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.1019999999999968,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.907441016333941,
+          "transition_count": 0.0,
+          "time_near_mfe": 1.0,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.2959032742893828,
+          "excursion_concentration": 1.0
+        }
+      },
+      "u_diff": 0.007531679999999954,
+      "mae_diff": 0.0,
+      "terminal_diff": 0.008139599999999945,
+      "p_diff": 0.006392647992424626,
+      "candidate_diffs": {
+        "giveback_ratio": {
+          "a": 0.1277355519460401,
+          "b": 0.092558983666059,
+          "abs_diff": 0.03517656827998111
+        },
+        "reversal_depth": {
+          "a": 0.1277355519460401,
+          "b": 0.092558983666059,
+          "abs_diff": 0.03517656827998111
+        },
+        "excursion_stability": {
+          "a": 0.7946206577672049,
+          "b": 1.0,
+          "abs_diff": 0.20537934223279508
+        },
+        "peak_timing": {
+          "a": 0.2,
+          "b": 0.1,
+          "abs_diff": 0.1
+        },
+        "peak_after_decay": {
+          "a": 0.1277355519460401,
+          "b": 0.092558983666059,
+          "abs_diff": 0.03517656827998111
+        },
+        "recovery_shape_score": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "oscillation_chop": {
+          "a": 0.1111111111111111,
+          "b": 0.0,
+          "abs_diff": 0.1111111111111111
+        },
+        "mfe_terminal_ratio": {
+          "a": 1.146441314020101,
+          "b": 1.1019999999999968,
+          "abs_diff": 0.04444131402010432
+        },
+        "path_efficiency": {
+          "a": 0.8722644480539599,
+          "b": 1.0,
+          "abs_diff": 0.12773555194604014
+        },
+        "terminal_proximity_mfe": {
+          "a": 0.8722644480539599,
+          "b": 0.907441016333941,
+          "abs_diff": 0.03517656827998117
+        },
+        "transition_count": {
+          "a": 1.0,
+          "b": 0.0,
+          "abs_diff": 1.0
+        },
+        "time_near_mfe": {
+          "a": 0.1,
+          "b": 1.0,
+          "abs_diff": 0.9
+        },
+        "drawdown_from_mfe": {
+          "a": 0.06386777597302006,
+          "b": 0.0,
+          "abs_diff": 0.06386777597302006
+        },
+        "post_mae_recovery_high": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "time_under_water": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "time_under_favorable": {
+          "a": 1.0,
+          "b": 1.0,
+          "abs_diff": 0.0
+        },
+        "recovery_speed": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "drawdown_duration": {
+          "a": 0.8,
+          "b": 0.0,
+          "abs_diff": 0.8
+        },
+        "path_sign_entropy": {
+          "a": 0.7298466991620948,
+          "b": 0.2959032742893828,
+          "abs_diff": 0.433943424872712
+        },
+        "excursion_concentration": {
+          "a": 0.33774834437086004,
+          "b": 1.0,
+          "abs_diff": 0.66225165562914
+        }
+      },
+      "top_discriminating_candidates": [
+        {
+          "key": "transition_count",
+          "a": 1.0,
+          "b": 0.0,
+          "abs_diff": 1.0
+        },
+        {
+          "key": "time_near_mfe",
+          "a": 0.1,
+          "b": 1.0,
+          "abs_diff": 0.9
+        },
+        {
+          "key": "drawdown_duration",
+          "a": 0.8,
+          "b": 0.0,
+          "abs_diff": 0.8
+        },
+        {
+          "key": "excursion_concentration",
+          "a": 0.33774834437086004,
+          "b": 1.0,
+          "abs_diff": 0.66225165562914
+        },
+        {
+          "key": "path_sign_entropy",
+          "a": 0.7298466991620948,
+          "b": 0.2959032742893828,
+          "abs_diff": 0.433943424872712
+        }
+      ],
+      "interpretation_notes": []
+    },
+    {
+      "case_id": 3,
+      "label": "adverse_then_rise_fast_vs_slow",
+      "question": "Same terminal, different recovery speed?",
+      "path_a": {
+        "name": "case3_a",
+        "u_mean": 0.017714999999999988,
+        "u_terminal": 0.01969999999999999,
+        "mae": 0.017920000000000016,
+        "terminal": 0.01969999999999999,
+        "mfe": 0.021739400000000016,
+        "p": 0.011831920806607592,
+        "recovery_after_mae": 1.0993303571428554,
+        "favorable_occupancy": 0.9,
+        "candidates": {
+          "giveback_ratio": 0.09381123674066563,
+          "reversal_depth": 0.09381123674066563,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.2,
+          "peak_after_decay": 0.09381123674066563,
+          "recovery_shape_score": 1.0993303571428554,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 1.1035228426395953,
+          "path_efficiency": 0.4962216624685137,
+          "terminal_proximity_mfe": 0.9061887632593344,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.9,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 1.0993303571428554,
+          "time_under_water": 0.1,
+          "time_under_favorable": 0.9,
+          "recovery_speed": 0.8888888888888888,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.581671865717884,
+          "excursion_concentration": 1.0
+        }
+      },
+      "path_b": {
+        "name": "case3_b",
+        "u_mean": 0.01590339850000002,
+        "u_terminal": 0.019898000000000023,
+        "mae": 0.017920000000000016,
+        "terminal": 0.019898000000000023,
+        "mfe": 0.021937795999999992,
+        "p": 0.00800408695265516,
+        "recovery_after_mae": 1.1103794642857145,
+        "favorable_occupancy": 0.8,
+        "candidates": {
+          "giveback_ratio": 0.09298089926626948,
+          "reversal_depth": 0.09298089926626948,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.3,
+          "peak_after_decay": 0.09298089926626948,
+          "recovery_shape_score": 1.1103794642857145,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 1.1025126143330972,
+          "path_efficiency": 0.4987217404381175,
+          "terminal_proximity_mfe": 0.9070191007337305,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.8,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 1.1103794642857145,
+          "time_under_water": 0.2,
+          "time_under_favorable": 0.8,
+          "recovery_speed": 0.7777777777777778,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.6688741721854324
+        }
+      },
+      "u_diff": 0.001811601499999968,
+      "mae_diff": 0.0,
+      "terminal_diff": 0.00019800000000003495,
+      "p_diff": 0.0038278338539524323,
+      "candidate_diffs": {
+        "giveback_ratio": {
+          "a": 0.09381123674066563,
+          "b": 0.09298089926626948,
+          "abs_diff": 0.0008303374743961478
+        },
+        "reversal_depth": {
+          "a": 0.09381123674066563,
+          "b": 0.09298089926626948,
+          "abs_diff": 0.0008303374743961478
+        },
+        "excursion_stability": {
+          "a": 1.0,
+          "b": 1.0,
+          "abs_diff": 0.0
+        },
+        "peak_timing": {
+          "a": 0.2,
+          "b": 0.3,
+          "abs_diff": 0.09999999999999998
+        },
+        "peak_after_decay": {
+          "a": 0.09381123674066563,
+          "b": 0.09298089926626948,
+          "abs_diff": 0.0008303374743961478
+        },
+        "recovery_shape_score": {
+          "a": 1.0993303571428554,
+          "b": 1.1103794642857145,
+          "abs_diff": 0.011049107142859116
+        },
+        "oscillation_chop": {
+          "a": 0.1111111111111111,
+          "b": 0.1111111111111111,
+          "abs_diff": 0.0
+        },
+        "mfe_terminal_ratio": {
+          "a": 1.1035228426395953,
+          "b": 1.1025126143330972,
+          "abs_diff": 0.0010102283064981066
+        },
+        "path_efficiency": {
+          "a": 0.4962216624685137,
+          "b": 0.4987217404381175,
+          "abs_diff": 0.002500077969603831
+        },
+        "terminal_proximity_mfe": {
+          "a": 0.9061887632593344,
+          "b": 0.9070191007337305,
+          "abs_diff": 0.0008303374743960923
+        },
+        "transition_count": {
+          "a": 1.0,
+          "b": 1.0,
+          "abs_diff": 0.0
+        },
+        "time_near_mfe": {
+          "a": 0.9,
+          "b": 0.8,
+          "abs_diff": 0.09999999999999998
+        },
+        "drawdown_from_mfe": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "post_mae_recovery_high": {
+          "a": 1.0993303571428554,
+          "b": 1.1103794642857145,
+          "abs_diff": 0.011049107142859116
+        },
+        "time_under_water": {
+          "a": 0.1,
+          "b": 0.2,
+          "abs_diff": 0.1
+        },
+        "time_under_favorable": {
+          "a": 0.9,
+          "b": 0.8,
+          "abs_diff": 0.09999999999999998
+        },
+        "recovery_speed": {
+          "a": 0.8888888888888888,
+          "b": 0.7777777777777778,
+          "abs_diff": 0.11111111111111105
+        },
+        "drawdown_duration": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "path_sign_entropy": {
+          "a": 0.581671865717884,
+          "b": 0.7298466991620948,
+          "abs_diff": 0.14817483344421079
+        },
+        "excursion_concentration": {
+          "a": 1.0,
+          "b": 0.6688741721854324,
+          "abs_diff": 0.33112582781456756
+        }
+      },
+      "top_discriminating_candidates": [
+        {
+          "key": "excursion_concentration",
+          "a": 1.0,
+          "b": 0.6688741721854324,
+          "abs_diff": 0.33112582781456756
+        },
+        {
+          "key": "path_sign_entropy",
+          "a": 0.581671865717884,
+          "b": 0.7298466991620948,
+          "abs_diff": 0.14817483344421079
+        },
+        {
+          "key": "recovery_speed",
+          "a": 0.8888888888888888,
+          "b": 0.7777777777777778,
+          "abs_diff": 0.11111111111111105
+        },
+        {
+          "key": "time_under_water",
+          "a": 0.1,
+          "b": 0.2,
+          "abs_diff": 0.1
+        },
+        {
+          "key": "peak_timing",
+          "a": 0.2,
+          "b": 0.3,
+          "abs_diff": 0.09999999999999998
+        }
+      ],
+      "interpretation_notes": [
+        "U and MAE approximately matched - residual candidates should discriminate.",
+        "Terminal return similar - magnitude ranking alone cannot separate paths.",
+        "Case 3: recovery speed differs - recovery_shape may overlap MAE blind spot (Audit 5)."
+      ]
+    },
+    {
+      "case_id": 4,
+      "label": "round_trip_vs_monotone",
+      "question": "Same terminal, oscillation vs hold?",
+      "path_a": {
+        "name": "case4_a",
+        "u_mean": 0.017673575999999965,
+        "u_terminal": 0.019591999999999957,
+        "mae": 0.030388000000000092,
+        "terminal": 0.019591999999999957,
+        "mfe": 0.022039999999999935,
+        "p": 0.01572789888502281,
+        "recovery_after_mae": 0.6447281821771719,
+        "favorable_occupancy": 0.9,
+        "candidates": {
+          "giveback_ratio": 0.11107078039927337,
+          "reversal_depth": 1.0,
+          "excursion_stability": 0.6245148049531032,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.20984069368824299,
+          "recovery_shape_score": 0.6447281821771719,
+          "oscillation_chop": 0.2222222222222222,
+          "mfe_terminal_ratio": 1.124948958758676,
+          "path_efficiency": 0.3244138296463096,
+          "terminal_proximity_mfe": 0.8889292196007266,
+          "transition_count": 2.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.9255898366606227,
+          "post_mae_recovery_high": 0.6447281821771719,
+          "time_under_water": 0.1,
+          "time_under_favorable": 0.9,
+          "recovery_speed": 0.875,
+          "drawdown_duration": 0.9,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.5001000200040006
+        }
+      },
+      "path_b": {
+        "name": "case4_b",
+        "u_mean": 0.02,
+        "u_terminal": 0.02,
+        "mae": 0.007999999999999972,
+        "terminal": 0.02,
+        "mfe": 0.022039999999999935,
+        "p": 0.02,
+        "recovery_after_mae": 2.500000000000009,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.092558983666059,
+          "reversal_depth": 0.092558983666059,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.092558983666059,
+          "recovery_shape_score": 2.500000000000009,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.1019999999999968,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.907441016333941,
+          "transition_count": 0.0,
+          "time_near_mfe": 1.0,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 2.500000000000009,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.8888888888888888,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.2959032742893828,
+          "excursion_concentration": 1.0
+        }
+      },
+      "u_diff": 0.0023264240000000352,
+      "mae_diff": 0.02238800000000012,
+      "terminal_diff": 0.00040800000000004374,
+      "p_diff": 0.004272101114977191,
+      "candidate_diffs": {
+        "giveback_ratio": {
+          "a": 0.11107078039927337,
+          "b": 0.092558983666059,
+          "abs_diff": 0.018511796733214375
+        },
+        "reversal_depth": {
+          "a": 1.0,
+          "b": 0.092558983666059,
+          "abs_diff": 0.907441016333941
+        },
+        "excursion_stability": {
+          "a": 0.6245148049531032,
+          "b": 1.0,
+          "abs_diff": 0.3754851950468968
+        },
+        "peak_timing": {
+          "a": 0.1,
+          "b": 0.1,
+          "abs_diff": 0.0
+        },
+        "peak_after_decay": {
+          "a": 0.20984069368824299,
+          "b": 0.092558983666059,
+          "abs_diff": 0.11728171002218399
+        },
+        "recovery_shape_score": {
+          "a": 0.6447281821771719,
+          "b": 2.500000000000009,
+          "abs_diff": 1.8552718178228371
+        },
+        "oscillation_chop": {
+          "a": 0.2222222222222222,
+          "b": 0.0,
+          "abs_diff": 0.2222222222222222
+        },
+        "mfe_terminal_ratio": {
+          "a": 1.124948958758676,
+          "b": 1.1019999999999968,
+          "abs_diff": 0.022948958758679305
+        },
+        "path_efficiency": {
+          "a": 0.3244138296463096,
+          "b": 1.0,
+          "abs_diff": 0.6755861703536904
+        },
+        "terminal_proximity_mfe": {
+          "a": 0.8889292196007266,
+          "b": 0.907441016333941,
+          "abs_diff": 0.01851179673321446
+        },
+        "transition_count": {
+          "a": 2.0,
+          "b": 0.0,
+          "abs_diff": 2.0
+        },
+        "time_near_mfe": {
+          "a": 0.1,
+          "b": 1.0,
+          "abs_diff": 0.9
+        },
+        "drawdown_from_mfe": {
+          "a": 0.9255898366606227,
+          "b": 0.0,
+          "abs_diff": 0.9255898366606227
+        },
+        "post_mae_recovery_high": {
+          "a": 0.6447281821771719,
+          "b": 2.500000000000009,
+          "abs_diff": 1.8552718178228371
+        },
+        "time_under_water": {
+          "a": 0.1,
+          "b": 0.0,
+          "abs_diff": 0.1
+        },
+        "time_under_favorable": {
+          "a": 0.9,
+          "b": 1.0,
+          "abs_diff": 0.09999999999999998
+        },
+        "recovery_speed": {
+          "a": 0.875,
+          "b": 0.8888888888888888,
+          "abs_diff": 0.01388888888888884
+        },
+        "drawdown_duration": {
+          "a": 0.9,
+          "b": 0.0,
+          "abs_diff": 0.9
+        },
+        "path_sign_entropy": {
+          "a": 0.7298466991620948,
+          "b": 0.2959032742893828,
+          "abs_diff": 0.433943424872712
+        },
+        "excursion_concentration": {
+          "a": 0.5001000200040006,
+          "b": 1.0,
+          "abs_diff": 0.49989997999599944
+        }
+      },
+      "top_discriminating_candidates": [
+        {
+          "key": "transition_count",
+          "a": 2.0,
+          "b": 0.0,
+          "abs_diff": 2.0
+        },
+        {
+          "key": "recovery_shape_score",
+          "a": 0.6447281821771719,
+          "b": 2.500000000000009,
+          "abs_diff": 1.8552718178228371
+        },
+        {
+          "key": "post_mae_recovery_high",
+          "a": 0.6447281821771719,
+          "b": 2.500000000000009,
+          "abs_diff": 1.8552718178228371
+        },
+        {
+          "key": "drawdown_from_mfe",
+          "a": 0.9255898366606227,
+          "b": 0.0,
+          "abs_diff": 0.9255898366606227
+        },
+        {
+          "key": "reversal_depth",
+          "a": 1.0,
+          "b": 0.092558983666059,
+          "abs_diff": 0.907441016333941
+        }
+      ],
+      "interpretation_notes": [
+        "Terminal return similar - magnitude ranking alone cannot separate paths.",
+        "Case 4: round-trip vs monotone - oscillation/chop and path_efficiency should rise on A; may affect risk more than expected return."
+      ]
+    },
+    {
+      "case_id": 5,
+      "label": "gradual_peak_vs_early_spike_late_hold",
+      "question": "Same terminal, different peak shape / chop?",
+      "path_a": {
+        "name": "case5_a",
+        "u_mean": 0.02725080000000004,
+        "u_terminal": 0.030301000000000043,
+        "mae": -0.007980000000000018,
+        "terminal": 0.030301000000000043,
+        "mfe": 0.032361602,
+        "p": 0.02289606455912778,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.06367428905404497,
+          "reversal_depth": 0.06367428905404497,
+          "excursion_stability": 0.605876004860659,
+          "peak_timing": 0.3,
+          "peak_after_decay": 0.06367428905404497,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.0680044222962923,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.9363257109459551,
+          "transition_count": 0.0,
+          "time_near_mfe": 0.8,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.5560326498763872,
+          "excursion_concentration": 0.336655555922246
+        }
+      },
+      "path_b": {
+        "name": "case5_b",
+        "u_mean": 0.028887599999999992,
+        "u_terminal": 0.029896999999999993,
+        "mae": -0.01766059999999996,
+        "terminal": 0.029896999999999993,
+        "mfe": 0.03206000000000003,
+        "p": 0.027898256212311533,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.06746724890829812,
+          "reversal_depth": 0.3855271366188407,
+          "excursion_stability": 0.7655392629046869,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.10280723643169175,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.2222222222222222,
+          "mfe_terminal_ratio": 1.0723483961601512,
+          "path_efficiency": 0.5920549735627856,
+          "terminal_proximity_mfe": 0.9325327510917019,
+          "transition_count": 2.0,
+          "time_near_mfe": 0.9,
+          "drawdown_from_mfe": 0.32127261384903305,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.9,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.7463243525636241
+        }
+      },
+      "u_diff": 0.0016367999999999522,
+      "mae_diff": 0.009680599999999942,
+      "terminal_diff": 0.00040400000000005015,
+      "p_diff": 0.005002191653183753,
+      "candidate_diffs": {
+        "giveback_ratio": {
+          "a": 0.06367428905404497,
+          "b": 0.06746724890829812,
+          "abs_diff": 0.003792959854253153
+        },
+        "reversal_depth": {
+          "a": 0.06367428905404497,
+          "b": 0.3855271366188407,
+          "abs_diff": 0.3218528475647957
+        },
+        "excursion_stability": {
+          "a": 0.605876004860659,
+          "b": 0.7655392629046869,
+          "abs_diff": 0.15966325804402792
+        },
+        "peak_timing": {
+          "a": 0.3,
+          "b": 0.1,
+          "abs_diff": 0.19999999999999998
+        },
+        "peak_after_decay": {
+          "a": 0.06367428905404497,
+          "b": 0.10280723643169175,
+          "abs_diff": 0.039132947377646776
+        },
+        "recovery_shape_score": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "oscillation_chop": {
+          "a": 0.0,
+          "b": 0.2222222222222222,
+          "abs_diff": 0.2222222222222222
+        },
+        "mfe_terminal_ratio": {
+          "a": 1.0680044222962923,
+          "b": 1.0723483961601512,
+          "abs_diff": 0.004343973863858874
+        },
+        "path_efficiency": {
+          "a": 1.0,
+          "b": 0.5920549735627856,
+          "abs_diff": 0.4079450264372144
+        },
+        "terminal_proximity_mfe": {
+          "a": 0.9363257109459551,
+          "b": 0.9325327510917019,
+          "abs_diff": 0.0037929598542532084
+        },
+        "transition_count": {
+          "a": 0.0,
+          "b": 2.0,
+          "abs_diff": 2.0
+        },
+        "time_near_mfe": {
+          "a": 0.8,
+          "b": 0.9,
+          "abs_diff": 0.09999999999999998
+        },
+        "drawdown_from_mfe": {
+          "a": 0.0,
+          "b": 0.32127261384903305,
+          "abs_diff": 0.32127261384903305
+        },
+        "post_mae_recovery_high": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "time_under_water": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "time_under_favorable": {
+          "a": 1.0,
+          "b": 1.0,
+          "abs_diff": 0.0
+        },
+        "recovery_speed": {
+          "a": 0.0,
+          "b": 0.0,
+          "abs_diff": 0.0
+        },
+        "drawdown_duration": {
+          "a": 0.0,
+          "b": 0.9,
+          "abs_diff": 0.9
+        },
+        "path_sign_entropy": {
+          "a": 0.5560326498763872,
+          "b": 0.7298466991620948,
+          "abs_diff": 0.17381404928570754
+        },
+        "excursion_concentration": {
+          "a": 0.336655555922246,
+          "b": 0.7463243525636241,
+          "abs_diff": 0.40966879664137806
+        }
+      },
+      "top_discriminating_candidates": [
+        {
+          "key": "transition_count",
+          "a": 0.0,
+          "b": 2.0,
+          "abs_diff": 2.0
+        },
+        {
+          "key": "drawdown_duration",
+          "a": 0.0,
+          "b": 0.9,
+          "abs_diff": 0.9
+        },
+        {
+          "key": "excursion_concentration",
+          "a": 0.336655555922246,
+          "b": 0.7463243525636241,
+          "abs_diff": 0.40966879664137806
+        },
+        {
+          "key": "path_efficiency",
+          "a": 1.0,
+          "b": 0.5920549735627856,
+          "abs_diff": 0.4079450264372144
+        },
+        {
+          "key": "reversal_depth",
+          "a": 0.06367428905404497,
+          "b": 0.3855271366188407,
+          "abs_diff": 0.3218528475647957
+        }
+      ],
+      "interpretation_notes": [
+        "Terminal return similar - magnitude ranking alone cannot separate paths."
+      ]
+    }
+  ],
+  "10_case1_spike_vs_grind": {
+    "path_A": "0→1→3→1 (spike then giveback)",
+    "path_B": "0→2→2→2 (grind hold)",
+    "metrics": {
+      "A": {
+        "name": "case1_a",
+        "u_mean": 0.011696799999999953,
+        "u_terminal": 0.009595999999999947,
+        "mae": -0.007576807999999886,
+        "terminal": 0.009595999999999947,
+        "mfe": 0.032260399999999974,
+        "p": 0.013796812517495696,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.7025455357032165,
+          "reversal_depth": 0.7025455357032165,
+          "excursion_stability": 0.618470905115623,
+          "peak_timing": 0.2,
+          "peak_after_decay": 0.7025455357032165,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 3.3618591079616666,
+          "path_efficiency": 0.18888276513660246,
+          "terminal_proximity_mfe": 0.2974544642967835,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.6386777597301964,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.8,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.66887417218543
+        }
+      },
+      "B": {
+        "name": "case1_b",
+        "u_mean": 0.02,
+        "u_terminal": 0.02,
+        "mae": -0.017960000000000066,
+        "terminal": 0.02,
+        "mfe": 0.022039999999999935,
+        "p": 0.02,
+        "recovery_after_mae": 0.0,
+        "favorable_occupancy": 1.0,
+        "candidates": {
+          "giveback_ratio": 0.092558983666059,
+          "reversal_depth": 0.092558983666059,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.092558983666059,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.1019999999999968,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.907441016333941,
+          "transition_count": 0.0,
+          "time_near_mfe": 1.0,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.2959032742893828,
+          "excursion_concentration": 1.0
+        }
+      }
+    },
+    "u_similar": true,
+    "mfe_A_higher": true,
+    "terminal_A_lower": true,
+    "giveback_A_much_higher": true,
+    "core_design_question": "P1이 단일 scalar로 A/B 우열을 정해야 하는가? Expected Return(potential=MFE vs realized=terminal)과 Acceptable Risk(giveback/chop/reversal)을 분리하면 A는 높은 potential+낮은 capture, B는 낮은 potential+높은 capture로 동시 표현 가능 — 우열은 output semantics에 달림.",
+    "dimension_mapping": {
+      "direction": "동일 (LONG favorable)",
+      "expected_return_if_potential": "A 우위 (MFE 3.2% vs 2.2%)",
+      "expected_return_if_realized": "B 우위 (terminal 2.0% vs 1.0%)",
+      "expected_return_if_capture_efficiency": "B 우위 (giveback 0 vs 0.68)",
+      "acceptable_risk": "A: giveback/reversal 높음; B: chop 낮음, hold 안정",
+      "single_scalar_F": "A/B trade-off를 한 숫자로 collapse하면 정보 손실"
+    },
+    "recommended_expression": "multi-head: Return_mag ≈ f(U, terminal, MFE); Risk_mag ≈ f(MAE, chop, reversal); capture_efficiency ≈ f(giveback, terminal/MFE) as diagnostic"
+  },
+  "11_reward_direct_candidates": [],
+  "12_output_diagnostic_candidates": [
+    "giveback_ratio",
+    "reversal_depth",
+    "excursion_stability",
+    "peak_timing",
+    "peak_after_decay",
+    "recovery_shape_score",
+    "oscillation_chop",
+    "time_near_mfe",
+    "drawdown_from_mfe",
+    "recovery_speed",
+    "time_under_water"
+  ],
+  "13_discard_candidates": [
+    "path_efficiency",
+    "path_sign_entropy",
+    "directional_consistency"
+  ],
+  "14_recommended_structures": [
+    {
+      "id": "S1_multi_head_diagnostic",
+      "name_ko": "Multi-head P1 + Path는 diagnostic/target 보조",
+      "sketch": {
+        "direction": "P 또는 별도 head",
+        "expected_return": "U + terminal + MFE (potential/realized 분리 가능)",
+        "acceptable_risk": "MAE + chop + reversal_depth",
+        "path_diagnostic": "giveback, peak_timing, recovery_shape",
+        "reward": "F = P + U - MAE (변경 없음)"
+      },
+      "path_role": "U/MAE residual path structure를 P1 output 학습 target/diagnostic으로"
+    },
+    {
+      "id": "S2_conditional_reward_adjustment",
+      "name_ko": "Conditional path adjustment (연구용, 비채택)",
+      "sketch": {
+        "reward": "F = P + U - MAE - penalty(giveback | MFE>τ) - penalty(chop | MAE>τ)",
+        "conditioning": "반드시 U/MAE/MFE 조건부"
+      },
+      "path_role": "reward에 넣되 nonlinear conditional — canonical 채택 전 추가 audit 필요"
+    },
+    {
+      "id": "S3_minimal_no_path",
+      "name_ko": "Minimal — U/MAE/P만, path 없음",
+      "sketch": {
+        "reward": "F = P + U - MAE",
+        "p1_output": "direction + U_proxy(return) + MAE_proxy(risk)"
+      },
+      "path_role": "path shape 무시 — Case 1 A/B collapse, multi-head 없으면 정보 손실"
+    }
+  ],
+  "15_structure_pros_cons": {
+    "S1_multi_head_diagnostic": {
+      "pros": [
+        "Case 1 spike vs grind을 Return/Risk/capture로 분리 표현",
+        "reward canonical 유지, double counting 최소",
+        "P1 output semantics와 정렬"
+      ],
+      "cons": [
+        "학습 target 설계 복잡도 증가",
+        "output head 간 상관 관리 필요"
+      ]
+    },
+    "S2_conditional_reward_adjustment": {
+      "pros": [
+        "단일 F scalar 유지 가능",
+        "giveback/chop을 risk-adjusted F에 반영"
+      ],
+      "cons": [
+        "U/MAE overlap 재발 위험",
+        "weight/threshold 확정 전 채택 불가",
+        "Case 1 우열을 F 하나로 여전히 collapse"
+      ]
+    },
+    "S3_minimal_no_path": {
+      "pros": [
+        "단순",
+        "기존 audit과 일관"
+      ],
+      "cons": [
+        "path shape blind spot 잔존",
+        "Expected Return vs capture efficiency 구분 불가"
+      ]
+    }
+  },
+  "16_unresolved_human_decisions": [
+    "Expected Return Magnitude 정의: MFE(potential) vs terminal(realized) vs U-aggregate 중 무엇인가?",
+    "Acceptable Risk에 giveback(reversal)을 포함할 것인가, MAE만으로 충분한가?",
+    "Case 1 (0→1→3→1 vs 0→2→2→2): chart qual — 트레이더가 t에서 어느 쪽을 더 attractive하게 보는가?",
+    "peak_timing을 P1 risk에 넣을지, P2 wait/deferred opportunity에 넣을지",
+    "recovery_shape를 P1 risk head vs P2 entry timing으로 분리하는 product boundary",
+    "giveback / reversal / peak_after_decay 셋 중 diagnostic으로 어떤 하나를 primary로 둘지",
+    "multi-asset에서 residual path signal robustness (현재 BTC only)"
+  ],
+  "core_questions_Q1_Q7": {
+    "Q1_u_mae_similar_path_diff": [
+      {
+        "case_id": 1,
+        "label": "spike_giveback_vs_grind_hold",
+        "u_diff": 0.008303200000000047,
+        "mae_diff": 0.01038319200000018,
+        "top_separators": [
+          {
+            "key": "mfe_terminal_ratio",
+            "a": 3.3618591079616666,
+            "b": 1.1019999999999968,
+            "abs_diff": 2.25985910796167
+          },
+          {
+            "key": "transition_count",
+            "a": 1.0,
+            "b": 0.0,
+            "abs_diff": 1.0
+          },
+          {
+            "key": "time_near_mfe",
+            "a": 0.1,
+            "b": 1.0,
+            "abs_diff": 0.9
+          }
+        ]
+      },
+      {
+        "case_id": 2,
+        "label": "late_peak_hold_vs_early_peak",
+        "u_diff": 0.007531679999999954,
+        "mae_diff": 0.0,
+        "top_separators": [
+          {
+            "key": "transition_count",
+            "a": 1.0,
+            "b": 0.0,
+            "abs_diff": 1.0
+          },
+          {
+            "key": "time_near_mfe",
+            "a": 0.1,
+            "b": 1.0,
+            "abs_diff": 0.9
+          },
+          {
+            "key": "drawdown_duration",
+            "a": 0.8,
+            "b": 0.0,
+            "abs_diff": 0.8
+          }
+        ]
+      },
+      {
+        "case_id": 3,
+        "label": "adverse_then_rise_fast_vs_slow",
+        "u_diff": 0.001811601499999968,
+        "mae_diff": 0.0,
+        "top_separators": [
+          {
+            "key": "excursion_concentration",
+            "a": 1.0,
+            "b": 0.6688741721854324,
+            "abs_diff": 0.33112582781456756
+          },
+          {
+            "key": "path_sign_entropy",
+            "a": 0.581671865717884,
+            "b": 0.7298466991620948,
+            "abs_diff": 0.14817483344421079
+          },
+          {
+            "key": "recovery_speed",
+            "a": 0.8888888888888888,
+            "b": 0.7777777777777778,
+            "abs_diff": 0.11111111111111105
+          }
+        ]
+      },
+      {
+        "case_id": 4,
+        "label": "round_trip_vs_monotone",
+        "u_diff": 0.0023264240000000352,
+        "mae_diff": 0.02238800000000012,
+        "top_separators": [
+          {
+            "key": "transition_count",
+            "a": 2.0,
+            "b": 0.0,
+            "abs_diff": 2.0
+          },
+          {
+            "key": "recovery_shape_score",
+            "a": 0.6447281821771719,
+            "b": 2.500000000000009,
+            "abs_diff": 1.8552718178228371
+          },
+          {
+            "key": "post_mae_recovery_high",
+            "a": 0.6447281821771719,
+            "b": 2.500000000000009,
+            "abs_diff": 1.8552718178228371
+          }
+        ]
+      },
+      {
+        "case_id": 5,
+        "label": "gradual_peak_vs_early_spike_late_hold",
+        "u_diff": 0.0016367999999999522,
+        "mae_diff": 0.009680599999999942,
+        "top_separators": [
+          {
+            "key": "transition_count",
+            "a": 0.0,
+            "b": 2.0,
+            "abs_diff": 2.0
+          },
+          {
+            "key": "drawdown_duration",
+            "a": 0.0,
+            "b": 0.9,
+            "abs_diff": 0.9
+          },
+          {
+            "key": "excursion_concentration",
+            "a": 0.336655555922246,
+            "b": 0.7463243525636241,
+            "abs_diff": 0.40966879664137806
+          }
+        ]
+      }
+    ],
+    "Q2_same_terminal_u_mae": [
+      {
+        "case_id": 3,
+        "label": "adverse_then_rise_fast_vs_slow",
+        "terminal_diff": 0.00019800000000003495,
+        "u_diff": 0.001811601499999968,
+        "mae_diff": 0.0,
+        "top_separators": [
+          {
+            "key": "excursion_concentration",
+            "a": 1.0,
+            "b": 0.6688741721854324,
+            "abs_diff": 0.33112582781456756
+          },
+          {
+            "key": "path_sign_entropy",
+            "a": 0.581671865717884,
+            "b": 0.7298466991620948,
+            "abs_diff": 0.14817483344421079
+          },
+          {
+            "key": "recovery_speed",
+            "a": 0.8888888888888888,
+            "b": 0.7777777777777778,
+            "abs_diff": 0.11111111111111105
+          }
+        ]
+      },
+      {
+        "case_id": 4,
+        "label": "round_trip_vs_monotone",
+        "terminal_diff": 0.00040800000000004374,
+        "u_diff": 0.0023264240000000352,
+        "mae_diff": 0.02238800000000012,
+        "top_separators": [
+          {
+            "key": "transition_count",
+            "a": 2.0,
+            "b": 0.0,
+            "abs_diff": 2.0
+          },
+          {
+            "key": "recovery_shape_score",
+            "a": 0.6447281821771719,
+            "b": 2.500000000000009,
+            "abs_diff": 1.8552718178228371
+          },
+          {
+            "key": "post_mae_recovery_high",
+            "a": 0.6447281821771719,
+            "b": 2.500000000000009,
+            "abs_diff": 1.8552718178228371
+          }
+        ]
+      },
+      {
+        "case_id": 5,
+        "label": "gradual_peak_vs_early_spike_late_hold",
+        "terminal_diff": 0.00040400000000005015,
+        "u_diff": 0.0016367999999999522,
+        "mae_diff": 0.009680599999999942,
+        "top_separators": [
+          {
+            "key": "transition_count",
+            "a": 0.0,
+            "b": 2.0,
+            "abs_diff": 2.0
+          },
+          {
+            "key": "drawdown_duration",
+            "a": 0.0,
+            "b": 0.9,
+            "abs_diff": 0.9
+          },
+          {
+            "key": "excursion_concentration",
+            "a": 0.336655555922246,
+            "b": 0.7463243525636241,
+            "abs_diff": 0.40966879664137806
+          }
+        ]
+      }
+    ],
+    "Q3_redundancy_classification": {
+      "giveback_ratio": "C_mostly_independent",
+      "reversal_depth": "C_mostly_independent",
+      "excursion_stability": "B_partial_path_detail",
+      "peak_timing": "B_partial_path_detail",
+      "peak_after_decay": "B_partial_path_detail",
+      "recovery_shape_score": "B_partial_path_detail",
+      "oscillation_chop": "C_mostly_independent",
+      "time_near_mfe": "B_partial_path_detail",
+      "drawdown_from_mfe": "B_partial_path_detail",
+      "path_efficiency": "A_U_MAE_redundant",
+      "recovery_speed": "B_partial_path_detail",
+      "time_under_water": "B_partial_path_detail",
+      "path_sign_entropy": "A_U_MAE_redundant",
+      "directional_consistency": "A_U_MAE_redundant"
+    },
+    "Q4_p1_output_mapping": {
+      "giveback_ratio": {
+        "direction": "low",
+        "expected_return": "high — realized capture vs potential (MFE 대비 terminal 유지)",
+        "acceptable_risk": "moderate — 큰 giveback은 intra-horizon risk 신호일 수 있으나 terminal이 회복하면 risk와 분리"
+      },
+      "reversal_depth": {
+        "direction": "low",
+        "expected_return": "moderate — terminal giveback과 다를 때 return capture와 분리",
+        "acceptable_risk": "high — intra-horizon path risk, stop/whip 가능성"
+      },
+      "excursion_stability": {
+        "direction": "low",
+        "expected_return": "moderate — hold 품질, capture 안정성",
+        "acceptable_risk": "moderate — unstable excursion은 risk proxy"
+      },
+      "peak_timing": {
+        "direction": "low",
+        "expected_return": "moderate — conditional on MFE>0; deferred opportunity 잔여 가능성",
+        "acceptable_risk": "low-moderate — late peak는 아직 움직임 남음 vs early peak는 giveback 위험"
+      },
+      "peak_after_decay": {
+        "direction": "low",
+        "expected_return": "moderate",
+        "acceptable_risk": "moderate"
+      },
+      "recovery_shape_score": {
+        "direction": "low",
+        "expected_return": "moderate — deferred opportunity 성격",
+        "acceptable_risk": "high — path risk / 회복 가능성"
+      },
+      "oscillation_chop": {
+        "direction": "low",
+        "expected_return": "low — return magnitude 자체보다 path quality",
+        "acceptable_risk": "high — execution/holding variance, acceptable risk"
+      },
+      "time_near_mfe": {
+        "direction": "low",
+        "expected_return": "moderate",
+        "acceptable_risk": "low"
+      },
+      "drawdown_from_mfe": {
+        "direction": "low",
+        "expected_return": "moderate",
+        "acceptable_risk": "high"
+      },
+      "path_efficiency": {
+        "direction": "low",
+        "expected_return": "redundant with terminal",
+        "acceptable_risk": "low"
+      },
+      "recovery_speed": {
+        "direction": "low",
+        "expected_return": "low-moderate",
+        "acceptable_risk": "moderate"
+      },
+      "time_under_water": {
+        "direction": "low",
+        "expected_return": "low",
+        "acceptable_risk": "moderate-high"
+      },
+      "path_sign_entropy": {
+        "direction": "low",
+        "expected_return": "low",
+        "acceptable_risk": "moderate"
+      },
+      "directional_consistency": {
+        "direction": "low",
+        "expected_return": "low",
+        "acceptable_risk": "moderate"
+      }
+    },
+    "Q5_composition_candidates": {
+      "baseline": "F = P + U - MAE (canonical, unchanged)",
+      "candidates": [
+        {
+          "name": "A_multi_head_no_path_in_reward",
+          "formula": "F_baseline + P1 heads: Return(U,terminal,MFE), Risk(MAE,chop,reversal), Capture(giveback)",
+          "path_in_reward": false
+        },
+        {
+          "name": "B_conditional_path_penalty",
+          "formula": "F = P + U - MAE - g(giveback|U,MFE) - h(chop|MAE)",
+          "path_in_reward": true,
+          "note": "U/MAE conditioning 필수 — double counting 방지"
+        },
+        {
+          "name": "C_split_F_return_F_risk",
+          "formula": "F_return = U + capture_diag; F_risk = MAE + path_risk_diag",
+          "path_in_reward": "partial"
+        }
+      ],
+      "preferred_separation": "Path를 reward scalar에 직접 더하기보다 P1 output/diagnostic head로 분리하면 Return vs Risk 역할이 명확해짐 (Case 1 설계 질문 해소에 유리)."
+    },
+    "Q6_inter_observable_collinearity": {
+      "pairs": [
+        {
+          "a": "oscillation_chop",
+          "b": "transition_count",
+          "corr": 1.0
+        },
+        {
+          "a": "time_under_water",
+          "b": "time_under_favorable",
+          "corr": -0.9821723568725812
+        },
+        {
+          "a": "giveback_ratio",
+          "b": "reversal_depth",
+          "corr": 0.9657350012053282
+        },
+        {
+          "a": "reversal_depth",
+          "b": "peak_after_decay",
+          "corr": 0.9436656794041676
+        },
+        {
+          "a": "giveback_ratio",
+          "b": "peak_after_decay",
+          "corr": 0.9364769990996213
+        },
+        {
+          "a": "path_efficiency",
+          "b": "terminal_proximity_mfe",
+          "corr": 0.8418559360743083
+        },
+        {
+          "a": "giveback_ratio",
+          "b": "terminal_proximity_mfe",
+          "corr": -0.8031432885726028
+        },
+        {
+          "a": "reversal_depth",
+          "b": "terminal_proximity_mfe",
+          "corr": -0.7655043586430181
+        },
+        {
+          "a": "peak_after_decay",
+          "b": "terminal_proximity_mfe",
+          "corr": -0.7590322645767611
+        },
+        {
+          "a": "path_efficiency",
+          "b": "time_under_water",
+          "corr": -0.7552085607865161
+        },
+        {
+          "a": "path_efficiency",
+          "b": "time_under_favorable",
+          "corr": 0.7519438271046341
+        }
+      ],
+      "notes": [
+        "giveback ≈ terminal_proximity (1-giveback) when MFE>0 — 하나만",
+        "reversal_depth vs drawdown_from_mfe: Case 4에서 유사, monotone path에서 giveback과 분리",
+        "peak_after_decay: giveback과 reversal 사이 — 3개 중 1개",
+        "oscillation_chop = 1 - directional_consistency; transition_count = chop * scale",
+        "path_sign_entropy ≈ chop family"
+      ]
+    },
+    "Q7_is_path_needed": {
+      "verdict_options": [
+        "1_Path_in_reward",
+        "2_Path_as_P1_output_diagnostic",
+        "3_Path_unnecessary"
+      ],
+      "selected": "2_Path_as_P1_output_diagnostic",
+      "rationale_ko": "U/MAE만으로 magnitude는 충분하나 path shape 정보는 존재하고 P1 Return/Risk 분리 표현에 의미 있음. 다만 reward scalar에 직접 추가하면 U/MAE와 double counting 위험 — output/diagnostic이 역할 분리에 유리."
+    },
+    "real_data_u_mae_buckets": {
+      "matched_pairs": 300,
+      "tol_u_mae": 0.0005,
+      "discriminating_pair_counts": {
+        "path_efficiency": 300,
+        "excursion_concentration": 298,
+        "mfe_terminal_ratio": 294,
+        "recovery_shape_score": 290,
+        "post_mae_recovery_high": 280,
+        "excursion_stability": 272,
+        "drawdown_duration": 260,
+        "peak_timing": 259,
+        "peak_after_decay": 245,
+        "time_under_water": 241,
+        "time_under_favorable": 241,
+        "drawdown_from_mfe": 216,
+        "giveback_ratio": 200,
+        "transition_count": 195,
+        "oscillation_chop": 195,
+        "path_sign_entropy": 193,
+        "terminal_proximity_mfe": 185,
+        "recovery_speed": 165,
+        "reversal_depth": 158,
+        "time_near_mfe": 142
+      },
+      "max_abs_diff_in_buckets": {
+        "giveback_ratio": 1.0,
+        "reversal_depth": 1.0,
+        "excursion_stability": 0.9780921464243284,
+        "peak_timing": 0.9,
+        "peak_after_decay": 1.0,
+        "recovery_shape_score": 5.225555555555628,
+        "oscillation_chop": 0.33333333333333337,
+        "mfe_terminal_ratio": 9.999582985821434,
+        "path_efficiency": 0.9772810695181866,
+        "terminal_proximity_mfe": 1.0,
+        "transition_count": 3.0,
+        "time_near_mfe": 0.1,
+        "drawdown_from_mfe": 1.0,
+        "post_mae_recovery_high": 10679.000005594482,
+        "time_under_water": 0.8,
+        "time_under_favorable": 0.8,
+        "recovery_speed": 0.8888888888888888,
+        "drawdown_duration": 0.8,
+        "path_sign_entropy": 0.157115704285749,
+        "excursion_concentration": 0.7977722529599635
+      },
+      "top_discriminators": [
+        "path_efficiency",
+        "excursion_concentration",
+        "mfe_terminal_ratio",
+        "recovery_shape_score",
+        "post_mae_recovery_high"
+      ]
+    },
+    "case1_design": "P1이 단일 scalar로 A/B 우열을 정해야 하는가? Expected Return(potential=MFE vs realized=terminal)과 Acceptable Risk(giveback/chop/reversal)을 분리하면 A는 높은 potential+낮은 capture, B는 낮은 potential+높은 capture로 동시 표현 가능 — 우열은 output semantics에 달림."
+  },
+  "path_role_definition": {
+    "what_path_is_NOT": "speed/persistence 재측정, S+D 분해 목적, correlation winner 선택, Enter/Wait/Avoid 직접 학습",
+    "what_path_IS": "U/MAE가 동일하게 평가하는 서로 다른 future path를 구분하고, 그 차이가 P1 Expected Return Magnitude vs Acceptable Risk Magnitude 판단에 논리적으로 기여할 때만 의미 있는 residual path structure",
+    "preferred_locus": "현 단계: P1 output/diagnostic head 또는 학습 보조 target. canonical reward scalar 직접 수정은 보류."
+  },
+  "final_conclusion_category": "2_Path_as_P1_output_diagnostic",
+  "residual_audit_crossref": {
+    "CONFIRMED": [
+      "Real eval: 300 pairs with similar U and MAE exist; residual candidates still vary (top: ['path_efficiency', 'excursion_concentration', 'mfe_terminal_ratio', 'recovery_shape_score', 'post_mae_recovery_high']).",
+      "Case 1 synthetic: similar U_mean between spike-giveback and grind-hold paths; giveback/reversal/chop discriminate structure.",
+      "Giveback ratio has moderate/low direct correlation with U on eval data - not fully redundant with opportunity magnitude."
+    ],
+    "RESIDUAL_PATH_CANDIDATES": [
+      "giveback_ratio",
+      "reversal_depth",
+      "excursion_stability",
+      "peak_timing",
+      "peak_after_decay",
+      "recovery_shape_score",
+      "oscillation_chop",
+      "mfe_terminal_ratio",
+      "terminal_proximity_mfe",
+      "time_near_mfe",
+      "drawdown_from_mfe",
+      "post_mae_recovery_high",
+      "time_under_water",
+      "recovery_speed",
+      "drawdown_duration",
+      "path_sign_entropy",
+      "excursion_concentration"
+    ]
+  },
+  "synthesis_ko": {
+    "path_역할_정의": "U/MAE가 동일하게 평가하는 서로 다른 future path를 구분하고, 그 차이가 P1 Expected Return Magnitude vs Acceptable Risk Magnitude 판단에 논리적으로 기여할 때만 의미 있는 residual path structure",
+    "결론_카테고리": "2 - Path 정보는 필요, reward component보다 P1 output/diagnostic 분리 권장",
+    "reward_직접_투입_후보": [],
+    "output_diagnostic_후보": [
+      "giveback_ratio",
+      "reversal_depth",
+      "excursion_stability",
+      "peak_timing",
+      "peak_after_decay",
+      "recovery_shape_score",
+      "oscillation_chop",
+      "time_near_mfe",
+      "drawdown_from_mfe",
+      "recovery_speed",
+      "time_under_water"
+    ],
+    "불필요_후보": [
+      "path_efficiency",
+      "path_sign_entropy",
+      "directional_consistency"
+    ],
+    "핵심_잔여_정보": [
+      "giveback / capture efficiency → Expected Return (realized vs potential)",
+      "reversal_depth / chop → Acceptable Risk (intra-horizon path risk)",
+      "recovery_shape → MAE blind spot, P1 risk 또는 P2 boundary"
+    ],
+    "Case1_핵심": "P1이 단일 scalar로 A/B 우열을 정해야 하는가? Expected Return(potential=MFE vs realized=terminal)과 Acceptable Risk(giveback/chop/reversal)을 분리하면 A는 높은 potential+낮은 capture, B는 낮은 potential+높은 capture로 동시 표현 가능 — 우열은 output semantics에 달림.",
+    "권장_구조": "S1_multi_head_diagnostic"
+  }
+}

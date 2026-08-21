@@ -1,0 +1,517 @@
+{
+  "audit": "P1 Return/Risk Target Validation",
+  "candidate_structure": {
+    "expected_return": [
+      "U",
+      "MFE"
+    ],
+    "acceptable_risk": [
+      "MAE",
+      "giveback",
+      "chop"
+    ]
+  },
+  "pre_declared_semantics": {
+    "return_order_AB": "A_return_tier >= B_return_tier (A high, B mid)",
+    "risk_order_ABC": "B_risk < A_risk < C_risk",
+    "archetype_tiers": {
+      "A": {
+        "return": "high",
+        "risk": "mid"
+      },
+      "B": {
+        "return": "mid",
+        "risk": "low"
+      },
+      "C": {
+        "return": "high_potential_not_realized",
+        "risk": "high"
+      },
+      "REC": {
+        "return": "mid",
+        "risk": "mid"
+      },
+      "G": {
+        "return": "mid",
+        "risk": "mid_whip"
+      },
+      "H": {
+        "return": "low_realized",
+        "risk": "high"
+      }
+    }
+  },
+  "market": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "config": {
+    "reward_horizon": 10,
+    "eval_samples": 2485
+  },
+  "synthetic_paths": [
+    {
+      "id": "A",
+      "levels": [
+        0,
+        1,
+        3,
+        1
+      ],
+      "description": "0->1->3->1 spike giveback",
+      "expected_return_tier": "high",
+      "expected_risk_tier": "mid",
+      "observables": {
+        "U": 0.011696799999999953,
+        "MFE": 0.032260399999999974,
+        "MAE": -0.007576807999999886,
+        "giveback": 0.7025455357032165,
+        "chop": 0.1111111111111111,
+        "terminal": 0.009595999999999947
+      }
+    },
+    {
+      "id": "B",
+      "levels": [
+        0,
+        2,
+        2,
+        2
+      ],
+      "description": "0->2->2->2 grind hold",
+      "expected_return_tier": "mid",
+      "expected_risk_tier": "low",
+      "observables": {
+        "U": 0.02,
+        "MFE": 0.022039999999999935,
+        "MAE": -0.017960000000000066,
+        "giveback": 0.092558983666059,
+        "chop": 0.0,
+        "terminal": 0.02
+      }
+    },
+    {
+      "id": "C",
+      "levels": [
+        0,
+        3,
+        -1,
+        -3
+      ],
+      "description": "0->3->-1->-3 rise crash",
+      "expected_return_tier": "high_potential_not_realized",
+      "expected_risk_tier": "high",
+      "observables": {
+        "U": 0.0018297689087999995,
+        "MFE": 0.03206000000000003,
+        "MAE": 0.06004671999999999,
+        "giveback": 1.0,
+        "chop": 0.1111111111111111,
+        "terminal": -0.030976
+      }
+    },
+    {
+      "id": "REC",
+      "levels": [
+        0,
+        -2,
+        -1,
+        1
+      ],
+      "description": "0->-2->-1->1 adverse recovery",
+      "expected_return_tier": "mid",
+      "expected_risk_tier": "mid",
+      "observables": {
+        "U": 0.007601194000000071,
+        "MFE": 0.011615192000000149,
+        "MAE": 0.04939999999999998,
+        "giveback": 0.17384060461506226,
+        "chop": 0.1111111111111111,
+        "terminal": 0.009596000000000089
+      }
+    },
+    {
+      "id": "G",
+      "levels": [
+        0,
+        2,
+        0,
+        2
+      ],
+      "description": "0->2->0->2 round-trip",
+      "expected_return_tier": "mid",
+      "expected_risk_tier": "mid_whip",
+      "observables": {
+        "U": 0.017673575999999965,
+        "MFE": 0.022039999999999935,
+        "MAE": 0.030388000000000092,
+        "giveback": 0.11107078039927337,
+        "chop": 0.2222222222222222,
+        "terminal": 0.019591999999999957
+      }
+    },
+    {
+      "id": "H",
+      "levels": [
+        0,
+        1,
+        3,
+        0
+      ],
+      "description": "0->1->3->0 spike to zero",
+      "expected_return_tier": "low_realized",
+      "expected_risk_tier": "high",
+      "observables": {
+        "U": 0.004019401876799996,
+        "MFE": 0.032260399999999974,
+        "MAE": 0.03068482000000017,
+        "giveback": 1.0,
+        "chop": 0.1111111111111111,
+        "terminal": -0.000706000000000131
+      }
+    }
+  ],
+  "return_validation": {
+    "A_vs_B": {
+      "U": {
+        "A": 0.011696799999999953,
+        "B": 0.02,
+        "A_gt_B": false
+      },
+      "MFE": {
+        "A": 0.032260399999999974,
+        "B": 0.022039999999999935,
+        "A_gt_B": true
+      },
+      "terminal": {
+        "A": 0.009595999999999947,
+        "B": 0.02
+      },
+      "single_scalar_return_would_favor": "B (U and terminal)",
+      "dual_head_U_MFE_expresses": "A: higher MFE (potential/max opportunity), B: higher U (average favorable opportunity) - tiers 'high vs mid' expressible as facet split, not one scalar",
+      "A_higher_expected_return_via_MFE": true,
+      "meets_tier_if_MFE_is_primary": true,
+      "meets_tier_if_U_is_primary": false
+    },
+    "C_return_not_unconditionally_high": {
+      "MFE": 0.03206000000000003,
+      "U": 0.0018297689087999995,
+      "terminal": -0.030976,
+      "MFE_high": true,
+      "U_suppresses_unconditional_high": true,
+      "terminal_negative": true,
+      "verdict": "CONFIRMED: C has high MFE but low U and negative terminal - dual-head prevents MFE-alone from marking C as unqualified high Return"
+    }
+  },
+  "risk_validation": {
+    "ABC_ordering": {
+      "MAE_abs": {
+        "values": {
+          "A": 0.007576807999999886,
+          "B": 0.017960000000000066,
+          "C": 0.06004671999999999
+        },
+        "rank": [
+          [
+            "A",
+            0.007576807999999886
+          ],
+          [
+            "B",
+            0.017960000000000066
+          ],
+          [
+            "C",
+            0.06004671999999999
+          ]
+        ],
+        "B_lt_A": false,
+        "A_lt_C": true,
+        "matches_B_lt_A_lt_C": false
+      },
+      "giveback": {
+        "values": {
+          "A": 0.7025455357032165,
+          "B": 0.092558983666059,
+          "C": 1.0
+        },
+        "rank": [
+          [
+            "B",
+            0.092558983666059
+          ],
+          [
+            "A",
+            0.7025455357032165
+          ],
+          [
+            "C",
+            1.0
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": true,
+        "matches_B_lt_A_lt_C": true
+      },
+      "chop": {
+        "values": {
+          "A": 0.1111111111111111,
+          "B": 0.0,
+          "C": 0.1111111111111111
+        },
+        "rank": [
+          [
+            "B",
+            0.0
+          ],
+          [
+            "A",
+            0.1111111111111111
+          ],
+          [
+            "C",
+            0.1111111111111111
+          ]
+        ],
+        "B_lt_A": true,
+        "A_lt_C": true,
+        "matches_B_lt_A_lt_C": true,
+        "note": "A and C may tie on chop; chop alone does not rank A vs C"
+      }
+    },
+    "giveback_catches_A_vs_B": {
+      "mae_separates": true,
+      "giveback_separates": true,
+      "giveback_delta": 0.6099865520371576,
+      "verdict": "giveback distinguishes A/B capture-erosion risk"
+    },
+    "chop_catches_round_trip": {
+      "B": {
+        "terminal": 0.02,
+        "giveback": 0.092558983666059,
+        "chop": 0.0
+      },
+      "G": {
+        "terminal": 0.019591999999999957,
+        "giveback": 0.11107078039927337,
+        "chop": 0.2222222222222222
+      },
+      "terminal_similar": true,
+      "chop_G_higher": true,
+      "giveback_similar": true
+    }
+  },
+  "u_mfe_redundancy": {
+    "synthetic_corr_U_MFE": -0.35832903112443626,
+    "per_path": [
+      {
+        "id": "A",
+        "U": 0.011696799999999953,
+        "MFE": 0.032260399999999974,
+        "terminal": 0.009595999999999947,
+        "U_vs_MFE_divergence": 0.020563600000000022
+      },
+      {
+        "id": "B",
+        "U": 0.02,
+        "MFE": 0.022039999999999935,
+        "terminal": 0.02,
+        "U_vs_MFE_divergence": 0.0020399999999999342
+      },
+      {
+        "id": "C",
+        "U": 0.0018297689087999995,
+        "MFE": 0.03206000000000003,
+        "terminal": -0.030976,
+        "U_vs_MFE_divergence": 0.030230231091200033
+      },
+      {
+        "id": "REC",
+        "U": 0.007601194000000071,
+        "MFE": 0.011615192000000149,
+        "terminal": 0.009596000000000089,
+        "U_vs_MFE_divergence": 0.0040139980000000785
+      },
+      {
+        "id": "G",
+        "U": 0.017673575999999965,
+        "MFE": 0.022039999999999935,
+        "terminal": 0.019591999999999957,
+        "U_vs_MFE_divergence": 0.0043664239999999695
+      },
+      {
+        "id": "H",
+        "U": 0.004019401876799996,
+        "MFE": 0.032260399999999974,
+        "terminal": -0.000706000000000131,
+        "U_vs_MFE_divergence": 0.028240998123199978
+      }
+    ],
+    "same_information": false,
+    "interpretation": "U and MFE are NOT the same information on archetypes: A has MFE>>U (spike), B has U~MFE (grind), C has MFE>>U with negative terminal. Dual-head captures average vs max favorable opportunity."
+  },
+  "giveback_chop_analysis": {
+    "pairwise": [
+      {
+        "pair": "A_vs_B",
+        "note": "high giveback vs low",
+        "giveback": {
+          "a": 0.7025455357032165,
+          "b": 0.092558983666059
+        },
+        "chop": {
+          "a": 0.1111111111111111,
+          "b": 0.0
+        },
+        "giveback_diff": 0.6099865520371576,
+        "chop_diff": 0.1111111111111111
+      },
+      {
+        "pair": "B_vs_G",
+        "note": "low giveback both, chop differs",
+        "giveback": {
+          "a": 0.092558983666059,
+          "b": 0.11107078039927337
+        },
+        "chop": {
+          "a": 0.0,
+          "b": 0.2222222222222222
+        },
+        "giveback_diff": 0.018511796733214375,
+        "chop_diff": 0.2222222222222222
+      },
+      {
+        "pair": "A_vs_G",
+        "note": "giveback vs chop independence",
+        "giveback": {
+          "a": 0.7025455357032165,
+          "b": 0.11107078039927337
+        },
+        "chop": {
+          "a": 0.1111111111111111,
+          "b": 0.2222222222222222
+        },
+        "giveback_diff": 0.5914747553039432,
+        "chop_diff": 0.1111111111111111
+      }
+    ],
+    "redundancy_level": "partial - correlated on spike-giveback paths, independent on B vs G (similar giveback, chop 0 vs 0.22)",
+    "B_vs_G": {
+      "giveback": {
+        "B": 0.092558983666059,
+        "G": 0.11107078039927337
+      },
+      "chop": {
+        "B": 0.0,
+        "G": 0.2222222222222222
+      },
+      "independent_facets": true
+    }
+  },
+  "risk_facet_preservation": {
+    "facet_values": {
+      "A": {
+        "MAE": 0.007576807999999886,
+        "giveback": 0.7025455357032165,
+        "chop": 0.1111111111111111
+      },
+      "B": {
+        "MAE": 0.017960000000000066,
+        "giveback": 0.092558983666059,
+        "chop": 0.0
+      },
+      "C": {
+        "MAE": 0.06004671999999999,
+        "giveback": 1.0,
+        "chop": 0.1111111111111111
+      },
+      "G": {
+        "MAE": 0.030388000000000092,
+        "giveback": 0.11107078039927337,
+        "chop": 0.2222222222222222
+      }
+    },
+    "naive_sum_scalar": {
+      "A": 0.8212334548143276,
+      "B": 0.11051898366605906,
+      "C": 1.171157831111111,
+      "G": 0.36368100262149566
+    },
+    "preservation_verdict": "Multi-facet head preserves semantics; naive sum loses which facet drives (e.g. G: moderate sum but chop-driven whip). Use separate Risk sub-targets, not one collapsed scalar.",
+    "G_example": {
+      "facets": {
+        "MAE": 0.030388000000000092,
+        "giveback": 0.11107078039927337,
+        "chop": 0.2222222222222222
+      },
+      "note": "G has chop>>B while giveback~B - sum scalar obscures whip facet"
+    }
+  },
+  "real_data_pair_analysis": {
+    "eval_samples": 2485,
+    "similar_U_MAE_terminal_pairs": 200,
+    "giveback_discriminates": 138,
+    "chop_discriminates": 137,
+    "similar_U_MFE_MAE_pairs": 274,
+    "giveback_discriminates_umfe": 184,
+    "chop_discriminates_umfe": 187,
+    "U_MFE_corr_eval": 0.9124270026756769,
+    "giveback_chop_corr_eval": 0.06653309296748582,
+    "interpretation": "Real pairs with matched U/MAE/terminal still vary on giveback/chop - path information beyond magnitude scalars."
+  },
+  "structure_adoption_judgment": {
+    "structure": {
+      "Direction": "P or separate (out of scope)",
+      "Expected_Return": [
+        "U",
+        "MFE"
+      ],
+      "Acceptable_Risk": [
+        "MAE",
+        "giveback",
+        "chop"
+      ]
+    },
+    "adoption_sufficient_as_design_candidate": true,
+    "strengths": [
+      "U+MFE dual Return head blocks C from MFE-only high rating",
+      "MFE expresses A high potential vs B mid",
+      "giveback supports B<A<C risk ordering",
+      "giveback separates A/B capture erosion",
+      "chop catches G round-trip whip",
+      "giveback and chop are independent facets on B vs G",
+      "U and MFE carry distinct facets on archetypes",
+      "real data: giveback adds info in matched buckets"
+    ],
+    "gaps": [
+      "U alone ranks B above A - Return tier needs MFE facet explicit semantics"
+    ],
+    "not_auto_adopt": "Semantic adequacy supports this as P1 target DESIGN CANDIDATE; canonical adoption requires chart qual, weighting, and training protocol - not done here."
+  },
+  "CONFIRMED": [
+    "C: high MFE but low U - dual Return head prevents unconditional high Return from MFE alone.",
+    "A vs B: MFE ranks A higher (max opportunity / high tier).",
+    "A vs B: U ranks B higher (average opportunity) - Return tier requires MFE facet, not U alone.",
+    "Risk ordering B<A<C on giveback.",
+    "G (0->2->0->2): chop > B despite similar terminal/giveback.",
+    "giveback and chop independent on B vs G.",
+    "U and MFE not redundant on synthetic archetypes (different facets)."
+  ],
+  "HYPOTHESIS": [
+    "U+MFE dual head adequately expresses Return tiers if MFE=potential and U=average opportunity are documented in target semantics.",
+    "MAE+giveback+chop triple Risk head preserves facets if trained as separate outputs not naive sum."
+  ],
+  "UNRESOLVED": [
+    "Whether A>B Return tier needs human chart judgment beyond MFE>U split.",
+    "Recovery path (REC) Risk tier placement in MAE+giveback+chop structure.",
+    "Training weighting and loss coupling between Risk sub-targets.",
+    "Direction head coupling with Return/Risk - out of scope here."
+  ]
+}

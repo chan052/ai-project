@@ -1,0 +1,1632 @@
+{
+  "audit": "P1 Return/Risk Aggregation & Path Validation",
+  "fixed_structure": {
+    "Expected_Return": [
+      "U",
+      "MFE"
+    ],
+    "Acceptable_Risk": [
+      "MAE",
+      "Giveback"
+    ],
+    "Path": [
+      "Chop"
+    ],
+    "Recovery": "diagnostic_only"
+  },
+  "normalization": "X / sigma_prefix (scale-only); raw auxiliary",
+  "1_executive_summary": {
+    "eval_n": 2485,
+    "headline": "Facet structure SUPPORTED; naive equal-weight Return/Risk scalars FAILED or HYPOTHESIS-only; X/sigma SUPPORTED; Chop->Path SUPPORTED on BTC; Recovery stays diagnostic",
+    "key_recommendations": [
+      "Keep U, MFE, MAE, Giveback, Chop as separate supervised facets or heads",
+      "Use X/sigma_prefix for scale balance within each facet group",
+      "Do not adopt single Return or Risk scalar without mechanism-aware aggregation",
+      "Keep Recovery diagnostic until post-MAE timing need is CONFIRMED on BTC"
+    ],
+    "no_canonical_adoption": true
+  },
+  "2_return": {
+    "aggregation_modes": [
+      "raw_sum",
+      "scaled_equal",
+      "scaled_w25_75",
+      "scaled_w75_25"
+    ],
+    "contribution_balance": {
+      "U": {
+        "mean": 0.39674033618181964,
+        "median": 0.38945763341552625,
+        "p90": 0.6935179437984305,
+        "p99": 1.0,
+        "dominance_gt65_pct": 0.1062374245472837
+      },
+      "MFE": {
+        "mean": 0.6032596638181803,
+        "median": 0.6105423665844737,
+        "p90": 0.9375657853722875,
+        "p99": 0.9965823946117807,
+        "dominance_gt65_pct": 0.4454728370221328
+      }
+    },
+    "correlations": {
+      "composite_vs_U_scaled": 0.9796721092433571,
+      "composite_vs_MFE_scaled": 0.9759749714587931,
+      "composite_vs_terminal": 0.6997695254764449
+    },
+    "archetypes": [
+      {
+        "id": "A",
+        "description": "0->1->3->1 spike giveback",
+        "raw": {
+          "U": 0.011696799999999953,
+          "MFE": 0.032260399999999974,
+          "MAE": -0.007576807999999886,
+          "giveback": 0.7025455357032165,
+          "chop": 0.1111111111111111,
+          "recovery": 0.0,
+          "terminal": 0.009595999999999947,
+          "transition_count": 1.0,
+          "reversal_depth": 0.7025455357032165
+        },
+        "raw_sum_value": 0.043957199999999925,
+        "raw_sum_shares": {
+          "U": 0.26609520169619477,
+          "MFE": 0.7339047983038053
+        },
+        "scaled_equal_value": 26.366784194230277,
+        "scaled_equal_shares": {
+          "U": 0.4433819448832584,
+          "MFE": 0.5566180551167417
+        },
+        "scaled_w25_75_value": 27.85962023499044,
+        "scaled_w25_75_shares": {
+          "U": 0.2098118344354199,
+          "MFE": 0.79018816556458
+        },
+        "scaled_w75_25_value": 24.873948153470113,
+        "scaled_w75_25_shares": {
+          "U": 0.7049879647709274,
+          "MFE": 0.2950120352290726
+        }
+      },
+      {
+        "id": "B",
+        "description": "0->2->2->2 grind hold",
+        "raw": {
+          "U": 0.02,
+          "MFE": 0.022039999999999935,
+          "MAE": -0.017960000000000066,
+          "giveback": 0.092558983666059,
+          "chop": 0.0,
+          "recovery": 0.0,
+          "terminal": 0.02,
+          "transition_count": 0.0,
+          "reversal_depth": 0.092558983666059
+        },
+        "raw_sum_value": 0.04203999999999994,
+        "raw_sum_shares": {
+          "U": 0.4757373929590873,
+          "MFE": 0.5242626070409127
+        },
+        "scaled_equal_value": 30.015983854763217,
+        "scaled_equal_shares": {
+          "U": 0.6659559709506725,
+          "MFE": 0.3340440290493275
+        },
+        "scaled_w25_75_value": 25.03465211010628,
+        "scaled_w25_75_shares": {
+          "U": 0.39923310266350825,
+          "MFE": 0.6007668973364917
+        },
+        "scaled_w75_25_value": 34.997315599420155,
+        "scaled_w75_25_shares": {
+          "U": 0.8567510105990701,
+          "MFE": 0.14324898940092984
+        }
+      },
+      {
+        "id": "C",
+        "description": "0->3->-1->-3 rise crash",
+        "raw": {
+          "U": 0.0018297689087999995,
+          "MFE": 0.03206000000000003,
+          "MAE": 0.06004671999999999,
+          "giveback": 1.0,
+          "chop": 0.1111111111111111,
+          "recovery": -0.515864979802394,
+          "terminal": -0.030976,
+          "transition_count": 1.0,
+          "reversal_depth": 1.0
+        },
+        "raw_sum_value": 0.033889768908800036,
+        "raw_sum_shares": {
+          "U": 0.05399177886765908,
+          "MFE": 0.9460082211323408
+        },
+        "scaled_equal_value": 16.413852286906526,
+        "scaled_equal_shares": {
+          "U": 0.11141760728592898,
+          "MFE": 0.888582392714071
+        },
+        "scaled_w25_75_value": 22.79198628220799,
+        "scaled_w25_75_shares": {
+          "U": 0.04011919201573495,
+          "MFE": 0.959880807984265
+        },
+        "scaled_w75_25_value": 10.035718291605061,
+        "scaled_w75_25_shares": {
+          "U": 0.27334248954779766,
+          "MFE": 0.7266575104522024
+        }
+      },
+      {
+        "id": "G",
+        "description": "0->2->0->2 round-trip",
+        "raw": {
+          "U": 0.017673575999999965,
+          "MFE": 0.022039999999999935,
+          "MAE": 0.030388000000000092,
+          "giveback": 0.11107078039927337,
+          "chop": 0.2222222222222222,
+          "recovery": 0.6447281821771719,
+          "terminal": 0.019591999999999957,
+          "transition_count": 2.0,
+          "reversal_depth": 1.0
+        },
+        "raw_sum_value": 0.0397135759999999,
+        "raw_sum_shares": {
+          "U": 0.4450260535591156,
+          "MFE": 0.5549739464408843
+        },
+        "scaled_equal_value": 27.69080173804325,
+        "scaled_equal_shares": {
+          "U": 0.6379064688130913,
+          "MFE": 0.36209353118690873
+        },
+        "scaled_w25_75_value": 23.872061051746293,
+        "scaled_w25_75_shares": {
+          "U": 0.36997520903261955,
+          "MFE": 0.6300247909673805
+        },
+        "scaled_w75_25_value": 31.509542424340204,
+        "scaled_w75_25_shares": {
+          "U": 0.8408948621389791,
+          "MFE": 0.1591051378610209
+        }
+      },
+      {
+        "id": "REC",
+        "description": "0->-2->-1->1 adverse recovery",
+        "raw": {
+          "U": 0.007601194000000071,
+          "MFE": 0.011615192000000149,
+          "MAE": 0.04939999999999998,
+          "giveback": 0.17384060461506226,
+          "chop": 0.1111111111111111,
+          "recovery": 0.19425101214575086,
+          "terminal": 0.009596000000000089,
+          "transition_count": 1.0,
+          "reversal_depth": 0.17384060461506226
+        },
+        "raw_sum_value": 0.01921638600000022,
+        "raw_sum_shares": {
+          "U": 0.3955579368565964,
+          "MFE": 0.6044420631434035
+        },
+        "scaled_equal_value": 12.88123722646908,
+        "scaled_equal_shares": {
+          "U": 0.5897831259862928,
+          "MFE": 0.41021687401370716
+        },
+        "scaled_w25_75_value": 11.724719481705682,
+        "scaled_w25_75_shares": {
+          "U": 0.32397945084536584,
+          "MFE": 0.676020549154634
+        },
+        "scaled_w75_25_value": 14.037754971232479,
+        "scaled_w75_25_shares": {
+          "U": 0.8117896743710148,
+          "MFE": 0.1882103256289852
+        }
+      }
+    ],
+    "archetype_rankings": {
+      "U_raw": [
+        "B",
+        "G",
+        "A",
+        "REC",
+        "C"
+      ],
+      "MFE_raw": [
+        "A",
+        "C",
+        "B",
+        "G",
+        "REC"
+      ],
+      "scaled_equal": [
+        "B",
+        "G",
+        "A",
+        "C",
+        "REC"
+      ]
+    },
+    "archetype_explanations": {
+      "A": "High MFE/giveback spike; equal composite 26.37 below B 30.02 - sustained U dominates scalar",
+      "B": "Stable grind: highest U; equal composite ranks 1st",
+      "C": "High MFE then collapse; composite 16.41 still mid-high",
+      "G": "Round-trip utility; composite between A and B"
+    },
+    "dual_semantic_limit": "CONFIRMED: single Return scalar cannot rank A peak-potential and B sustained utility simultaneously; MFE order A>C>B vs U order B>A",
+    "equal_weight_validation": "HYPOTHESIS: equal 0.5/0.5 not semantically neutral; mean MFE share 60.3%"
+  },
+  "3_risk": {
+    "contribution_balance": {
+      "MAE": {
+        "mean": 0.36947646466382006,
+        "median": 0.2995379342863522,
+        "p90": 1.0,
+        "p99": 1.0,
+        "dominance_gt65_pct": 0.1818913480885312
+      },
+      "giveback": {
+        "mean": 0.6216704166239063,
+        "median": 0.6972032322128103,
+        "p90": 0.9928225769973952,
+        "p99": 1.0,
+        "dominance_gt65_pct": 0.5670020120724346
+      }
+    },
+    "correlations": {
+      "composite_vs_MAE_scaled": 0.7987160209279099,
+      "composite_vs_giveback_scaled": 0.8166323219722096,
+      "composite_vs_terminal": -0.7618657632797826
+    },
+    "archetypes": [
+      {
+        "id": "A",
+        "description": "0->1->3->1 spike giveback",
+        "raw": {
+          "U": 0.011696799999999953,
+          "MFE": 0.032260399999999974,
+          "MAE": -0.007576807999999886,
+          "giveback": 0.7025455357032165,
+          "chop": 0.1111111111111111,
+          "recovery": 0.0,
+          "terminal": 0.009595999999999947,
+          "transition_count": 1.0,
+          "reversal_depth": 0.7025455357032165
+        },
+        "raw_sum_value": 0.7101223437032165,
+        "raw_sum_shares": {
+          "MAE": 0.010669722009432342,
+          "giveback": 0.9893302779905676
+        },
+        "scaled_equal_value": 4.100822907117578,
+        "scaled_equal_shares": {
+          "MAE": 0.7862770770652145,
+          "giveback": 0.21372292293478545
+        },
+        "scaled_w25_75_value": 2.9268513117058825,
+        "scaled_w25_75_shares": {
+          "MAE": 0.5508279556386467,
+          "giveback": 0.4491720443613532
+        },
+        "scaled_w75_25_value": 5.274794502529274,
+        "scaled_w75_25_shares": {
+          "MAE": 0.9169218954665591,
+          "giveback": 0.08307810453344092
+        }
+      },
+      {
+        "id": "B",
+        "description": "0->2->2->2 grind hold",
+        "raw": {
+          "U": 0.02,
+          "MFE": 0.022039999999999935,
+          "MAE": -0.017960000000000066,
+          "giveback": 0.092558983666059,
+          "chop": 0.0,
+          "recovery": 0.0,
+          "terminal": 0.02,
+          "transition_count": 0.0,
+          "reversal_depth": 0.092558983666059
+        },
+        "raw_sum_value": 0.11051898366605906,
+        "raw_sum_shares": {
+          "MAE": 0.16250601846165613,
+          "giveback": 0.837493981538344
+        },
+        "scaled_equal_value": 7.758518843597024,
+        "scaled_equal_shares": {
+          "MAE": 0.9851171056282255,
+          "giveback": 0.014882894371774414
+        },
+        "scaled_w25_75_value": 3.9947286382291876,
+        "scaled_w25_75_shares": {
+          "MAE": 0.9566419047871064,
+          "giveback": 0.043358095212893584
+        },
+        "scaled_w75_25_value": 11.522309048964859,
+        "scaled_w75_25_shares": {
+          "MAE": 0.994989319591239,
+          "giveback": 0.005010680408761012
+        }
+      },
+      {
+        "id": "C",
+        "description": "0->3->-1->-3 rise crash",
+        "raw": {
+          "U": 0.0018297689087999995,
+          "MFE": 0.03206000000000003,
+          "MAE": 0.06004671999999999,
+          "giveback": 1.0,
+          "chop": 0.1111111111111111,
+          "recovery": -0.515864979802394,
+          "terminal": -0.030976,
+          "transition_count": 1.0,
+          "reversal_depth": 1.0
+        },
+        "raw_sum_value": 1.0600467199999999,
+        "raw_sum_shares": {
+          "MAE": 0.05664535238597785,
+          "giveback": 0.9433546476140222
+        },
+        "scaled_equal_value": 26.80097586506607,
+        "scaled_equal_shares": {
+          "MAE": 0.9534524278448376,
+          "giveback": 0.04654757215516233
+        },
+        "scaled_w25_75_value": 14.648008290440963,
+        "scaled_w25_75_shares": {
+          "MAE": 0.8722501721900953,
+          "giveback": 0.12774982780990476
+        },
+        "scaled_w75_25_value": 38.95394343969118,
+        "scaled_w75_25_shares": {
+          "MAE": 0.9839872391887697,
+          "giveback": 0.01601276081123017
+        }
+      },
+      {
+        "id": "G",
+        "description": "0->2->0->2 round-trip",
+        "raw": {
+          "U": 0.017673575999999965,
+          "MFE": 0.022039999999999935,
+          "MAE": 0.030388000000000092,
+          "giveback": 0.11107078039927337,
+          "chop": 0.2222222222222222,
+          "recovery": 0.6447281821771719,
+          "terminal": 0.019591999999999957,
+          "transition_count": 2.0,
+          "reversal_depth": 1.0
+        },
+        "raw_sum_value": 0.14145878039927345,
+        "raw_sum_shares": {
+          "MAE": 0.21481876143869374,
+          "giveback": 0.7851812385613063
+        },
+        "scaled_equal_value": 13.07046684982432,
+        "scaled_equal_shares": {
+          "MAE": 0.9893987673654766,
+          "giveback": 0.010601232634523432
+        },
+        "scaled_w25_75_value": 6.673796484628975,
+        "scaled_w25_75_shares": {
+          "MAE": 0.9688566185597768,
+          "giveback": 0.031143381440223283
+        },
+        "scaled_w75_25_value": 19.46713721501967,
+        "scaled_w75_25_shares": {
+          "MAE": 0.9964411033274603,
+          "giveback": 0.0035588966725396934
+        }
+      },
+      {
+        "id": "REC",
+        "description": "0->-2->-1->1 adverse recovery",
+        "raw": {
+          "U": 0.007601194000000071,
+          "MFE": 0.011615192000000149,
+          "MAE": 0.04939999999999998,
+          "giveback": 0.17384060461506226,
+          "chop": 0.1111111111111111,
+          "recovery": 0.19425101214575086,
+          "terminal": 0.009596000000000089,
+          "transition_count": 1.0,
+          "reversal_depth": 0.17384060461506226
+        },
+        "raw_sum_value": 0.22324060461506223,
+        "raw_sum_shares": {
+          "MAE": 0.22128590847162988,
+          "giveback": 0.7787140915283701
+        },
+        "scaled_equal_value": 21.239511763556465,
+        "scaled_equal_shares": {
+          "MAE": 0.9897893277537374,
+          "giveback": 0.010210672246262547
+        },
+        "scaled_w25_75_value": 10.836625575066545,
+        "scaled_w25_75_shares": {
+          "MAE": 0.9699810113693559,
+          "giveback": 0.030018988630644065
+        },
+        "scaled_w75_25_value": 31.642397952046384,
+        "scaled_w75_25_shares": {
+          "MAE": 0.9965731153875099,
+          "giveback": 0.0034268846124901136
+        }
+      }
+    ],
+    "archetype_order_scaled_equal": [
+      "A",
+      "B",
+      "REC",
+      "C"
+    ],
+    "archetype_risk_note": "On BTC prefix-scaled archetypes B may not rank lowest (MAE scale effect); raw giveback order B<A<C still holds",
+    "false_equivalence_pairs": [
+      {
+        "t_indices": [
+          2505,
+          2523
+        ],
+        "Risk_composite": [
+          0.911287068571302,
+          0.9859035404569936
+        ],
+        "facets_a": {
+          "MAE": 0.00013337337292146175,
+          "giveback": 1.8224407637696827
+        },
+        "facets_b": {
+          "MAE": 1.9718070809139872,
+          "giveback": 0.0
+        },
+        "records": [
+          {
+            "timestamp": "2026-08-12 05:21:00+00:00",
+            "t_index": 2505,
+            "path_pattern": "spike_then_giveback",
+            "path_ascii": "t>--^^^-^^--",
+            "U": 0.0004625888332748571,
+            "MFE": 0.0008585786644690701,
+            "MAE": 1.5670353422509101e-07,
+            "giveback": 0.730425260083887,
+            "chop": 0.6666666666666666,
+            "recovery": 1477.000000774162,
+            "terminal": 0.00023145112017177333,
+            "Return_composite": 0.8529352037904605,
+            "Risk_composite": 0.911287068571302,
+            "Path_score": 3.969596788479156,
+            "U_share_pct": 54.2,
+            "MFE_share_pct": 45.8,
+            "MAE_share_pct": 0.0,
+            "giveback_share_pct": 100.0,
+            "note": ""
+          },
+          {
+            "timestamp": "2026-08-12 06:15:00+00:00",
+            "t_index": 2523,
+            "path_pattern": "round_trip_whip",
+            "path_ascii": "t>vvvvvvvvvv",
+            "U": -4.202849441656735e-06,
+            "MFE": 0.0,
+            "MAE": 0.002316722833209243,
+            "giveback": 0.0,
+            "chop": 0.5555555555555556,
+            "recovery": -0.5059580230196167,
+            "terminal": -0.001172164504574954,
+            "Return_composite": -0.004200605891706148,
+            "Risk_composite": 0.9859035404569936,
+            "Path_score": 3.3079973237326303,
+            "U_share_pct": 100.0,
+            "MFE_share_pct": 0.0,
+            "MAE_share_pct": 100.0,
+            "giveback_share_pct": 0.0,
+            "note": ""
+          }
+        ]
+      },
+      {
+        "t_indices": [
+          2505,
+          2548
+        ],
+        "Risk_composite": [
+          0.911287068571302,
+          1.0397547466408055
+        ],
+        "facets_a": {
+          "MAE": 0.00013337337292146175,
+          "giveback": 1.8224407637696827
+        },
+        "facets_b": {
+          "MAE": 1.7031268238268182,
+          "giveback": 0.3763826694547925
+        },
+        "records": [
+          {
+            "timestamp": "2026-08-12 05:21:00+00:00",
+            "t_index": 2505,
+            "path_pattern": "spike_then_giveback",
+            "path_ascii": "t>--^^^-^^--",
+            "U": 0.0004625888332748571,
+            "MFE": 0.0008585786644690701,
+            "MAE": 1.5670353422509101e-07,
+            "giveback": 0.730425260083887,
+            "chop": 0.6666666666666666,
+            "recovery": 1477.000000774162,
+            "terminal": 0.00023145112017177333,
+            "Return_composite": 0.8529352037904605,
+            "Risk_composite": 0.911287068571302,
+            "Path_score": 3.969596788479156,
+            "U_share_pct": 54.2,
+            "MFE_share_pct": 45.8,
+            "MAE_share_pct": 0.0,
+            "giveback_share_pct": 100.0,
+            "note": ""
+          },
+          {
+            "timestamp": "2026-08-12 07:30:00+00:00",
+            "t_index": 2548,
+            "path_pattern": "round_trip_whip",
+            "path_ascii": "t>-vvvvvv-^^",
+            "U": 0.0001987956158519412,
+            "MFE": 0.0010394891402473114,
+            "MAE": 0.0020010440366112275,
+            "giveback": 0.1508523155830421,
+            "chop": 0.4444444444444444,
+            "recovery": 0.4411096309066736,
+            "terminal": 0.0008826797964175788,
+            "Return_composite": 0.6715844307415381,
+            "Risk_composite": 1.0397547466408055,
+            "Path_score": 2.646397858986104,
+            "U_share_pct": 29.6,
+            "MFE_share_pct": 70.4,
+            "MAE_share_pct": 81.9,
+            "giveback_share_pct": 18.1,
+            "note": ""
+          }
+        ]
+      },
+      {
+        "t_indices": [
+          2505,
+          2549
+        ],
+        "Risk_composite": [
+          0.911287068571302,
+          1.1062601221042985
+        ],
+        "facets_a": {
+          "MAE": 0.00013337337292146175,
+          "giveback": 1.8224407637696827
+        },
+        "facets_b": {
+          "MAE": 1.5206085959358193,
+          "giveback": 0.6919116482727774
+        },
+        "records": [
+          {
+            "timestamp": "2026-08-12 05:21:00+00:00",
+            "t_index": 2505,
+            "path_pattern": "spike_then_giveback",
+            "path_ascii": "t>--^^^-^^--",
+            "U": 0.0004625888332748571,
+            "MFE": 0.0008585786644690701,
+            "MAE": 1.5670353422509101e-07,
+            "giveback": 0.730425260083887,
+            "chop": 0.6666666666666666,
+            "recovery": 1477.000000774162,
+            "terminal": 0.00023145112017177333,
+            "Return_composite": 0.8529352037904605,
+            "Risk_composite": 0.911287068571302,
+            "Path_score": 3.969596788479156,
+            "U_share_pct": 54.2,
+            "MFE_share_pct": 45.8,
+            "MAE_share_pct": 0.0,
+            "giveback_share_pct": 100.0,
+            "note": ""
+          },
+          {
+            "timestamp": "2026-08-12 07:33:00+00:00",
+            "t_index": 2549,
+            "path_pattern": "round_trip_whip",
+            "path_ascii": "t>vvvvv--^^^",
+            "U": 0.0003874587431425177,
+            "MFE": 0.0017125691344506368,
+            "MAE": 0.001786599048496079,
+            "giveback": 0.2773147724150582,
+            "chop": 0.5555555555555556,
+            "recovery": 0.6927398823632148,
+            "terminal": 0.0012376484146854052,
+            "Return_composite": 1.1663512194134624,
+            "Risk_composite": 1.1062601221042985,
+            "Path_score": 3.3079973237326303,
+            "U_share_pct": 33.2,
+            "MFE_share_pct": 66.8,
+            "MAE_share_pct": 68.7,
+            "giveback_share_pct": 31.3,
+            "note": ""
+          }
+        ]
+      },
+      {
+        "t_indices": [
+          2506,
+          2549
+        ],
+        "Risk_composite": [
+          1.2848036112264567,
+          1.1062601221042985
+        ],
+        "facets_a": {
+          "MAE": 0.2005253335841214,
+          "giveback": 2.369081888868792
+        },
+        "facets_b": {
+          "MAE": 1.5206085959358193,
+          "giveback": 0.6919116482727774
+        },
+        "records": [
+          {
+            "timestamp": "2026-08-12 05:24:00+00:00",
+            "t_index": 2506,
+            "path_pattern": "spike_then_giveback",
+            "path_ascii": "t>-^--------",
+            "U": 0.0001702669353072292,
+            "MFE": 0.0005181989984409302,
+            "MAE": 0.0002356019630155183,
+            "giveback": 0.9495163240629222,
+            "chop": 0.6666666666666666,
+            "recovery": 0.11103723404243064,
+            "terminal": 2.616059030821019e-05,
+            "Return_composite": 0.4059203845149263,
+            "Risk_composite": 1.2848036112264567,
+            "Path_score": 3.969596788479156,
+            "U_share_pct": 41.9,
+            "MFE_share_pct": 58.1,
+            "MAE_share_pct": 7.8,
+            "giveback_share_pct": 92.2,
+            "note": ""
+          },
+          {
+            "timestamp": "2026-08-12 07:33:00+00:00",
+            "t_index": 2549,
+            "path_pattern": "round_trip_whip",
+            "path_ascii": "t>vvvvv--^^^",
+            "U": 0.0003874587431425177,
+            "MFE": 0.0017125691344506368,
+            "MAE": 0.001786599048496079,
+            "giveback": 0.2773147724150582,
+            "chop": 0.5555555555555556,
+            "recovery": 0.6927398823632148,
+            "terminal": 0.0012376484146854052,
+            "Return_composite": 1.1663512194134624,
+            "Risk_composite": 1.1062601221042985,
+            "Path_score": 3.3079973237326303,
+            "U_share_pct": 33.2,
+            "MFE_share_pct": 66.8,
+            "MAE_share_pct": 68.7,
+            "giveback_share_pct": 31.3,
+            "note": ""
+          }
+        ]
+      },
+      {
+        "t_indices": [
+          2507,
+          2523
+        ],
+        "Risk_composite": [
+          0.9027214372648655,
+          0.9859035404569936
+        ],
+        "facets_a": {
+          "MAE": 0.22785025950242616,
+          "giveback": 1.577592615027305
+        },
+        "facets_b": {
+          "MAE": 1.9718070809139872,
+          "giveback": 0.0
+        },
+        "records": [
+          {
+            "timestamp": "2026-08-12 05:27:00+00:00",
+            "t_index": 2507,
+            "path_pattern": "spike_then_giveback",
+            "path_ascii": "t>----------",
+            "U": 0.00016624651553715978,
+            "MFE": 0.00048607008964646957,
+            "MAE": 0.00026770666555129803,
+            "giveback": 0.6322913309699026,
+            "chop": 0.6666666666666666,
+            "recovery": 0.6676418958458645,
+            "terminal": 0.00017873218571924342,
+            "Return_composite": 0.387285702084913,
+            "Risk_composite": 0.9027214372648655,
+            "Path_score": 3.969596788479156,
+            "U_share_pct": 42.9,
+            "MFE_share_pct": 57.1,
+            "MAE_share_pct": 12.6,
+            "giveback_share_pct": 87.4,
+            "note": ""
+          },
+          {
+            "timestamp": "2026-08-12 06:15:00+00:00",
+            "t_index": 2523,
+            "path_pattern": "round_trip_whip",
+            "path_ascii": "t>vvvvvvvvvv",
+            "U": -4.202849441656735e-06,
+            "MFE": 0.0,
+            "MAE": 0.002316722833209243,
+            "giveback": 0.0,
+            "chop": 0.5555555555555556,
+            "recovery": -0.5059580230196167,
+            "terminal": -0.001172164504574954,
+            "Return_composite": -0.004200605891706148,
+            "Risk_composite": 0.9859035404569936,
+            "Path_score": 3.3079973237326303,
+            "U_share_pct": 100.0,
+            "MFE_share_pct": 0.0,
+            "MAE_share_pct": 100.0,
+            "giveback_share_pct": 0.0,
+            "note": ""
+          }
+        ]
+      }
+    ],
+    "semantic_collapse_note": "MAE-high/giveback-low vs MAE-low/giveback-high can yield similar Risk scalar"
+  },
+  "4_x_sigma_normalization": {
+    "per_facet": {
+      "U": {
+        "sign_flip_rate": 0.0,
+        "zero_maps_to_zero": true,
+        "sign_preserved": true
+      },
+      "MFE": {
+        "sign_flip_rate": 0.0,
+        "zero_maps_to_zero": true,
+        "sign_preserved": true
+      },
+      "MAE": {
+        "sign_flip_rate": 0.0,
+        "zero_maps_to_zero": true,
+        "sign_preserved": true
+      },
+      "giveback": {
+        "sign_flip_rate": 0.0,
+        "zero_maps_to_zero": true,
+        "sign_preserved": true
+      },
+      "chop": {
+        "sign_flip_rate": 0.0,
+        "zero_maps_to_zero": true,
+        "sign_preserved": true
+      }
+    },
+    "U_ratio_preservation_rate": 1.0,
+    "return_composite_balance": {
+      "U": {
+        "mean": 0.39674033618181964,
+        "median": 0.38945763341552625,
+        "p90": 0.6935179437984305,
+        "p99": 1.0,
+        "dominance_gt65_pct": 0.1062374245472837
+      },
+      "MFE": {
+        "mean": 0.6032596638181803,
+        "median": 0.6105423665844737,
+        "p90": 0.9375657853722875,
+        "p99": 0.9965823946117807,
+        "dominance_gt65_pct": 0.4454728370221328
+      }
+    },
+    "risk_composite_balance": {
+      "MAE": {
+        "mean": 0.36947646466382006,
+        "median": 0.2995379342863522,
+        "p90": 1.0,
+        "p99": 1.0,
+        "dominance_gt65_pct": 0.1818913480885312
+      },
+      "giveback": {
+        "mean": 0.6216704166239063,
+        "median": 0.6972032322128103,
+        "p90": 0.9928225769973952,
+        "p99": 1.0,
+        "dominance_gt65_pct": 0.5670020120724346
+      }
+    },
+    "verdict": "SUPPORTED for X/sigma on sign/zero; scale balance improved vs raw"
+  },
+  "5_path_chop": {
+    "medians": {
+      "MAE_scaled": 0.5054188362460649,
+      "chop_scaled": 2.646397858986104
+    },
+    "bucket_counts": {
+      "low_MAE_low_Chop": 409,
+      "low_MAE_high_Chop": 833,
+      "high_MAE_low_Chop": 350,
+      "high_MAE_high_Chop": 893
+    },
+    "representative_cases": {
+      "low_MAE_low_Chop": [
+        {
+          "timestamp": "2026-08-12 06:33:00+00:00",
+          "t_index": 2529,
+          "path_pattern": "round_trip_whip",
+          "path_ascii": "t>-------^^^",
+          "U": 0.00044208433647538274,
+          "MFE": 0.0017819660884452941,
+          "MAE": 0.00036965231474152553,
+          "giveback": 0.0,
+          "chop": 0.3333333333333333,
+          "recovery": 4.8206544836363605,
+          "terminal": 0.0017819660884452941,
+          "Return_composite": 1.2525184183812934,
+          "Risk_composite": 0.15730907496472069,
+          "Path_score": 1.984798394239578,
+          "U_share_pct": 35.3,
+          "MFE_share_pct": 64.7,
+          "MAE_share_pct": 100.0,
+          "giveback_share_pct": 0.0,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 06:36:00+00:00",
+          "t_index": 2530,
+          "path_pattern": "round_trip_whip",
+          "path_ascii": "t>------^^^^",
+          "U": 0.0007089202807605294,
+          "MFE": 0.002334149979466011,
+          "MAE": 0.0003095022857608582,
+          "giveback": 0.016759776536299176,
+          "chop": 0.3333333333333333,
+          "recovery": 7.415228426394384,
+          "terminal": 0.0022950301474079535,
+          "Return_composite": 1.7704170135341764,
+          "Risk_composite": 0.15261981775663166,
+          "Path_score": 1.984798394239578,
+          "U_share_pct": 40.0,
+          "MFE_share_pct": 60.0,
+          "MAE_share_pct": 86.3,
+          "giveback_share_pct": 13.7,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 06:39:00+00:00",
+          "t_index": 2531,
+          "path_pattern": "round_trip_whip",
+          "path_ascii": "t>-^---^^^^^",
+          "U": 0.001024742950973995,
+          "MFE": 0.002466918543763842,
+          "MAE": 0.00017708389801419458,
+          "giveback": 0.14974522292994927,
+          "chop": 0.3333333333333333,
+          "recovery": 11.844720496889947,
+          "terminal": 0.0020975092764778996,
+          "Return_composite": 2.1464715133512913,
+          "Risk_composite": 0.2621699591321087,
+          "Path_score": 1.984798394239578,
+          "U_share_pct": 47.7,
+          "MFE_share_pct": 52.3,
+          "MAE_share_pct": 28.7,
+          "giveback_share_pct": 71.3,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 06:42:00+00:00",
+          "t_index": 2532,
+          "path_pattern": "round_trip_whip",
+          "path_ascii": "t>----^^^^^^",
+          "U": 0.0010308434865447039,
+          "MFE": 0.002283918140276761,
+          "MAE": 0.00035960163867748007,
+          "giveback": 0.265373503920763,
+          "chop": 0.3333333333333333,
+          "recovery": 4.665792922673902,
+          "terminal": 0.0016778267807233242,
+          "Return_composite": 2.0693163940318255,
+          "Risk_composite": 0.4840907623111296,
+          "Path_score": 1.984798394239578,
+          "U_share_pct": 49.8,
+          "MFE_share_pct": 50.2,
+          "MAE_share_pct": 31.6,
+          "giveback_share_pct": 68.4,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 06:51:00+00:00",
+          "t_index": 2535,
+          "path_pattern": "round_trip_whip",
+          "path_ascii": "t>-^^^^^^^^^",
+          "U": 0.0016653982153888678,
+          "MFE": 0.002594838013559767,
+          "MAE": 4.950181530230688e-05,
+          "giveback": 0.4232679263565789,
+          "chop": 0.2222222222222222,
+          "recovery": 30.231746031733085,
+          "terminal": 0.0014965263083291,
+          "Return_composite": 2.844979207186409,
+          "Risk_composite": 0.5491013255244251,
+          "Path_score": 1.323198929493052,
+          "U_share_pct": 58.5,
+          "MFE_share_pct": 41.5,
+          "MAE_share_pct": 3.8,
+          "giveback_share_pct": 96.2,
+          "note": ""
+        }
+      ],
+      "low_MAE_high_Chop": [
+        {
+          "timestamp": "2026-08-12 05:21:00+00:00",
+          "t_index": 2505,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>--^^^-^^--",
+          "U": 0.0004625888332748571,
+          "MFE": 0.0008585786644690701,
+          "MAE": 1.5670353422509101e-07,
+          "giveback": 0.730425260083887,
+          "chop": 0.6666666666666666,
+          "recovery": 1477.000000774162,
+          "terminal": 0.00023145112017177333,
+          "Return_composite": 0.8529352037904605,
+          "Risk_composite": 0.911287068571302,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 54.2,
+          "MFE_share_pct": 45.8,
+          "MAE_share_pct": 0.0,
+          "giveback_share_pct": 100.0,
+          "note": "Risk low, Path high - whip without deep MAE"
+        },
+        {
+          "timestamp": "2026-08-12 05:24:00+00:00",
+          "t_index": 2506,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>-^--------",
+          "U": 0.0001702669353072292,
+          "MFE": 0.0005181989984409302,
+          "MAE": 0.0002356019630155183,
+          "giveback": 0.9495163240629222,
+          "chop": 0.6666666666666666,
+          "recovery": 0.11103723404243064,
+          "terminal": 2.616059030821019e-05,
+          "Return_composite": 0.4059203845149263,
+          "Risk_composite": 1.2848036112264567,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 41.9,
+          "MFE_share_pct": 58.1,
+          "MAE_share_pct": 7.8,
+          "giveback_share_pct": 92.2,
+          "note": "Risk low, Path high - whip without deep MAE"
+        },
+        {
+          "timestamp": "2026-08-12 05:27:00+00:00",
+          "t_index": 2507,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>----------",
+          "U": 0.00016624651553715978,
+          "MFE": 0.00048607008964646957,
+          "MAE": 0.00026770666555129803,
+          "giveback": 0.6322913309699026,
+          "chop": 0.6666666666666666,
+          "recovery": 0.6676418958458645,
+          "terminal": 0.00017873218571924342,
+          "Return_composite": 0.387285702084913,
+          "Risk_composite": 0.9027214372648655,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 42.9,
+          "MFE_share_pct": 57.1,
+          "MAE_share_pct": 12.6,
+          "giveback_share_pct": 87.4,
+          "note": "Risk low, Path high - whip without deep MAE"
+        },
+        {
+          "timestamp": "2026-08-12 06:21:00+00:00",
+          "t_index": 2525,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>--v----^--",
+          "U": 0.0001520181640609184,
+          "MFE": 0.000581061450626604,
+          "MAE": 0.0005656628507993523,
+          "giveback": 1.0,
+          "chop": 0.6666666666666666,
+          "recovery": -0.2255555555556283,
+          "terminal": -0.0001275883985692284,
+          "Return_composite": 0.41627937864210257,
+          "Risk_composite": 1.4882435895840866,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 36.5,
+          "MFE_share_pct": 63.5,
+          "MAE_share_pct": 16.2,
+          "giveback_share_pct": 83.8,
+          "note": "Risk low, Path high - whip without deep MAE"
+        },
+        {
+          "timestamp": "2026-08-12 06:24:00+00:00",
+          "t_index": 2526,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>------^^--",
+          "U": 0.00023676847413729444,
+          "MFE": 0.000677918266062953,
+          "MAE": 0.00046891703892713084,
+          "giveback": 0.6293463143253255,
+          "chop": 0.6666666666666666,
+          "recovery": 0.5358579088474232,
+          "terminal": 0.0002512729039024181,
+          "Return_composite": 0.5450475317675355,
+          "Risk_composite": 0.9846744662185468,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 43.4,
+          "MFE_share_pct": 56.6,
+          "MAE_share_pct": 20.3,
+          "giveback_share_pct": 79.7,
+          "note": "Risk low, Path high - whip without deep MAE"
+        }
+      ],
+      "high_MAE_low_Chop": [
+        {
+          "timestamp": "2026-08-12 06:45:00+00:00",
+          "t_index": 2533,
+          "path_pattern": "round_trip_whip",
+          "path_ascii": "t>-v-^^^^^^^",
+          "U": 0.0008411904025237114,
+          "MFE": 0.0018849192639596596,
+          "MAE": 0.0007575481570726046,
+          "giveback": 0.3928184620511698,
+          "chop": 0.2222222222222222,
+          "recovery": 1.510779436152352,
+          "terminal": 0.001144488177600403,
+          "Return_composite": 1.6982479371366392,
+          "Risk_composite": 0.8124308858026709,
+          "Path_score": 1.323198929493052,
+          "U_share_pct": 49.5,
+          "MFE_share_pct": 50.5,
+          "MAE_share_pct": 39.7,
+          "giveback_share_pct": 60.3,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 06:48:00+00:00",
+          "t_index": 2534,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>v-^^^^^^^^",
+          "U": 0.001039086523549122,
+          "MFE": 0.0020339361061353406,
+          "MAE": 0.0006089243462152544,
+          "giveback": 0.539768339768351,
+          "chop": 0.2222222222222222,
+          "recovery": 1.5372710858909537,
+          "terminal": 0.0009360817909317633,
+          "Return_composite": 1.9638306701453114,
+          "Risk_composite": 0.9325055668758152,
+          "Path_score": 1.323198929493052,
+          "U_share_pct": 52.9,
+          "MFE_share_pct": 47.1,
+          "MAE_share_pct": 27.8,
+          "giveback_share_pct": 72.2,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 13:33:00+00:00",
+          "t_index": 2669,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>---^-vvvvv",
+          "U": 0.00018553236388774134,
+          "MFE": 0.0017755757330894654,
+          "MAE": 0.005327352622210788,
+          "giveback": 1.0,
+          "chop": 0.3333333333333333,
+          "recovery": -0.9028527823432777,
+          "terminal": -0.004809815137486766,
+          "Return_composite": 0.9931962322167283,
+          "Risk_composite": 3.5146261748885324,
+          "Path_score": 1.984798394239578,
+          "U_share_pct": 18.7,
+          "MFE_share_pct": 81.3,
+          "MAE_share_pct": 64.5,
+          "giveback_share_pct": 35.5,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 13:36:00+00:00",
+          "t_index": 2670,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>----vvvvvv",
+          "U": 3.224307306348105e-05,
+          "MFE": 0.0013852409245462937,
+          "MAE": 0.005964991524913806,
+          "giveback": 1.0,
+          "chop": 0.3333333333333333,
+          "recovery": -0.7484868334861848,
+          "terminal": -0.004464717618254664,
+          "Return_composite": 0.662413702454092,
+          "Risk_composite": 3.785979503261085,
+          "Path_score": 1.984798394239578,
+          "U_share_pct": 4.9,
+          "MFE_share_pct": 95.1,
+          "MAE_share_pct": 67.0,
+          "giveback_share_pct": 33.0,
+          "note": ""
+        },
+        {
+          "timestamp": "2026-08-12 13:39:00+00:00",
+          "t_index": 2671,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>-^-vvvvvvv",
+          "U": 5.1089508305376466e-05,
+          "MFE": 0.0014783738200598313,
+          "MAE": 0.0058725422308782416,
+          "giveback": 1.0,
+          "chop": 0.2222222222222222,
+          "recovery": -0.24405110460472654,
+          "terminal": -0.0014332004182837398,
+          "Return_composite": 0.7236190379196761,
+          "Risk_composite": 3.7466368227315576,
+          "Path_score": 1.323198929493052,
+          "U_share_pct": 7.1,
+          "MFE_share_pct": 92.9,
+          "MAE_share_pct": 66.7,
+          "giveback_share_pct": 33.3,
+          "note": ""
+        }
+      ],
+      "high_MAE_high_Chop": [
+        {
+          "timestamp": "2026-08-12 05:30:00+00:00",
+          "t_index": 2508,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>--v--vv--v",
+          "U": -5.285152718441096e-07,
+          "MFE": 1.0959849530614534e-06,
+          "MAE": 0.0013881432276975473,
+          "giveback": 1.0,
+          "chop": 0.6666666666666666,
+          "recovery": -0.9122490412813088,
+          "terminal": -0.001266332328628229,
+          "Return_composite": -2.9636558706915787e-05,
+          "Risk_composite": 1.8382579736599978,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 51.4,
+          "MFE_share_pct": 48.6,
+          "MAE_share_pct": 32.1,
+          "giveback_share_pct": 67.9,
+          "note": "Both adverse MAE and path Chop elevated"
+        },
+        {
+          "timestamp": "2026-08-12 05:33:00+00:00",
+          "t_index": 2509,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>--------vv",
+          "U": 2.763450383618125e-05,
+          "MFE": 0.0003061863263607262,
+          "MAE": 0.0010834767292910415,
+          "giveback": 1.0,
+          "chop": 0.6666666666666666,
+          "recovery": -0.8146863255276141,
+          "terminal": -0.000882693675380796,
+          "Return_composite": 0.16691313897307708,
+          "Risk_composite": 1.7086042338461942,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 16.5,
+          "MFE_share_pct": 83.5,
+          "MAE_share_pct": 27.0,
+          "giveback_share_pct": 73.0,
+          "note": "Both adverse MAE and path Chop elevated"
+        },
+        {
+          "timestamp": "2026-08-12 05:36:00+00:00",
+          "t_index": 2510,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>---v---vvv",
+          "U": -8.875735629634895e-07,
+          "MFE": 0.00013701674000063575,
+          "MAE": 0.0015785894353672883,
+          "giveback": 1.0,
+          "chop": 0.6666666666666666,
+          "recovery": -1.0,
+          "terminal": -0.0015785894353672883,
+          "Return_composite": 0.061445944309643716,
+          "Risk_composite": 1.9193041772527288,
+          "Path_score": 3.969596788479156,
+          "U_share_pct": 1.4,
+          "MFE_share_pct": 98.6,
+          "MAE_share_pct": 35.0,
+          "giveback_share_pct": 65.0,
+          "note": "Both adverse MAE and path Chop elevated"
+        },
+        {
+          "timestamp": "2026-08-12 05:39:00+00:00",
+          "t_index": 2511,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>------vvvv",
+          "U": 0.00012009239227216728,
+          "MFE": 0.0006271391940376004,
+          "MAE": 0.0014839526469958523,
+          "giveback": 1.0,
+          "chop": 0.5555555555555556,
+          "recovery": -1.0,
+          "terminal": -0.0014839526469958523,
+          "Return_composite": 0.4053328033996267,
+          "Risk_composite": 1.8790305876047044,
+          "Path_score": 3.3079973237326303,
+          "U_share_pct": 29.6,
+          "MFE_share_pct": 70.4,
+          "MAE_share_pct": 33.6,
+          "giveback_share_pct": 66.4,
+          "note": "Both adverse MAE and path Chop elevated"
+        },
+        {
+          "timestamp": "2026-08-12 05:42:00+00:00",
+          "t_index": 2512,
+          "path_pattern": "spike_then_giveback",
+          "path_ascii": "t>-----vvvvv",
+          "U": 9.449934362468749e-07,
+          "MFE": 0.00019404058909406406,
+          "MAE": 0.002240158665376626,
+          "giveback": 1.0,
+          "chop": 0.5555555555555556,
+          "recovery": -1.0,
+          "terminal": -0.002240158665376626,
+          "Return_composite": 0.08921940043978342,
+          "Risk_composite": 2.2008412850905676,
+          "Path_score": 3.3079973237326303,
+          "U_share_pct": 1.1,
+          "MFE_share_pct": 98.9,
+          "MAE_share_pct": 43.3,
+          "giveback_share_pct": 56.7,
+          "note": "Both adverse MAE and path Chop elevated"
+        }
+      ]
+    },
+    "low_MAE_high_Chop_exists": true
+  },
+  "6_chop_frequency_magnitude": {
+    "proxies": {
+      "reversal_frequency": "transition_count",
+      "reversal_magnitude": "reversal_depth"
+    },
+    "correlations": {
+      "freq_vs_chop": 1.0,
+      "mag_vs_chop": 0.08764642031126871,
+      "freq_vs_MAE": 0.05551263776292803,
+      "mag_vs_MAE": 0.27275813389678016,
+      "freq_vs_giveback": 0.06653309296748589,
+      "mag_vs_giveback": 0.9657350012053281,
+      "freq_vs_mag": 0.08764642031126876
+    },
+    "controlled_paths": {
+      "small_oscillation": {
+        "U": 9.799965998631421e-05,
+        "MFE": 0.002100200000000001,
+        "MAE": 0.0019101810978088452,
+        "giveback": 0.9523855823348817,
+        "chop": 0.4444444444444444,
+        "recovery": 0.05235095253271565,
+        "terminal": 9.999979998028152e-05,
+        "transition_count": 4.0,
+        "reversal_depth": 0.9571474621506654
+      },
+      "large_reversal": {
+        "U": 5.9990997264770235e-05,
+        "MFE": 0.002300599999999946,
+        "MAE": 0.00200017963999187,
+        "giveback": 1.0,
+        "chop": 0.3333333333333333,
+        "recovery": -8.999191286259357e-05,
+        "terminal": -1.7999999187168215e-07,
+        "transition_count": 3.0,
+        "reversal_depth": 1.0
+      },
+      "distinguishes_magnitude": true
+    },
+    "recommendation": "HYPOTHESIS: frequency and magnitude add partial orthogonal info; single Chop may suffice unless whip-size discrimination is required"
+  },
+  "7_recovery_diagnostic": {
+    "archetype_REC": {
+      "raw": {
+        "U": 0.007601194000000071,
+        "MFE": 0.011615192000000149,
+        "MAE": 0.04939999999999998,
+        "giveback": 0.17384060461506226,
+        "chop": 0.1111111111111111,
+        "recovery": 0.19425101214575086,
+        "terminal": 0.009596000000000089,
+        "transition_count": 1.0,
+        "reversal_depth": 0.17384060461506226
+      },
+      "Risk_composite": 21.239511763556465,
+      "Risk_shares": {
+        "MAE": 0.9897893277537374,
+        "giveback": 0.010210672246262547
+      },
+      "Path_score": 0.661599464746526,
+      "Recovery": 0.19425101214575086
+    },
+    "interpretation": {
+      "Risk": "Captures early adverse (MAE) + giveback from peak",
+      "Path": "Chop=0.1111 - moderate oscillation during recovery",
+      "Recovery": "Explicit recovery=0.1943 not in Risk/Path scalar"
+    },
+    "sufficiency": "UNRESOLVED: Risk+Path describe adverse burden and path dirt but Recovery facet carries post-MAE rebound timing not fully encoded in MAE+Giveback+Chop"
+  },
+  "8_concrete_failure_cases": {
+    "count": 10,
+    "cases": [
+      {
+        "timestamp": "2026-08-12 05:21:00+00:00",
+        "t_index": 2505,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>--^^^-^^--",
+        "U": 0.0004625888332748571,
+        "MFE": 0.0008585786644690701,
+        "MAE": 1.5670353422509101e-07,
+        "giveback": 0.730425260083887,
+        "chop": 0.6666666666666666,
+        "recovery": 1477.000000774162,
+        "terminal": 0.00023145112017177333,
+        "Return_composite": 0.8529352037904605,
+        "Risk_composite": 0.911287068571302,
+        "Path_score": 3.969596788479156,
+        "U_share_pct": 54.2,
+        "MFE_share_pct": 45.8,
+        "MAE_share_pct": 0.0,
+        "giveback_share_pct": 100.0,
+        "note": "Risk composite giveback-dominated; adverse excursion hidden"
+      },
+      {
+        "timestamp": "2026-08-12 05:24:00+00:00",
+        "t_index": 2506,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>-^--------",
+        "U": 0.0001702669353072292,
+        "MFE": 0.0005181989984409302,
+        "MAE": 0.0002356019630155183,
+        "giveback": 0.9495163240629222,
+        "chop": 0.6666666666666666,
+        "recovery": 0.11103723404243064,
+        "terminal": 2.616059030821019e-05,
+        "Return_composite": 0.4059203845149263,
+        "Risk_composite": 1.2848036112264567,
+        "Path_score": 3.969596788479156,
+        "U_share_pct": 41.9,
+        "MFE_share_pct": 58.1,
+        "MAE_share_pct": 7.8,
+        "giveback_share_pct": 92.2,
+        "note": "Risk composite giveback-dominated; adverse excursion hidden"
+      },
+      {
+        "timestamp": "2026-08-12 05:27:00+00:00",
+        "t_index": 2507,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>----------",
+        "U": 0.00016624651553715978,
+        "MFE": 0.00048607008964646957,
+        "MAE": 0.00026770666555129803,
+        "giveback": 0.6322913309699026,
+        "chop": 0.6666666666666666,
+        "recovery": 0.6676418958458645,
+        "terminal": 0.00017873218571924342,
+        "Return_composite": 0.387285702084913,
+        "Risk_composite": 0.9027214372648655,
+        "Path_score": 3.969596788479156,
+        "U_share_pct": 42.9,
+        "MFE_share_pct": 57.1,
+        "MAE_share_pct": 12.6,
+        "giveback_share_pct": 87.4,
+        "note": "Risk composite giveback-dominated; adverse excursion hidden"
+      },
+      {
+        "timestamp": "2026-08-12 05:33:00+00:00",
+        "t_index": 2509,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>--------vv",
+        "U": 2.763450383618125e-05,
+        "MFE": 0.0003061863263607262,
+        "MAE": 0.0010834767292910415,
+        "giveback": 1.0,
+        "chop": 0.6666666666666666,
+        "recovery": -0.8146863255276141,
+        "terminal": -0.000882693675380796,
+        "Return_composite": 0.16691313897307708,
+        "Risk_composite": 1.7086042338461942,
+        "Path_score": 3.969596788479156,
+        "U_share_pct": 16.5,
+        "MFE_share_pct": 83.5,
+        "MAE_share_pct": 27.0,
+        "giveback_share_pct": 73.0,
+        "note": "Return composite dominated by MFE; U contribution diluted"
+      },
+      {
+        "timestamp": "2026-08-12 05:36:00+00:00",
+        "t_index": 2510,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>---v---vvv",
+        "U": -8.875735629634895e-07,
+        "MFE": 0.00013701674000063575,
+        "MAE": 0.0015785894353672883,
+        "giveback": 1.0,
+        "chop": 0.6666666666666666,
+        "recovery": -1.0,
+        "terminal": -0.0015785894353672883,
+        "Return_composite": 0.061445944309643716,
+        "Risk_composite": 1.9193041772527288,
+        "Path_score": 3.969596788479156,
+        "U_share_pct": 1.4,
+        "MFE_share_pct": 98.6,
+        "MAE_share_pct": 35.0,
+        "giveback_share_pct": 65.0,
+        "note": "Return composite dominated by MFE; U contribution diluted"
+      },
+      {
+        "timestamp": "2026-08-12 05:42:00+00:00",
+        "t_index": 2512,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>-----vvvvv",
+        "U": 9.449934362468749e-07,
+        "MFE": 0.00019404058909406406,
+        "MAE": 0.002240158665376626,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "recovery": -1.0,
+        "terminal": -0.002240158665376626,
+        "Return_composite": 0.08921940043978342,
+        "Risk_composite": 2.2008412850905676,
+        "Path_score": 3.3079973237326303,
+        "U_share_pct": 1.1,
+        "MFE_share_pct": 98.9,
+        "MAE_share_pct": 43.3,
+        "giveback_share_pct": 56.7,
+        "note": "Return composite dominated by MFE; U contribution diluted"
+      },
+      {
+        "timestamp": "2026-08-12 05:45:00+00:00",
+        "t_index": 2513,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>v---vvvvvv",
+        "U": -2.368056790383678e-06,
+        "MFE": 0.00016537610143075302,
+        "MAE": 0.0026702915771726916,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "recovery": -0.5899947217172109,
+        "terminal": -0.0015754579359778143,
+        "Return_composite": 0.0728677795217893,
+        "Risk_composite": 2.383888456089169,
+        "Path_score": 3.3079973237326303,
+        "U_share_pct": 3.0,
+        "MFE_share_pct": 97.0,
+        "MAE_share_pct": 47.7,
+        "giveback_share_pct": 52.3,
+        "note": "Return composite dominated by MFE; U contribution diluted"
+      },
+      {
+        "timestamp": "2026-08-12 05:48:00+00:00",
+        "t_index": 2514,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>---v-vvvvv",
+        "U": 8.181579973005491e-05,
+        "MFE": 0.0006826859437831504,
+        "MAE": 0.0021544484110668765,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "recovery": -0.9295272727273088,
+        "terminal": -0.0020026185557706776,
+        "Return_composite": 0.39234653390929014,
+        "Risk_composite": 2.164366467315152,
+        "Path_score": 3.3079973237326303,
+        "U_share_pct": 20.8,
+        "MFE_share_pct": 79.2,
+        "MAE_share_pct": 42.4,
+        "giveback_share_pct": 57.6,
+        "note": "Return composite dominated by MFE; U contribution diluted"
+      },
+      {
+        "timestamp": "2026-08-12 05:51:00+00:00",
+        "t_index": 2515,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>--vvvvvvvv",
+        "U": 4.211802022759794e-05,
+        "MFE": 0.0005556988190734441,
+        "MAE": 0.0030584585130959924,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "recovery": -0.9598914045691952,
+        "terminal": -0.0029357880379523244,
+        "Return_composite": 0.29489967590284766,
+        "Risk_composite": 2.549076605024964,
+        "Path_score": 3.3079973237326303,
+        "U_share_pct": 14.3,
+        "MFE_share_pct": 85.7,
+        "MAE_share_pct": 51.1,
+        "giveback_share_pct": 48.9,
+        "note": "Return composite dominated by MFE; U contribution diluted"
+      },
+      {
+        "timestamp": "2026-08-12 05:54:00+00:00",
+        "t_index": 2516,
+        "path_pattern": "spike_then_giveback",
+        "path_ascii": "t>-vvvvvvvvv",
+        "U": 1.3130514291776198e-05,
+        "MFE": 0.0004207515412022526,
+        "MAE": 0.0033818335901024607,
+        "giveback": 1.0,
+        "chop": 0.5555555555555556,
+        "recovery": -0.9364027977210804,
+        "terminal": -0.0031667584351990695,
+        "Return_composite": 0.2045360605883621,
+        "Risk_composite": 2.6866919592426237,
+        "Path_score": 3.3079973237326303,
+        "U_share_pct": 6.4,
+        "MFE_share_pct": 93.6,
+        "MAE_share_pct": 53.6,
+        "giveback_share_pct": 46.4,
+        "note": "Return composite dominated by MFE; U contribution diluted"
+      }
+    ]
+  },
+  "9_final_verdict": {
+    "questions": {
+      "Q1_return_equal_weight_semantic": "HYPOTHESIS",
+      "Q2_risk_equal_weight_semantic": "HYPOTHESIS",
+      "Q3_x_sigma_for_composite": "SUPPORTED",
+      "Q4_MAE_giveback_single_risk_scalar": "HYPOTHESIS",
+      "Q5_chop_as_path": "SUPPORTED",
+      "Q6_chop_freq_mag_split": "HYPOTHESIS",
+      "Q7_concrete_failure_paths": "CONFIRMED",
+      "Q8_composite_preserves_P1_intent": "FAILED"
+    },
+    "structure_verdict": {
+      "Return": {
+        "U": "keep_facet",
+        "MFE": "keep_facet",
+        "scalar_sum": "FAILED"
+      },
+      "Risk": {
+        "MAE": "keep_facet",
+        "Giveback": "keep_facet",
+        "scalar_sum": "HYPOTHESIS"
+      },
+      "Path": {
+        "Chop": "SUPPORTED_separate",
+        "freq_mag_split": "HYPOTHESIS"
+      },
+      "Recovery": {
+        "status": "diagnostic_UNRESOLVED"
+      }
+    },
+    "summary": "Facet structure SUPPORTED; naive equal-weight Return/Risk scalars FAILED or HYPOTHESIS-only; X/sigma SUPPORTED; Chop->Path SUPPORTED on BTC; Recovery stays diagnostic",
+    "recommendations": [
+      "Keep U, MFE, MAE, Giveback, Chop as separate supervised facets or heads",
+      "Use X/sigma_prefix for scale balance within each facet group",
+      "Do not adopt single Return or Risk scalar without mechanism-aware aggregation",
+      "Keep Recovery diagnostic until post-MAE timing need is CONFIRMED on BTC"
+    ]
+  },
+  "data_protocol": {
+    "market": {
+      "symbol": "BTCUSDT",
+      "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+      "timeframe": "3m",
+      "num_bars": 5000,
+      "start_time": "2026-08-07 00:06:00+00:00",
+      "end_time": "2026-08-17 10:06:00+00:00",
+      "close_min": 62586.29,
+      "close_max": 65408.05,
+      "return_std": 0.00047408251416413826
+    },
+    "prefix_n": 2485,
+    "eval_n": 2485
+  },
+  "11_test_result": {
+    "pytest_pass_count": null
+  }
+}

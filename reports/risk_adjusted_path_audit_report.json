@@ -1,0 +1,566 @@
+{
+  "audit": "Risk-Adjusted Path Metrics Audit (Sharpe/Sortino/Ulcer)",
+  "market": {
+    "symbol": "BTCUSDT",
+    "source": "csv:C:\\Users\\이유찬\\Desktop\\ChartAI\\data\\market\\btcusdt_3m.csv",
+    "timeframe": "3m",
+    "num_bars": 5000,
+    "start_time": "2026-08-07 00:06:00+00:00",
+    "end_time": "2026-08-17 10:06:00+00:00",
+    "close_min": 62586.29,
+    "close_max": 65408.05,
+    "return_std": 0.00047408251416413826
+  },
+  "config": {
+    "reward_horizon": 10,
+    "eval_samples": 2485
+  },
+  "metric_definitions": {
+    "path_sharpe": "Path Sharpe (mean/vol of bar returns)",
+    "path_sortino": "Path Sortino (mean/downside dev)",
+    "ulcer_index": "Ulcer Index (RMS drawdown from wealth peak)",
+    "calmar_proxy": "Calmar proxy (terminal / max_drawdown)",
+    "return_over_ulcer": "Return / Ulcer (Martin-like ratio)",
+    "differential_sharpe_vs_zero": "Sharpe on path (flat baseline = 0)",
+    "differential_sortino_vs_zero": "Sortino on path (flat baseline = 0)"
+  },
+  "archetype_ABC_analysis": [
+    {
+      "id": "A",
+      "label": "spike_giveback",
+      "description": "0→1→3→1 — MFE 큰 spike 후 giveback",
+      "levels": [
+        0,
+        1,
+        3,
+        1
+      ],
+      "metrics": {
+        "u_mean": 0.011696799999999953,
+        "u_terminal": 0.009595999999999947,
+        "mae": -0.007576807999999886,
+        "terminal": 0.009595999999999947,
+        "mfe": 0.032260399999999974,
+        "p": 0.013796812517495696,
+        "risk_adj": {
+          "path_sharpe": 0.09986321306685228,
+          "path_sortino": 0.1472782781351951,
+          "ulcer_index": 0.0,
+          "calmar_proxy": 10000.0,
+          "return_over_ulcer": 10000.0,
+          "differential_sharpe_vs_zero": 0.09986321306685228,
+          "differential_sortino_vs_zero": 0.1472782781351951,
+          "terminal_return": 0.009595999999999947,
+          "mean_bar_return": 0.000959599999999995,
+          "bar_volatility": 0.009609144053452414,
+          "downside_deviation": 0.006515556891010932,
+          "max_drawdown": 0.0
+        },
+        "path_obs": {
+          "giveback_ratio": 0.7025455357032165,
+          "reversal_depth": 0.7025455357032165,
+          "excursion_stability": 0.618470905115623,
+          "peak_timing": 0.2,
+          "peak_after_decay": 0.7025455357032165,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 3.3618591079616666,
+          "path_efficiency": 0.18888276513660246,
+          "terminal_proximity_mfe": 0.2974544642967835,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 0.6386777597301964,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.8,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 0.66887417218543
+        }
+      },
+      "semantic_interpretation": {
+        "return_magnitude_signals": "terminal=0.0096, mfe=0.0323, u_mean=0.0117, mean_bar=0.0010",
+        "risk_magnitude_signals": "mae=-0.0076, bar_vol=0.0096, ulcer=0.0000, max_dd=0.0000, chop=0.111",
+        "risk_adjusted_scalar": "sharpe=0.100, sortino=0.147, calmar=10000.000, return/ulcer=10000.000",
+        "path_observable": "giveback=0.703, reversal=0.703",
+        "design_note": "Sharpe/Sortino는 bar return mean/vol mix — spike+giveback에서 vol↑, terminal↓. giveback은 capture efficiency, Sharpe은 return/risk scalar collapse. 어느 쪽이 더 좋은지 미결 — A는 MFE↑ terminal↓, B와 비교 필요."
+      }
+    },
+    {
+      "id": "B",
+      "label": "grind_hold",
+      "description": "0→2→2→2 — 안정적 grind/hold",
+      "levels": [
+        0,
+        2,
+        2,
+        2
+      ],
+      "metrics": {
+        "u_mean": 0.02,
+        "u_terminal": 0.02,
+        "mae": -0.017960000000000066,
+        "terminal": 0.02,
+        "mfe": 0.022039999999999935,
+        "p": 0.02,
+        "risk_adj": {
+          "path_sharpe": 0.33333333333333326,
+          "path_sortino": 10000.0,
+          "ulcer_index": 0.0,
+          "calmar_proxy": 10000.0,
+          "return_over_ulcer": 10000.0,
+          "differential_sharpe_vs_zero": 0.33333333333333326,
+          "differential_sortino_vs_zero": 10000.0,
+          "terminal_return": 0.02,
+          "mean_bar_return": 0.002,
+          "bar_volatility": 0.006000000000000001,
+          "downside_deviation": 0.0,
+          "max_drawdown": 0.0
+        },
+        "path_obs": {
+          "giveback_ratio": 0.092558983666059,
+          "reversal_depth": 0.092558983666059,
+          "excursion_stability": 1.0,
+          "peak_timing": 0.1,
+          "peak_after_decay": 0.092558983666059,
+          "recovery_shape_score": 0.0,
+          "oscillation_chop": 0.0,
+          "mfe_terminal_ratio": 1.1019999999999968,
+          "path_efficiency": 1.0,
+          "terminal_proximity_mfe": 0.907441016333941,
+          "transition_count": 0.0,
+          "time_near_mfe": 1.0,
+          "drawdown_from_mfe": 0.0,
+          "post_mae_recovery_high": 0.0,
+          "time_under_water": 0.0,
+          "time_under_favorable": 1.0,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.0,
+          "path_sign_entropy": 0.2959032742893828,
+          "excursion_concentration": 1.0
+        }
+      },
+      "semantic_interpretation": {
+        "return_magnitude_signals": "terminal=0.0200, mfe=0.0220, u_mean=0.0200, mean_bar=0.0020",
+        "risk_magnitude_signals": "mae=-0.0180, bar_vol=0.0060, ulcer=0.0000, max_dd=0.0000, chop=0.000",
+        "risk_adjusted_scalar": "sharpe=0.333, sortino=10000.000, calmar=10000.000, return/ulcer=10000.000",
+        "path_observable": "giveback=0.093, reversal=0.093",
+        "design_note": "낮은 vol, 높은 terminal proximity — Sharpe/Sortino가 상대적으로 유리할 수 있으나 이는 'potential MFE' 정보를 반영하지 않음. Expected Return 정의에 따라 우열 역전 가능."
+      }
+    },
+    {
+      "id": "C",
+      "label": "rise_then_crash",
+      "description": "0→3→-1→-3 — 상승 후 역전 crash",
+      "levels": [
+        0,
+        3,
+        -1,
+        -3
+      ],
+      "metrics": {
+        "u_mean": 0.0018297689087999995,
+        "u_terminal": -0.001439268864,
+        "mae": 0.06004671999999999,
+        "terminal": -0.030976,
+        "mfe": 0.03206000000000003,
+        "p": -0.010893059006980111,
+        "risk_adj": {
+          "path_sharpe": -0.18213051989438603,
+          "path_sortino": -0.21434085480126905,
+          "ulcer_index": 0.13660215251775368,
+          "calmar_proxy": -0.1339498565101492,
+          "return_over_ulcer": -0.22676070200265816,
+          "differential_sharpe_vs_zero": -0.18213051989438603,
+          "differential_sortino_vs_zero": -0.21434085480126905,
+          "terminal_return": -0.030976,
+          "mean_bar_return": -0.0030976,
+          "bar_volatility": 0.017007583362723823,
+          "downside_deviation": 0.014451747908125166,
+          "max_drawdown": 0.2312507143122844
+        },
+        "path_obs": {
+          "giveback_ratio": 1.0,
+          "reversal_depth": 1.0,
+          "excursion_stability": 0.34973339323774016,
+          "peak_timing": 0.1,
+          "peak_after_decay": 1.0,
+          "recovery_shape_score": -0.515864979802394,
+          "oscillation_chop": 0.1111111111111111,
+          "mfe_terminal_ratio": 1.034994834710745,
+          "path_efficiency": -0.34048540274358075,
+          "terminal_proximity_mfe": 0.0,
+          "transition_count": 1.0,
+          "time_near_mfe": 0.1,
+          "drawdown_from_mfe": 1.0,
+          "post_mae_recovery_high": -0.515864979802394,
+          "time_under_water": 0.9,
+          "time_under_favorable": 0.1,
+          "recovery_speed": 0.0,
+          "drawdown_duration": 0.9,
+          "path_sign_entropy": 0.7298466991620948,
+          "excursion_concentration": 1.0
+        }
+      },
+      "semantic_interpretation": {
+        "return_magnitude_signals": "terminal=-0.0310, mfe=0.0321, u_mean=0.0018, mean_bar=-0.0031",
+        "risk_magnitude_signals": "mae=0.0600, bar_vol=0.0170, ulcer=0.1366, max_dd=0.2313, chop=0.111",
+        "risk_adjusted_scalar": "sharpe=-0.182, sortino=-0.214, calmar=-0.134, return/ulcer=-0.227",
+        "path_observable": "giveback=1.000, reversal=1.000",
+        "design_note": "terminal<0, mae↑, ulcer↑, sharpe/sortino strongly negative. Direction과 Risk head에 분산 필요 — scalar Sharpe alone은 direction+return+risk 혼합."
+      }
+    },
+    {
+      "id": "comparison",
+      "pairwise_notes": {
+        "A_vs_B": {
+          "u_diff": 0.008303200000000047,
+          "terminal_diff": 0.010404000000000054,
+          "sharpe": {
+            "A": 0.09986321306685228,
+            "B": 0.33333333333333326
+          },
+          "sortino": {
+            "A": 0.1472782781351951,
+            "B": 10000.0
+          },
+          "ulcer": {
+            "A": 0.0,
+            "B": 0.0
+          },
+          "giveback": {
+            "A": 0.7025455357032165,
+            "B": 0.092558983666059
+          },
+          "note": "Sharpe/Sortino가 A/B rank를 single scalar로 정할 수 있으나, MFE(potential return) vs terminal(realized) trade-off를 collapse. giveback은 capture, Sharpe은 return/vol 혼합."
+        },
+        "C_vs_B": {
+          "terminal": {
+            "C": -0.030976,
+            "B": 0.02
+          },
+          "sharpe": {
+            "C": -0.18213051989438603,
+            "B": 0.33333333333333326
+          },
+          "mae": {
+            "C": 0.06004671999999999,
+            "B": -0.017960000000000066
+          },
+          "note": "C는 direction 실패 + adverse path — Sharpe negative, Risk head primary."
+        },
+        "C_vs_A": {
+          "mfe": {
+            "C": 0.03206000000000003,
+            "A": 0.032260399999999974
+          },
+          "terminal": {
+            "C": -0.030976,
+            "A": 0.009595999999999947
+          },
+          "reversal": {
+            "C": 1.0,
+            "A": 0.7025455357032165
+          },
+          "note": "C는 early rise 후 crash — MFE may still positive early but terminal negative. Ulcer/reversal/chop이 crash path risk 포착."
+        }
+      }
+    }
+  ],
+  "eval_overlap_with_U_MAE_path": {
+    "path_sharpe": {
+      "corr_u": 0.5748068850652549,
+      "corr_mae": -0.49119827378982694,
+      "corr_terminal": 0.792522360154281,
+      "r2_after_u_mae": 0.4485953284283378,
+      "corr_giveback_ratio": -0.6123140916958462,
+      "corr_reversal_depth": -0.5761084560556297,
+      "corr_oscillation_chop": 0.070132529201165,
+      "corr_peak_timing": 0.6962864980381172
+    },
+    "path_sortino": {
+      "corr_u": 0.013484755801035296,
+      "corr_mae": -0.05564710205231574,
+      "corr_terminal": 0.041243693656212374,
+      "r2_after_u_mae": 0.0031014844490026006,
+      "corr_giveback_ratio": -0.09798221533900424,
+      "corr_reversal_depth": -0.1030518909208528,
+      "corr_oscillation_chop": -0.13251933246194916,
+      "corr_peak_timing": 0.07866949741230196
+    },
+    "ulcer_index": {
+      "corr_u": -0.34297226181921747,
+      "corr_mae": 0.8767766026444139,
+      "corr_terminal": -0.674346659669427,
+      "r2_after_u_mae": 0.7789665892030722,
+      "corr_giveback_ratio": 0.2582519027603965,
+      "corr_reversal_depth": 0.22223825122881274,
+      "corr_oscillation_chop": -0.004349479735106926,
+      "corr_peak_timing": -0.452623175356401
+    },
+    "calmar_proxy": {
+      "corr_u": 0.5945735701608188,
+      "corr_mae": -0.37144521195402114,
+      "corr_terminal": 0.4961295579594179,
+      "r2_after_u_mae": 0.3989958861214927,
+      "corr_giveback_ratio": -0.3955532454771222,
+      "corr_reversal_depth": -0.3570405571154788,
+      "corr_oscillation_chop": 0.002208555047397384,
+      "corr_peak_timing": 0.31267943023946143
+    },
+    "return_over_ulcer": {
+      "corr_u": 0.5938132185967939,
+      "corr_mae": -0.37387412250651514,
+      "corr_terminal": 0.49769747589909996,
+      "r2_after_u_mae": 0.39927389506658917,
+      "corr_giveback_ratio": -0.3996528344206051,
+      "corr_reversal_depth": -0.36147602332315626,
+      "corr_oscillation_chop": -0.0012521858100283006,
+      "corr_peak_timing": 0.31650537913670884
+    },
+    "differential_sharpe_vs_zero": {
+      "corr_u": 0.5748068850652549,
+      "corr_mae": -0.49119827378982694,
+      "corr_terminal": 0.792522360154281,
+      "r2_after_u_mae": 0.4485953284283378,
+      "corr_giveback_ratio": -0.6123140916958462,
+      "corr_reversal_depth": -0.5761084560556297,
+      "corr_oscillation_chop": 0.070132529201165,
+      "corr_peak_timing": 0.6962864980381172
+    },
+    "differential_sortino_vs_zero": {
+      "corr_u": 0.013484755801035296,
+      "corr_mae": -0.05564710205231574,
+      "corr_terminal": 0.041243693656212374,
+      "r2_after_u_mae": 0.0031014844490026006,
+      "corr_giveback_ratio": -0.09798221533900424,
+      "corr_reversal_depth": -0.1030518909208528,
+      "corr_oscillation_chop": -0.13251933246194916,
+      "corr_peak_timing": 0.07866949741230196
+    }
+  },
+  "residual_after_U_MAE_and_path_obs": {
+    "path_sharpe": {
+      "r2_u_mae": 0.4485953284283378,
+      "r2_u_mae_giveback_chop": 0.591878854752719,
+      "r2_u_mae_giveback_chop_reversal": 0.5922204271955889,
+      "incremental_after_path_obs": 0.14362509876725105
+    },
+    "path_sortino": {
+      "r2_u_mae": 0.0031014844490026006,
+      "r2_u_mae_giveback_chop": 0.026111602562521097,
+      "r2_u_mae_giveback_chop_reversal": 0.02665391830825714,
+      "incremental_after_path_obs": 0.02355243385925454
+    },
+    "ulcer_index": {
+      "r2_u_mae": 0.7789665892030722,
+      "r2_u_mae_giveback_chop": 0.781870760530018,
+      "r2_u_mae_giveback_chop_reversal": 0.7825437674243765,
+      "incremental_after_path_obs": 0.0035771782213043224
+    },
+    "calmar_proxy": {
+      "r2_u_mae": 0.3989958861214927,
+      "r2_u_mae_giveback_chop": 0.42489354297029813,
+      "r2_u_mae_giveback_chop_reversal": 0.4296592604831351,
+      "incremental_after_path_obs": 0.030663374361642348
+    },
+    "return_over_ulcer": {
+      "r2_u_mae": 0.39927389506658917,
+      "r2_u_mae_giveback_chop": 0.426673781332948,
+      "r2_u_mae_giveback_chop_reversal": 0.43121325158954604,
+      "incremental_after_path_obs": 0.031939356522956874
+    },
+    "differential_sharpe_vs_zero": {
+      "r2_u_mae": 0.4485953284283378,
+      "r2_u_mae_giveback_chop": 0.591878854752719,
+      "r2_u_mae_giveback_chop_reversal": 0.5922204271955889,
+      "incremental_after_path_obs": 0.14362509876725105
+    },
+    "differential_sortino_vs_zero": {
+      "r2_u_mae": 0.0031014844490026006,
+      "r2_u_mae_giveback_chop": 0.026111602562521097,
+      "r2_u_mae_giveback_chop_reversal": 0.02665391830825714,
+      "incremental_after_path_obs": 0.02355243385925454
+    }
+  },
+  "differential_sharpe_long_short_hold": {
+    "samples": 500,
+    "mean_diff_long_hold": 0.014630905718581878,
+    "mean_diff_long_short": 0.029261811437163755,
+    "std_diff_long_short": 0.6160972249979799,
+    "p1_relevance": "diff_long_minus_short는 동일 market path에서 action perspective Sharpe gap — Direction judgment + risk-adjusted attractiveness 혼합. P1 Direction head와 coupling 가능하나 scalar F 단독 대체는 부적절.",
+    "p2_relevance": "Execution policy / position scaling에서 differential reward (RL)로 더 자연스러움. P2: 'LONG 대비 SHORT/HOLD의 risk-adjusted edge'는 entry/scale timing과 연결."
+  },
+  "multi_head_scalar_collapse_analysis": {
+    "conflict_statement": "Sharpe/Sortino/Calmar/return-over-ulcer은 Return과 Risk를 단일 scalar로 collapse. P1 multi-head (Direction / Expected Return / Acceptable Risk)와 논리적으로 충돌 - 하나의 Sharpe를 F target 또는 U 대체로 쓰면 head 분리 설계와 모순.",
+    "archetype_rankings": {
+      "by_sharpe": [
+        [
+          "B",
+          0.33333333333333326
+        ],
+        [
+          "A",
+          0.09986321306685228
+        ],
+        [
+          "C",
+          -0.18213051989438603
+        ]
+      ],
+      "by_terminal_realized_return": [
+        [
+          "B",
+          0.02
+        ],
+        [
+          "A",
+          0.009595999999999947
+        ],
+        [
+          "C",
+          -0.030976
+        ]
+      ],
+      "by_mfe_potential_return": [
+        [
+          "A",
+          0.032260399999999974
+        ],
+        [
+          "C",
+          0.03206000000000003
+        ],
+        [
+          "B",
+          0.022039999999999935
+        ]
+      ]
+    },
+    "A_vs_B_conflict": {
+      "sharpe_favors": "B",
+      "terminal_favors": "B",
+      "mfe_favors": "A",
+      "note": "A/B에서 Sharpe ranking != MFE ranking != terminal ranking 가능 — scalar risk-adjusted metric 하나로 Expected Return head 역할 불가."
+    },
+    "recommended_use": "Risk-adjusted metrics는 composite diagnostic 또는 P2 policy score로 유지. P1에서는 Return_mag, Risk_mag, capture(giveback) 분리 유지."
+  },
+  "final_judgments": {
+    "supplements_path_problem": {
+      "verdict": "partial_only",
+      "detail_ko": "Sharpe/Sortino/Ulcer는 path vol/drawdown을 scalar로 요약하지만, U/MAE/giveback/chop이 이미 분리 제공하는 정보와 substantial overlap. Path 문제(giveback vs grind)를 완전히 새로 보완하지는 못함."
+    },
+    "redundant_with_U_MAE": {
+      "verdict": "substantial_overlap",
+      "detail_ko": "path_sharpe/sortino는 mean return(U/terminal proxy)과 vol(MAE/chop proxy) 혼합. return_over_ulcer, calmar는 terminal+drawdown 재조합."
+    },
+    "better_than_path_observables": {
+      "verdict": "no",
+      "detail_ko": "giveback/reversal/chop이 Expected Return vs Risk 축 분리에 더 직접적. Sharpe는 두 축을 다시 collapse — multi-head 설계에 불리."
+    },
+    "expected_return_head": {
+      "verdict": "no_direct",
+      "detail_ko": "Return head에는 U, terminal, MFE, giveback(capture) — Sharpe 직접 투입 비권장."
+    },
+    "risk_head": {
+      "verdict": "partial_diagnostic_only",
+      "detail_ko": "ulcer_index, bar_volatility는 Risk head 보조 diagnostic 가능. Sharpe/Sortino 자체는 return component 포함 — Risk head 단독 부적합."
+    },
+    "separate_diagnostic": {
+      "verdict": "yes_preferred",
+      "detail_ko": "composite risk-adjusted score는 P1 학습 target이 아니라 chart review / P2 policy research diagnostic으로 유지 권장."
+    },
+    "replace_U_with_risk_adjusted": {
+      "verdict": "no",
+      "detail_ko": "U는 favorable opportunity magnitude — Sharpe로 교체하면 potential return 정보 손실, Case A(MFE↑ terminal↓) vs B trade-off collapse. 논리적 근거 없음."
+    },
+    "differential_sharpe_P1_vs_P2": {
+      "verdict": "primarily_P2",
+      "detail_ko": "diff_long_minus_short는 action 간 edge — Direction + execution scaling에 가까움. P1 t 시점 label로는 Direction head 보조 가능하나, canonical F 또는 U 대체는 P2 RL/execution 단계 문제."
+    },
+    "max_incremental_r2_after_path_obs": {
+      "metric": "path_sharpe",
+      "delta_r2": 0.14362509876725105
+    },
+    "overlap_table_summary": {
+      "path_sharpe": {
+        "corr_u": 0.5748068850652549,
+        "corr_mae": -0.49119827378982694,
+        "corr_terminal": 0.792522360154281,
+        "r2_after_u_mae": 0.4485953284283378,
+        "corr_giveback_ratio": -0.6123140916958462,
+        "corr_reversal_depth": -0.5761084560556297,
+        "corr_oscillation_chop": 0.070132529201165,
+        "corr_peak_timing": 0.6962864980381172
+      },
+      "path_sortino": {
+        "corr_u": 0.013484755801035296,
+        "corr_mae": -0.05564710205231574,
+        "corr_terminal": 0.041243693656212374,
+        "r2_after_u_mae": 0.0031014844490026006,
+        "corr_giveback_ratio": -0.09798221533900424,
+        "corr_reversal_depth": -0.1030518909208528,
+        "corr_oscillation_chop": -0.13251933246194916,
+        "corr_peak_timing": 0.07866949741230196
+      },
+      "ulcer_index": {
+        "corr_u": -0.34297226181921747,
+        "corr_mae": 0.8767766026444139,
+        "corr_terminal": -0.674346659669427,
+        "r2_after_u_mae": 0.7789665892030722,
+        "corr_giveback_ratio": 0.2582519027603965,
+        "corr_reversal_depth": 0.22223825122881274,
+        "corr_oscillation_chop": -0.004349479735106926,
+        "corr_peak_timing": -0.452623175356401
+      },
+      "calmar_proxy": {
+        "corr_u": 0.5945735701608188,
+        "corr_mae": -0.37144521195402114,
+        "corr_terminal": 0.4961295579594179,
+        "r2_after_u_mae": 0.3989958861214927,
+        "corr_giveback_ratio": -0.3955532454771222,
+        "corr_reversal_depth": -0.3570405571154788,
+        "corr_oscillation_chop": 0.002208555047397384,
+        "corr_peak_timing": 0.31267943023946143
+      },
+      "return_over_ulcer": {
+        "corr_u": 0.5938132185967939,
+        "corr_mae": -0.37387412250651514,
+        "corr_terminal": 0.49769747589909996,
+        "r2_after_u_mae": 0.39927389506658917,
+        "corr_giveback_ratio": -0.3996528344206051,
+        "corr_reversal_depth": -0.36147602332315626,
+        "corr_oscillation_chop": -0.0012521858100283006,
+        "corr_peak_timing": 0.31650537913670884
+      },
+      "differential_sharpe_vs_zero": {
+        "corr_u": 0.5748068850652549,
+        "corr_mae": -0.49119827378982694,
+        "corr_terminal": 0.792522360154281,
+        "r2_after_u_mae": 0.4485953284283378,
+        "corr_giveback_ratio": -0.6123140916958462,
+        "corr_reversal_depth": -0.5761084560556297,
+        "corr_oscillation_chop": 0.070132529201165,
+        "corr_peak_timing": 0.6962864980381172
+      },
+      "differential_sortino_vs_zero": {
+        "corr_u": 0.013484755801035296,
+        "corr_mae": -0.05564710205231574,
+        "corr_terminal": 0.041243693656212374,
+        "r2_after_u_mae": 0.0031014844490026006,
+        "corr_giveback_ratio": -0.09798221533900424,
+        "corr_reversal_depth": -0.1030518909208528,
+        "corr_oscillation_chop": -0.13251933246194916,
+        "corr_peak_timing": 0.07866949741230196
+      }
+    }
+  },
+  "synthesis_ko": {
+    "한줄_결론": "Sharpe/Sortino/Ulcer는 analysis diagnostic으로만 가치 - P1 reward/output head 직접 채택 비권장. U 교체 근거 없음. Differential Sharpe는 P2 쪽.",
+    "A_B_C_핵심": "Sharpe rank: [('B', 0.33333333333333326), ('A', 0.09986321306685228), ('C', -0.18213051989438603)]; terminal rank: [('B', 0.02), ('A', 0.009595999999999947), ('C', -0.030976)]; MFE rank: [('A', 0.032260399999999974), ('C', 0.03206000000000003), ('B', 0.022039999999999935)]",
+    "multi_head_충돌": "Sharpe/Sortino/Calmar/return-over-ulcer은 Return과 Risk를 단일 scalar로 collapse. P1 multi-head (Direction / Expected Return / Acceptable Risk)와 논리적으로 충돌 - 하나의 Sharpe를 F target 또는 U 대체로 쓰면 head 분리 설계와 모순.",
+    "Case_A_semantic": "Sharpe/Sortino는 bar return mean/vol mix — spike+giveback에서 vol↑, terminal↓. giveback은 capture efficiency, Sharpe은 return/risk scalar collapse. 어느 쪽이 더 좋은지 미결 — A는 MFE↑ terminal↓, B와 비교 필요.",
+    "Case_C_semantic": "terminal<0, mae↑, ulcer↑, sharpe/sortino strongly negative. Direction과 Risk head에 분산 필요 — scalar Sharpe alone은 direction+return+risk 혼합."
+  }
+}
